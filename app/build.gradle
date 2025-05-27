@@ -33,6 +33,10 @@ dependencies {
 
     implementation 'org.openjfx:javafx-controls:20'
     implementation 'org.openjfx:javafx-fxml:20'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.3' 
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.18.3'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.3'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

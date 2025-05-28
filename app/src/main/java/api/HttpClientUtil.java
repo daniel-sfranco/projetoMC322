@@ -83,15 +83,30 @@ public class HttpClientUtil {
         return response.body();
     }
 
-    public static String sendPostFormRequest(String url, Map<String, String> headers, String formBody) throws RequestException, IOException, InterruptedException{
+    /**
+     * Envia uma requisição HTTP POST com um corpo de formulário para a URL
+     * especificada com os cabeçalhos fornecidos.
+     *
+     * @param url      a URL para a qual a requisição será enviada
+     * @param headers  um mapa de cabeçalhos a serem incluídos na requisição
+     * @param formBody o corpo do formulário a ser enviado como string
+     * @return o corpo da resposta como uma string
+     * @throws RequestException     se a resposta tiver um código de status >=
+     *                              400
+     * @throws IOException          se ocorrer um erro de entrada/saída
+     * @throws InterruptedException se a thread for interrompida durante a
+     *                              requisição
+     */
+    public static String sendPostFormRequest(String url, Map<String, String> headers, String formBody)
+            throws RequestException, IOException, InterruptedException {
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(url));
-        if(headers != null){
+        if (headers != null) {
             headers.forEach(requestBuilder::header);
         }
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(formBody));
         HttpRequest request = requestBuilder.build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if(response.statusCode() >= 400){
+        if (response.statusCode() >= 400) {
             throw new RequestException((int) response.statusCode(), response.body());
         }
         return response.body();

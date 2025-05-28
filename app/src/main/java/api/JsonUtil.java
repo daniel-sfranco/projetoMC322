@@ -6,10 +6,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * JsonUtil
+ * Classe utilitária para conversão entre objetos Java e JSON usando Jackson.
+ * Fornece métodos para serializar objetos em JSON e desserializar JSON em
+ * objetos.
  */
 public class JsonUtil {
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * Converte um objeto para uma string JSON.
+     * Atenção: o método só funciona se o objeto tiver getters ou métodos públicos,
+     * senão aparece o erro No serializer found for class.
+     * 
+     * @param object o objeto a ser convertido
+     * @return a string JSON representando o objeto, ou null em caso de erro
+     */
     public static String parseObjectToJson(Object object) {
         try {
             return mapper.writeValueAsString(object);
@@ -19,6 +30,13 @@ public class JsonUtil {
         }
     }
 
+    /**
+     * Converte uma string JSON para um objeto do tipo especificado.
+     * 
+     * @param json      a string JSON a ser convertida
+     * @param valueType o tipo do objeto de destino
+     * @return o objeto convertido, ou null em caso de erro
+     */
     public static <T> T parseJson(String json, Class<T> valueType) {
         try {
             return mapper.readValue(json, valueType);
@@ -32,10 +50,15 @@ public class JsonUtil {
         return null;
     }
 
+    /**
+     * Método principal para testar a conversão de objeto para JSON e vice-versa.
+     * 
+     * @param args argumentos da linha de comando (não utilizados)
+     */
     public static void main(String[] args) {
         String jsonRequest = parseObjectToJson(new Request());
         System.out.println(jsonRequest);
-		Request parsedRequest = parseJson(jsonRequest, Request.class);
+        Request parsedRequest = parseJson(jsonRequest, Request.class);
         System.out.println(parsedRequest.toString());
     }
 }

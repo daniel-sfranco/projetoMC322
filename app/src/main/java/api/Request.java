@@ -1,7 +1,10 @@
 package api;
 
 /**
- * request
+ * Request
+ * Classe que representa uma requisição para a API do Spotify.
+ * Contém informações básicas como URL base, clientId e clientSecret, e gerencia
+ * as conexões com a API.
  */
 public class Request {
     private String baseUrl = "https://api.spotify.com/";

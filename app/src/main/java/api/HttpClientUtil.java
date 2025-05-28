@@ -83,6 +83,20 @@ public class HttpClientUtil {
         return response.body();
     }
 
+    public static String sendPostFormRequest(String url, Map<String, String> headers, String formBody) throws RequestException, IOException, InterruptedException{
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(url));
+        if(headers != null){
+            headers.forEach(requestBuilder::header);
+        }
+        requestBuilder.POST(HttpRequest.BodyPublishers.ofString(formBody));
+        HttpRequest request = requestBuilder.build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if(response.statusCode() >= 400){
+            throw new RequestException((int) response.statusCode(), response.body());
+        }
+        return response.body();
+    }
+
     /**
      * Método principal para testar o envio de requisições GET e POST.
      *

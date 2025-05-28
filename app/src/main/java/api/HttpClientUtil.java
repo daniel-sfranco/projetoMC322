@@ -7,8 +7,6 @@ import java.net.http.HttpResponse;
 import java.io.IOException;
 import java.util.Map;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import exceptions.RequestException;
 
@@ -17,7 +15,6 @@ import exceptions.RequestException;
  */
 public class HttpClientUtil {
     private static final HttpClient client = HttpClient.newBuilder().build();
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static String sendGetRequest(String url, Map<String, String> headers)
             throws IOException, JsonProcessingException, RequestException, InterruptedException {
@@ -35,7 +32,7 @@ public class HttpClientUtil {
 
     public static String sendPostRequest(String url, Map<String, String> headers, Object bodyObject)
             throws IOException, InterruptedException, RequestException {
-        String requestBodyJson = mapper.writeValueAsString(bodyObject);
+        String requestBodyJson = JsonUtil.parseObjectToJson(bodyObject);
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(url))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson));
         if (headers != null) {
@@ -49,19 +46,5 @@ public class HttpClientUtil {
             throw new RequestException((int) response.statusCode(), response.body());
         }
         return response.body();
-    }
-
-    public static <T> T parseJson(String json, Class<T> valueType)
-            throws JsonMappingException, JsonProcessingException {
-        return mapper.readValue(json, valueType);
-    }
-
-    public static String parseObjectToJson(Object object) throws JsonProcessingException {
-        try {
-            return mapper.writeValueAsString(object);
-        } catch (Exception e) {
-            System.out.println("Erro ao converter o objeto para JSON: " + e.getMessage());
-            return null;
-        }
     }
 }

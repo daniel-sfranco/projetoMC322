@@ -1,8 +1,11 @@
 package api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import exceptions.RequestException;
 
 /**
  * JsonUtil
@@ -50,12 +53,26 @@ public class JsonUtil {
         return null;
     }
 
+    public static <T> T parseJson(String json, TypeReference<T> valueTypeReference) {
+        try {
+            return mapper.readValue(json, valueTypeReference);
+        } catch (JsonMappingException e) {
+            System.out.println("Erro de mapeamento JSON: " + e.getMessage());
+        } catch (JsonProcessingException e) {
+            System.out.println("Erro ao processar JSON: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro desconhecido: " + e.getMessage());
+        }
+        return null;
+    }
+
     /**
      * Método principal para testar a conversão de objeto para JSON e vice-versa.
      * 
      * @param args argumentos da linha de comando (não utilizados)
+     * @throws RequestException 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RequestException {
         String jsonRequest = parseObjectToJson(new Request());
         System.out.println(jsonRequest);
         Request parsedRequest = parseJson(jsonRequest, Request.class);

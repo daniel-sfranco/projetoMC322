@@ -37,14 +37,21 @@ public class HttpClientUtil {
      *                                 requisição
      */
     public static String sendGetRequest(String url, Map<String, String> headers)
-            throws IOException, JsonProcessingException, RequestException, InterruptedException {
+            throws RequestException {
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(url));
         requestBuilder.GET();
         if (headers != null) {
             headers.forEach(requestBuilder::header);
         }
         HttpRequest request = requestBuilder.build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new RequestException("Erro de entrada/saída: " + e.getMessage());
+        } catch (InterruptedException e) {
+            throw new RequestException("A requisição foi interrompida: " + e.getMessage());
+        }
         if (response.statusCode() >= 400) {
             throw new RequestException((int) response.statusCode(), response.body());
         }
@@ -66,7 +73,7 @@ public class HttpClientUtil {
      * @throws RequestException     se a resposta tiver um código de status >= 400
      */
     public static String sendPostRequest(String url, Map<String, String> headers, Object bodyObject)
-            throws IOException, InterruptedException, RequestException {
+            throws RequestException {
         String requestBodyJson = JsonUtil.parseObjectToJson(bodyObject);
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(url));
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBodyJson));
@@ -74,9 +81,14 @@ public class HttpClientUtil {
             headers.forEach(requestBuilder::header);
         }
         HttpRequest request = requestBuilder.build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.statusCode());
-        System.out.println(response.body());
+        HttpResponse<String> response;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new RequestException("Erro de entrada/saída: " + e.getMessage());
+        } catch (InterruptedException e) {
+            throw new RequestException("A requisição foi interrompida: " + e.getMessage());
+        }
         if (response.statusCode() >= 400) {
             throw new RequestException((int) response.statusCode(), response.body());
         }
@@ -98,14 +110,21 @@ public class HttpClientUtil {
      *                              requisição
      */
     public static String sendPostFormRequest(String url, Map<String, String> headers, String formBody)
-            throws RequestException, IOException, InterruptedException {
+            throws RequestException {
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(url));
         if (headers != null) {
             headers.forEach(requestBuilder::header);
         }
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(formBody));
         HttpRequest request = requestBuilder.build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new RequestException("Erro de entrada/saída: " + e.getMessage());
+        } catch (InterruptedException e) {
+            throw new RequestException("A requisição foi interrompida: " + e.getMessage());
+        }
         if (response.statusCode() >= 400) {
             throw new RequestException((int) response.statusCode(), response.body());
         }

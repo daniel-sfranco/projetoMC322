@@ -21,6 +21,12 @@ class SpotifyToken {
     private String clientId = "9afeb5fec9854592994aa191f842b529";
     private String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2"; // Eu juro que vou fazer isso ser mais seguro
 
+    /**
+     * Construtor da classe SpotifyToken.
+     * Inicializa o token de autenticação chamando o método refreshToken().
+     * 
+     * @throws RequestException se ocorrer um erro ao atualizar o token.
+     */
     public SpotifyToken() throws RequestException {
         this.refreshToken();
     }
@@ -98,6 +104,12 @@ public class Request {
     private static String baseUrl = "https://api.spotify.com/v1/";
     private SpotifyToken token;
 
+    /**
+     * Construtor da classe Request.
+     * Inicializa o token de autenticação.
+     * 
+     * @throws RequestException se ocorrer um erro ao obter o token.
+     */
     public Request() throws RequestException {
         this.token = new SpotifyToken();
     }
@@ -120,6 +132,16 @@ public class Request {
         return token;
     }
 
+    /**
+     * Envia uma requisição POST para a URL especificada com o corpo do objeto
+     * fornecido.
+     * 
+     * @param url        A URL para a qual a requisição será enviada.
+     * @param bodyObject O objeto que será convertido em JSON e enviado como corpo
+     *                   da requisição.
+     * @return A resposta da requisição como uma string.
+     * @throws RequestException se ocorrer um erro ao enviar a requisição.
+     */
     public String sendPostRequest(String url, Object bodyObject) throws RequestException {
         String accessToken = this.token.getAccess_token();
         Map<String, String> headers = Map.of(
@@ -128,6 +150,13 @@ public class Request {
         return HttpClientUtil.sendPostRequest(url, headers, bodyObject);
     }
 
+    /**
+     * Envia uma requisição GET para a URL especificada.
+     * 
+     * @param url A URL para a qual a requisição será enviada.
+     * @return A resposta da requisição como uma string.
+     * @throws RequestException se ocorrer um erro ao enviar a requisição.
+     */
     public String sendGetRequest(String url) throws RequestException {
         String accessToken = this.token.getAccess_token();
         Map<String, String> headers = Map.of(
@@ -140,7 +169,7 @@ public class Request {
      * Método principal para testar a obtenção do token de autenticação.
      * 
      * @param args Argumentos da linha de comando (não utilizados).
-     * @throws RequestException 
+     * @throws RequestException
      */
     public static void main(String[] args) throws RequestException {
         Request request = new Request();

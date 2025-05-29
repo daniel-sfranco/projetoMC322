@@ -53,6 +53,14 @@ public class JsonUtil {
         return null;
     }
 
+    /**
+     * Converte uma string JSON para um objeto do tipo especificado usando
+     * TypeReference.
+     * 
+     * @param json               a string JSON a ser convertida
+     * @param valueTypeReference a referência de tipo para o objeto de destino
+     * @return o objeto convertido, ou null em caso de erro
+     */
     public static <T> T parseJson(String json, TypeReference<T> valueTypeReference) {
         try {
             return mapper.readValue(json, valueTypeReference);

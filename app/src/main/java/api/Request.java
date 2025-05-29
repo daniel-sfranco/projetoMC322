@@ -12,28 +12,31 @@ class SpotifyToken {
     private String token_type;
     private int expires_in;
 
+    /**
+     * Retorna o token de acesso.
+     * 
+     * @return O token de acesso.
+     */
     public String getAccess_token() {
         return access_token;
     }
 
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
-    }
-
+    /**
+     * Retorna o tipo de token.
+     * 
+     * @return O tipo de token.
+     */
     public String getToken_type() {
         return token_type;
     }
 
-    public void setToken_type(String token_type) {
-        this.token_type = token_type;
-    }
-
+    /**
+     * Retorna o tempo de expiração do token em segundos.
+     * 
+     * @return O tempo de expiração do token.
+     */
     public int getExpires_in() {
         return expires_in;
-    }
-
-    public void setExpires_in(int expires_in) {
-        this.expires_in = expires_in;
     }
 }
 
@@ -94,6 +97,11 @@ public class Request {
         }
     }
 
+    /**
+     * Método principal para testar a obtenção do token de autenticação.
+     * 
+     * @param args Argumentos da linha de comando (não utilizados).
+     */
     public static void main(String[] args) {
         Request request = new Request();
         String token = request.requestToken();

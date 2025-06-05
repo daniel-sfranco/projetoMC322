@@ -41,6 +41,7 @@ dependencies {
     implementation 'com.sparkjava:spark-core:2.9.4'
 
     implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

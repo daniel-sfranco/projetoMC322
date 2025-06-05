@@ -83,6 +83,7 @@ public class Request {
      */
     public static void main(String[] args) throws RequestException {
         Request request = new Request();
+        /**
         try {
             String requestUrl = request.getBaseUrl() + "tracks/6nH5L0CDejkvcMxlO1NLWf";
             System.out.println(requestUrl);
@@ -90,6 +91,6 @@ public class Request {
             System.out.println(response);
         } catch (RequestException e) {
             System.out.println("Erro ao obter a música: " + e.getMessage());
-        }
+        }*/
     }
 }

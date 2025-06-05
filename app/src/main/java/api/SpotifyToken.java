@@ -7,11 +7,16 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+import spark.Spark;
 
 import exceptions.RequestException;
 
 class authUtils {
     private String expectedState = null;
+    private CompletableFuture<String> authCodeFuture = new CompletableFuture<>();
+    private int port;
 
     /**
      * Redireciona o usuário para a página de autenticação do Spotify.
@@ -20,27 +25,95 @@ class authUtils {
      * @throws UnsupportedEncodingException se ocorrer um erro ao codificar a URL.
      */
     public void redirect(SpotifyToken token) throws UnsupportedEncodingException {
+        this.expectedState = UUID.randomUUID().toString();
         String clientId = token.getClient_id();
-        String redirectUri = "https://localhost:8000/callback";
+        String redirectUri = "http://localhost:8000/callback";
+        this.port = 8000;
         String scopes = "playlist-modify-public playlist-modify-private user-read-private";
-        String state = UUID.randomUUID().toString();
-        this.expectedState = state;
         String encodedRedirectUri = URLEncoder.encode(redirectUri, StandardCharsets.UTF_8.toString());
         String encodedScopes = URLEncoder.encode(scopes, StandardCharsets.UTF_8.toString());
 
         String authURL = String.format(
                 "https://accounts.spotify.com/authorize?client_id=%s&response_type=code&redirect_uri=%s&state=%s&scope=%s",
-                clientId, encodedRedirectUri, state, encodedScopes);
+                clientId, encodedRedirectUri, this.expectedState, encodedScopes);
+
+        CompletableFuture<String> authCodeFuture = startServer();
 
         try {
-            if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)){
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(new URI(authURL));
             } else {
-                System.out.println("Não foi possível abrir o navegador. Por favor, acesse a URL manualmente: \n" + authURL);
+                System.out.println(
+                        "Não foi possível abrir o navegador. Por favor, acesse a URL manualmente: \n" + authURL);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        authCodeFuture.thenAccept(code -> {
+            if (code != null && !code.isEmpty()) {
+                System.out.println("Código de autorização recebido: " + code);
+                // exchangeCodeForToken(code);
+            } else {
+                System.err.println("Nenhum código de autorização recebido.");
+            }
+        }).exceptionally(ex -> {
+            System.err.println("Erro ao obter o código de autorização: " + ex.getMessage());
+            return null;
+        });
+    }
+
+    private String printError(String message, spark.Response res) {
+        System.err.println(message);
+        authCodeFuture.completeExceptionally(new RequestException(message));
+        res.status(400);
+        return "<html><body><h1>Erro: " + message + "</h1></body></html>";
+    }
+
+    public CompletableFuture<String> startServer() {
+        this.authCodeFuture = new CompletableFuture<>();
+
+        Spark.port(this.port);
+        Spark.get("/callback", (req, res) -> {
+            String code = req.queryParams("code");
+            String state = req.queryParams("state");
+            String error = req.queryParams("error");
+
+            try {
+                if (this.expectedState == null || !this.expectedState.equals(state)) {
+                    return printError("Estado inválido ou expirado.", res);
+                } else if (error != null) {
+                    return printError("Erro na autorização do Spotify: " + error, res);
+                } else if (code == null || code.isEmpty()) {
+                    return printError("Código de autorização não encontrado.", res);
+                } else {
+                    System.out.println("Código de autorização recebido");
+                    authCodeFuture.complete(code);
+                    return "<html><body><h1>Autenticação concluída com sucesso!</h1><p>Pode fechar essa aba.</p></body></html>";
+                }
+            } finally {
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        System.err.println("Erro ao aguardar o término do processamento: " + e.getMessage());
+                    }
+                    Spark.stop();
+                    Spark.awaitStop();
+                }).start();
+            }
+        });
+
+        try {
+            Spark.awaitInitialization();
+            System.out.println("Servidor Spark iniciado na porta " + this.port);
+        } catch (Exception e) {
+            System.err.println("Falha ao iniciar o servidor Spark: " + e.getMessage());
+            authCodeFuture.completeExceptionally(e);
+        }
+
+        return authCodeFuture;
     }
 }
 

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import exceptions.RequestException;
 
-
 /**
  * Request
  * Classe que representa uma requisição para a API do Spotify.

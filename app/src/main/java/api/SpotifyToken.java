@@ -1,12 +1,48 @@
 package api;
 
+import java.awt.Desktop;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import exceptions.RequestException;
+
+class authUtils {
+    private String expectedState = null;
+
+    /**
+     * Redireciona o usuário para a página de autenticação do Spotify.
+     * 
+     * @param token O token de autenticação do Spotify.
+     * @throws UnsupportedEncodingException se ocorrer um erro ao codificar a URL.
+     */
+    public void redirect(SpotifyToken token) throws UnsupportedEncodingException {
+        String clientId = token.getClient_id();
+        String redirectUri = "https://localhost:8000/callback";
+        String scopes = "playlist-modify-public playlist-modify-private user-read-private";
+        String state = UUID.randomUUID().toString();
+        this.expectedState = state;
+        String encodedRedirectUri = URLEncoder.encode(redirectUri, StandardCharsets.UTF_8.toString());
+        String encodedScopes = URLEncoder.encode(scopes, StandardCharsets.UTF_8.toString());
+
+        String authURL = String.format(
+                "https://accounts.spotify.com/authorize?client_id=%s&response_type=code&redirect_uri=%s&state=%s&scope=%s",
+                clientId, encodedRedirectUri, state, encodedScopes);
+
+        try {
+            if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)){
+                Desktop.getDesktop().browse(new URI(authURL));
+            } else {
+                System.out.println("Não foi possível abrir o navegador. Por favor, acesse a URL manualmente: \n" + authURL);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
 
 /**
  * SpotifyToken
@@ -21,6 +57,7 @@ public class SpotifyToken {
     private LocalDateTime updatedAt;
     private String clientId = "9afeb5fec9854592994aa191f842b529";
     private String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2"; // Eu juro que vou fazer isso ser mais seguro
+    private authUtils authUtils;
 
     /**
      * Construtor da classe SpotifyToken.
@@ -94,6 +131,17 @@ public class SpotifyToken {
      * @return O novo token de acesso ou null em caso de falha.
      */
     public String refreshToken() throws RequestException {
-        throw new UnsupportedOperationException("Método refreshToken não implementado.");
+        if (this.refresh_token == null || this.refresh_token.isEmpty()) {
+            authUtils utils = new authUtils();
+            try {
+                utils.redirect(this);
+            } catch (UnsupportedEncodingException e) {
+                throw new RequestException("Erro ao redirecionar para a autenticação: " + e.getMessage());
+            }
+            String code = UUID.randomUUID().toString();
+            return code;
+        } else {
+            throw new UnsupportedOperationException("Método refreshToken não implementado.");
+        }
     }
 }

@@ -4,27 +4,185 @@ import java.awt.Desktop;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
-import spark.Spark;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import exceptions.RequestException;
+import spark.Spark;
+
+/**
+ * SpotifyToken
+ * Classe que representa o token de autenticação retornado pela API do Spotify.
+ * Contém os campos access_token, token_type e expires_in.
+ */
+public class SpotifyToken {
+    private Request request;
+    private String access_token;
+    private String refresh_token;
+    private int expires_in;
+    private LocalDateTime updatedAt;
+    private String clientId = "9afeb5fec9854592994aa191f842b529";
+    private String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2"; // Eu juro que vou fazer isso ser mais seguro
+    private authUtils utils = new authUtils(this);
+
+    /**
+     * Construtor da classe SpotifyToken.
+     * Inicializa o token de autenticação chamando o método refreshToken().
+     * 
+     * @throws RequestException se ocorrer um erro ao atualizar o token.
+     */
+    public SpotifyToken(Request request) throws RequestException {
+        this.request = request;
+        this.refresh_token = null;
+        this.refreshToken();
+    }
+
+    public Request getRequest() {
+        return request;
+    }
+
+    /**
+     * Retorna o ID do cliente.
+     * 
+     * @return O ID do cliente.
+     */
+    public String getClient_id() {
+        return this.clientId;
+    }
+
+    public String getClientSecret(String state) {
+        String expectedState = utils.getExpectedState();
+        if (state == expectedState) {
+            return this.clientSecret;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Retorna o token de acesso.
+     * 
+     * @return O token de acesso.
+     */
+    public String getAccess_token() {
+        LocalDateTime now = LocalDateTime.now();
+        if (updatedAt == null || updatedAt.plusSeconds(expires_in).isBefore(now)) {
+            try {
+                return this.refreshToken();
+            } catch (Exception e) {
+                System.out
+                        .println("Erro ao atualizar o token de autenticação: " + e.getClass() + ": " + e.getMessage());
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return access_token;
+    }
+
+    /**
+     * Retorna o token de atualização.
+     * 
+     * @return O token de atualização.
+     */
+    public String getRefresh_token() {
+        return this.refresh_token;
+    }
+
+    /**
+     * Retorna o tempo de expiração do token em segundos.
+     * 
+     * @return O tempo de expiração do token.
+     */
+    public int getExpires_in() {
+        return expires_in;
+    }
+
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
+    }
+
+    public void setRefresh_token(String refresh_token) {
+        this.refresh_token = refresh_token;
+    }
+
+    public void setExpires_in(int expires_in) {
+        this.expires_in = expires_in;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public void setUtils(authUtils utils) {
+        this.utils = utils;
+    }
+
+    /**
+     * Atualiza o token de autenticação.
+     * Faz uma requisição para a API do Spotify para obter um novo token.
+     * 
+     * @return O novo token de acesso ou null em caso de falha.
+     */
+    public String refreshToken() throws RequestException {
+        if (this.refresh_token == null || this.refresh_token.isEmpty()) {
+            try {
+                utils.firstLogin(this);
+            } catch (UnsupportedEncodingException e) {
+                throw new RequestException("Erro ao redirecionar para a autenticação: " + e.getMessage());
+            } catch (InterruptedException e) {
+                throw new RequestException("A autenticação foi interrompida: " + e.getMessage());
+            } catch (ExecutionException e) {
+                throw new RequestException("Erro ao obter o código de autorização: " + e.getMessage());
+            }
+            String code = UUID.randomUUID().toString();
+            return code;
+        } else {
+            throw new UnsupportedOperationException("Método refreshToken não implementado.");
+        }
+    }
+}
 
 class authUtils {
     private String expectedState = null;
+    private SpotifyToken token;
     private CompletableFuture<String> authCodeFuture = new CompletableFuture<>();
     private int port;
+
+    public authUtils(SpotifyToken token) {
+        this.token = token;
+    }
+
+    public String getExpectedState() {
+        return expectedState;
+    }
 
     /**
      * Redireciona o usuário para a página de autenticação do Spotify.
      * 
      * @param token O token de autenticação do Spotify.
      * @throws UnsupportedEncodingException se ocorrer um erro ao codificar a URL.
+     * @throws ExecutionException
+     * @throws InterruptedException
      */
-    public void redirect(SpotifyToken token) throws UnsupportedEncodingException {
+    public void firstLogin(SpotifyToken token)
+            throws UnsupportedEncodingException, InterruptedException, ExecutionException {
         this.expectedState = UUID.randomUUID().toString();
         String clientId = token.getClient_id();
         String redirectUri = "http://localhost:8000/callback";
@@ -52,8 +210,8 @@ class authUtils {
 
         authCodeFuture.thenAccept(code -> {
             if (code != null && !code.isEmpty()) {
-                System.out.println("Código de autorização recebido: " + code);
-                // exchangeCodeForToken(code);
+                exchangeCodeForToken(token, code);
+                this.token.getRequest().requestExample();
             } else {
                 System.err.println("Nenhum código de autorização recebido.");
             }
@@ -61,6 +219,8 @@ class authUtils {
             System.err.println("Erro ao obter o código de autorização: " + ex.getMessage());
             return null;
         });
+
+        authCodeFuture.get();
     }
 
     private String printError(String message, spark.Response res) {
@@ -70,7 +230,7 @@ class authUtils {
         return "<html><body><h1>Erro: " + message + "</h1></body></html>";
     }
 
-    public CompletableFuture<String> startServer() {
+    private CompletableFuture<String> startServer() {
         this.authCodeFuture = new CompletableFuture<>();
 
         Spark.port(this.port);
@@ -115,106 +275,49 @@ class authUtils {
 
         return authCodeFuture;
     }
-}
 
-/**
- * SpotifyToken
- * Classe que representa o token de autenticação retornado pela API do Spotify.
- * Contém os campos access_token, token_type e expires_in.
- */
-public class SpotifyToken {
-    private String access_token;
-    private String refresh_token;
-    private String token_type;
-    private int expires_in;
-    private LocalDateTime updatedAt;
-    private String clientId = "9afeb5fec9854592994aa191f842b529";
-    private String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2"; // Eu juro que vou fazer isso ser mais seguro
-    private authUtils authUtils;
+    private void exchangeCodeForToken(SpotifyToken token, String code) {
+        String clientId = token.getClient_id();
+        String clientSecret = token.getClientSecret(this.expectedState);
+        String redirectUri = "http://localhost:8000/callback";
+        String tokenUrl = "https://accounts.spotify.com/api/token";
 
-    /**
-     * Construtor da classe SpotifyToken.
-     * Inicializa o token de autenticação chamando o método refreshToken().
-     * 
-     * @throws RequestException se ocorrer um erro ao atualizar o token.
-     */
-    public SpotifyToken() throws RequestException {
-        this.refresh_token = null;
-        this.refreshToken();
-    }
+        String credentials = Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
 
-    /**
-     * Retorna o ID do cliente.
-     * 
-     * @return O ID do cliente.
-     */
-    public String getClient_id() {
-        return this.clientId;
-    }
+        Map<String, String> body = new HashMap<>();
+        body.put("grant_type", "authorization_code");
+        body.put("code", code);
+        body.put("redirect_uri", redirectUri);
 
-    /**
-     * Retorna o token de acesso.
-     * 
-     * @return O token de acesso.
-     */
-    public String getAccess_token() {
-        LocalDateTime now = LocalDateTime.now();
-        if (updatedAt == null || updatedAt.plusSeconds(expires_in).isBefore(now)) {
-            try {
-                return this.refreshToken();
-            } catch (Exception e) {
-                System.out.println("Erro ao atualizar o token de autenticação: " + e.getMessage());
-                return null;
+        String bodyForm = body.entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
+                .collect(Collectors.joining("&"));
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Basic " + credentials);
+        headers.put("Content-Type", "application/x-www-form-urlencoded");
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(tokenUrl))
+                    .header("Authorization", "Basic " + credentials)
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(bodyForm))
+                    .build();
+            HttpResponse<String> response = HttpClientUtil.getClient().send(request,
+                    HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                throw new RequestException("Erro ao obter o token: " + response.statusCode() + " - " + response.body());
             }
-        }
-        return access_token;
-    }
-
-    /**
-     * Retorna o token de atualização.
-     * 
-     * @return O token de atualização.
-     */
-    public String getRefresh_token() {
-        return this.refresh_token;
-    }
-
-    /**
-     * Retorna o tipo de token.
-     * 
-     * @return O tipo de token.
-     */
-    public String getToken_type() {
-        return token_type;
-    }
-
-    /**
-     * Retorna o tempo de expiração do token em segundos.
-     * 
-     * @return O tempo de expiração do token.
-     */
-    public int getExpires_in() {
-        return expires_in;
-    }
-
-    /**
-     * Atualiza o token de autenticação.
-     * Faz uma requisição para a API do Spotify para obter um novo token.
-     * 
-     * @return O novo token de acesso ou null em caso de falha.
-     */
-    public String refreshToken() throws RequestException {
-        if (this.refresh_token == null || this.refresh_token.isEmpty()) {
-            authUtils utils = new authUtils();
-            try {
-                utils.redirect(this);
-            } catch (UnsupportedEncodingException e) {
-                throw new RequestException("Erro ao redirecionar para a autenticação: " + e.getMessage());
-            }
-            String code = UUID.randomUUID().toString();
-            return code;
-        } else {
-            throw new UnsupportedOperationException("Método refreshToken não implementado.");
+            String tempToken = JsonUtil.readProperty(response.body(), "access_token").toString();
+            String tempRefreshToken = JsonUtil.readProperty(response.body(), "refresh_token").toString();
+            token.setAccess_token("Bearer " + tempToken.substring(1, tempToken.length() - 1));
+            token.setRefresh_token(tempRefreshToken.substring(1, tempRefreshToken.length() - 1));
+            token.setExpires_in(Integer.parseInt(JsonUtil.readProperty(response.body(), "expires_in").toString()));
+            token.setUpdatedAt(LocalDateTime.now());
+        } catch (Exception e) {
+            System.err.println("Erro ao trocar código por token: " + e.getMessage());
+            return;
         }
     }
 }

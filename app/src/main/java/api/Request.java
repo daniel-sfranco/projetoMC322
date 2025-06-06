@@ -15,16 +15,6 @@ public class Request {
     private SpotifyToken token;
 
     /**
-     * Construtor da classe Request.
-     * Inicializa o token de autenticação.
-     * 
-     * @throws RequestException se ocorrer um erro ao obter o token.
-     */
-    public Request() throws RequestException {
-        this.token = new SpotifyToken();
-    }
-
-    /**
      * Retorna a url base da API do Spotify.
      * 
      * @return A URL base da API do Spotify.
@@ -70,9 +60,25 @@ public class Request {
     public String sendGetRequest(String url) throws RequestException {
         String accessToken = this.token.getAccess_token();
         Map<String, String> headers = Map.of(
-                "Authorization", "Bearer " + accessToken,
+                "Authorization", accessToken,
                 "Content-Type", "application/json");
+        System.out.println(headers);
         return HttpClientUtil.sendGetRequest(url, headers);
+    }
+
+    public void setToken(SpotifyToken token) {
+        this.token = token;
+    }
+
+    public void requestExample() {
+        try {
+            String requestUrl = Request.baseUrl + "tracks/6nH5L0CDejkvcMxlO1NLWf";
+            System.out.println(requestUrl);
+            String response = this.sendGetRequest(requestUrl);
+            System.out.println(response);
+        } catch (RequestException e) {
+            System.out.println("Erro ao obter a música: " + e.getMessage());
+        }
     }
 
     /**
@@ -83,14 +89,6 @@ public class Request {
      */
     public static void main(String[] args) throws RequestException {
         Request request = new Request();
-        /**
-        try {
-            String requestUrl = request.getBaseUrl() + "tracks/6nH5L0CDejkvcMxlO1NLWf";
-            System.out.println(requestUrl);
-            String response = request.sendGetRequest(requestUrl);
-            System.out.println(response);
-        } catch (RequestException e) {
-            System.out.println("Erro ao obter a música: " + e.getMessage());
-        }*/
+        request.setToken(new SpotifyToken(request));
     }
 }

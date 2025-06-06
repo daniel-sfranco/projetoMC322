@@ -22,6 +22,10 @@ import exceptions.RequestException;
 public class HttpClientUtil {
     private static final HttpClient client = HttpClient.newBuilder().build();
 
+    public static HttpClient getClient() {
+        return client;
+    }
+
     /**
      * Envia uma requisição HTTP GET para a URL especificada com os cabeçalhos
      * fornecidos.

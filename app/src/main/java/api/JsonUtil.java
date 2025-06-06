@@ -74,6 +74,19 @@ public class JsonUtil {
         return null;
     }
 
+    public static Object readProperty(String json, String propertyName) {
+        try {
+            return mapper.readTree(json).get(propertyName);
+        } catch (JsonMappingException e) {
+            System.out.println("Erro de mapeamento JSON: " + e.getMessage());
+        } catch (JsonProcessingException e) {
+            System.out.println("Erro ao processar JSON: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro desconhecido: " + e.getMessage());
+        }
+        return null;
+    }
+
     /**
      * Método principal para testar a conversão de objeto para JSON e vice-versa.
      * 

@@ -15,6 +15,16 @@ public class Request {
     private SpotifyToken token;
 
     /**
+     * Construtor da classe Request.
+     * Inicializa o token de autenticação
+     * 
+     * @throws RequestException se ocorrer um erro ao inicializar o token.
+     */
+    public Request() throws RequestException {
+        this.token = new SpotifyToken(this);
+    }
+
+    /**
      * Retorna a url base da API do Spotify.
      * 
      * @return A URL base da API do Spotify.
@@ -30,6 +40,15 @@ public class Request {
      */
     public SpotifyToken getToken() {
         return token;
+    }
+
+    /**
+     * Define o token de autenticação a ser utilizado nas requisições.
+     * 
+     * @param token O token de autenticação a ser definido.
+     */
+    public void setToken(SpotifyToken token) {
+        this.token = token;
     }
 
     /**
@@ -66,10 +85,11 @@ public class Request {
         return HttpClientUtil.sendGetRequest(url, headers);
     }
 
-    public void setToken(SpotifyToken token) {
-        this.token = token;
-    }
-
+    /**
+     * Exemplo de requisição para obter informações de uma música específica.
+     * 
+     * @throws RequestException se ocorrer um erro ao enviar a requisição.
+     */
     public void requestExample() {
         try {
             String requestUrl = Request.baseUrl + "tracks/6nH5L0CDejkvcMxlO1NLWf";
@@ -89,6 +109,5 @@ public class Request {
      */
     public static void main(String[] args) throws RequestException {
         Request request = new Request();
-        request.setToken(new SpotifyToken(request));
     }
 }

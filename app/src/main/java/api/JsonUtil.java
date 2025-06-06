@@ -17,12 +17,10 @@ public class JsonUtil {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     /**
-     * Converte um objeto para uma string JSON.
-     * Atenção: o método só funciona se o objeto tiver getters ou métodos públicos,
-     * senão aparece o erro No serializer found for class.
+     * Converte um objeto Java em uma string JSON.
      * 
      * @param object o objeto a ser convertido
-     * @return a string JSON representando o objeto, ou null em caso de erro
+     * @return a string JSON resultante, ou null em caso de erro
      */
     public static String parseObjectToJson(Object object) {
         try {
@@ -56,9 +54,11 @@ public class JsonUtil {
     /**
      * Converte uma string JSON para um objeto do tipo especificado usando
      * TypeReference.
+     * TypeReference é útil quando se trabalha com tipos genéricos ou coleções, como
+     * Map<String, Object> ou List<MyClass>.
      * 
      * @param json               a string JSON a ser convertida
-     * @param valueTypeReference a referência de tipo para o objeto de destino
+     * @param valueTypeReference o TypeReference do objeto de destino
      * @return o objeto convertido, ou null em caso de erro
      */
     public static <T> T parseJson(String json, TypeReference<T> valueTypeReference) {
@@ -74,6 +74,13 @@ public class JsonUtil {
         return null;
     }
 
+    /**
+     * Lê uma propriedade específica de um objeto JSON.
+     * 
+     * @param json         a string JSON
+     * @param propertyName o nome da propriedade a ser lida
+     * @return o valor da propriedade, ou null em caso de erro
+     */
     public static Object readProperty(String json, String propertyName) {
         try {
             return mapper.readTree(json).get(propertyName);
@@ -91,7 +98,7 @@ public class JsonUtil {
      * Método principal para testar a conversão de objeto para JSON e vice-versa.
      * 
      * @param args argumentos da linha de comando (não utilizados)
-     * @throws RequestException 
+     * @throws RequestException
      */
     public static void main(String[] args) throws RequestException {
         String jsonRequest = parseObjectToJson(new Request());

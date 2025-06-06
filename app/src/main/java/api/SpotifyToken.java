@@ -46,6 +46,12 @@ public class SpotifyToken {
         this.refreshToken();
     }
 
+    /**
+     * Retorna a requisição associada a este token.
+     * 
+     * @return A instância da classe Request que contém informações sobre a
+     *         requisição.
+     */
     public Request getRequest() {
         return request;
     }
@@ -59,6 +65,12 @@ public class SpotifyToken {
         return this.clientId;
     }
 
+    /**
+     * Retorna o segredo do cliente.
+     * 
+     * @param state O estado esperado para validação.
+     * @return O segredo do cliente se o estado for válido, ou null caso contrário.
+     */
     public String getClientSecret(String state) {
         String expectedState = utils.getExpectedState();
         if (state == expectedState) {
@@ -106,28 +118,40 @@ public class SpotifyToken {
         return expires_in;
     }
 
+    /**
+     * Define o token de acesso.
+     * 
+     * @param access_token O token de acesso a ser definido.
+     */
     public void setAccess_token(String access_token) {
         this.access_token = access_token;
     }
 
+    /**
+     * Define o token para recuperação do token de acesso.
+     * 
+     * @param refresh_token O token para recuperação do token de acesso
+     */
     public void setRefresh_token(String refresh_token) {
         this.refresh_token = refresh_token;
     }
 
+    /**
+     * Define o tempo de expiração do token.
+     * 
+     * @param expires_in O tempo de expiração do token em segundos.
+     */
     public void setExpires_in(int expires_in) {
         this.expires_in = expires_in;
     }
 
+    /**
+     * Define a data e hora da última atualização do token.
+     * 
+     * @param updatedAt A data e hora da última atualização do token.
+     */
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
-    public void setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
     }
 
     public void setUtils(authUtils utils) {
@@ -159,16 +183,33 @@ public class SpotifyToken {
     }
 }
 
+/**
+ * authUtils
+ * Classe utilitária para gerenciar a autenticação com o Spotify.
+ * Inicia um servidor local para receber o código de autorização após a
+ * autenticação do usuário.
+ */
 class authUtils {
     private String expectedState = null;
     private SpotifyToken token;
     private CompletableFuture<String> authCodeFuture = new CompletableFuture<>();
     private int port;
 
+    /**
+     * Construtor da classe authUtils.
+     * Inicializa o token de autenticação do Spotify.
+     * 
+     * @param token O token de autenticação do Spotify.
+     */
     public authUtils(SpotifyToken token) {
         this.token = token;
     }
 
+    /**
+     * Retorna o estado esperado para validação.
+     * 
+     * @return O estado esperado.
+     */
     public String getExpectedState() {
         return expectedState;
     }
@@ -223,6 +264,13 @@ class authUtils {
         authCodeFuture.get();
     }
 
+    /**
+     * Imprime uma mensagem de erro e finaliza a execução do servidor.
+     * 
+     * @param message A mensagem de erro a ser impressa.
+     * @param res     A resposta HTTP para definir o status e o corpo.
+     * @return Uma string HTML com a mensagem de erro.
+     */
     private String printError(String message, spark.Response res) {
         System.err.println(message);
         authCodeFuture.completeExceptionally(new RequestException(message));
@@ -230,6 +278,13 @@ class authUtils {
         return "<html><body><h1>Erro: " + message + "</h1></body></html>";
     }
 
+    /**
+     * Inicia um servidor Spark na porta especificada para receber o código de
+     * autorização do Spotify.
+     * 
+     * @return Um CompletableFuture que será completado com o código de autorização
+     *         ou uma exceção em caso de erro.
+     */
     private CompletableFuture<String> startServer() {
         this.authCodeFuture = new CompletableFuture<>();
 
@@ -276,6 +331,12 @@ class authUtils {
         return authCodeFuture;
     }
 
+    /**
+     * Troca o código de autorização recebido por um token de acesso.
+     * 
+     * @param token O token de autenticação do Spotify.
+     * @param code  O código de autorização recebido.
+     */
     private void exchangeCodeForToken(SpotifyToken token, String code) {
         String clientId = token.getClient_id();
         String clientSecret = token.getClientSecret(this.expectedState);

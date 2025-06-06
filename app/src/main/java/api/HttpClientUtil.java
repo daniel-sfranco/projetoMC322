@@ -7,7 +7,6 @@ import java.net.http.HttpResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import exceptions.RequestException;
 
@@ -22,6 +21,11 @@ import exceptions.RequestException;
 public class HttpClientUtil {
     private static final HttpClient client = HttpClient.newBuilder().build();
 
+    /**
+     * Retorna uma instância do HttpClient.
+     *
+     * @return a instância do HttpClient
+     */
     public static HttpClient getClient() {
         return client;
     }
@@ -33,12 +37,10 @@ public class HttpClientUtil {
      * @param url     a URL para a qual a requisição será enviada
      * @param headers um mapa de cabeçalhos a serem incluídos na requisição
      * @return o corpo da resposta como uma string
-     * @throws IOException             se ocorrer um erro de entrada/saída
-     * @throws JsonProcessingException se ocorrer um erro ao processar JSON
-     * @throws RequestException        se a resposta tiver um código de status >=
-     *                                 400
-     * @throws InterruptedException    se a thread for interrompida durante a
-     *                                 requisição
+     * @throws RequestException     se a resposta tiver um código de status >= 400
+     * @throws IOException          se ocorrer um erro de entrada/saída
+     * @throws InterruptedException se a thread for interrompida durante a
+     *                              requisição
      */
     public static String sendGetRequest(String url, Map<String, String> headers)
             throws RequestException {
@@ -63,18 +65,18 @@ public class HttpClientUtil {
     }
 
     /**
-     * Envia uma requisição HTTP POST para a URL especificada com os cabeçalhos e
-     * corpo fornecidos.
+     * Envia uma requisição HTTP POST para a URL especificada com o corpo do objeto
+     * fornecido.
      *
      * @param url        a URL para a qual a requisição será enviada
      * @param headers    um mapa de cabeçalhos a serem incluídos na requisição
      * @param bodyObject o objeto que será convertido em JSON e enviado como corpo
      *                   da requisição
      * @return o corpo da resposta como uma string
+     * @throws RequestException     se a resposta tiver um código de status >= 400
      * @throws IOException          se ocorrer um erro de entrada/saída
      * @throws InterruptedException se a thread for interrompida durante a
      *                              requisição
-     * @throws RequestException     se a resposta tiver um código de status >= 400
      */
     public static String sendPostRequest(String url, Map<String, String> headers, Object bodyObject)
             throws RequestException {
@@ -100,15 +102,15 @@ public class HttpClientUtil {
     }
 
     /**
-     * Envia uma requisição HTTP POST com um corpo de formulário para a URL
-     * especificada com os cabeçalhos fornecidos.
+     * Envia uma requisição HTTP POST para a URL especificada com o corpo do
+     * formulário
+     * fornecido.
      *
      * @param url      a URL para a qual a requisição será enviada
      * @param headers  um mapa de cabeçalhos a serem incluídos na requisição
      * @param formBody o corpo do formulário a ser enviado como string
      * @return o corpo da resposta como uma string
-     * @throws RequestException     se a resposta tiver um código de status >=
-     *                              400
+     * @throws RequestException     se a resposta tiver um código de status >= 400
      * @throws IOException          se ocorrer um erro de entrada/saída
      * @throws InterruptedException se a thread for interrompida durante a
      *                              requisição

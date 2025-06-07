@@ -175,10 +175,40 @@ public class SpotifyToken {
             } catch (ExecutionException e) {
                 throw new RequestException("Erro ao obter o código de autorização: " + e.getMessage());
             }
-            String code = UUID.randomUUID().toString();
-            return code;
+            return this.access_token;
         } else {
-            throw new UnsupportedOperationException("Método refreshToken não implementado.");
+            String tokenUrl = "https://accounts.spotify.com/api/token";
+            String credentials = Base64.getEncoder()
+                    .encodeToString((this.clientId + ":" + this.clientSecret).getBytes());
+            Map<String, String> body = new HashMap<>();
+            body.put("grant_type", "refresh_token");
+            body.put("refresh_token", this.refresh_token);
+            body.put("client_id", this.clientId);
+            String bodyForm = body.entrySet().stream()
+                    .map(entry -> entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
+                    .collect(Collectors.joining("&"));
+            try {
+                HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(tokenUrl))
+                .header("Authorization", "Basic " + credentials)
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString(bodyForm))
+                .build();
+                HttpResponse<String> response = HttpClientUtil.getClient().send(request,
+                HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() != 200) {
+                    throw new RequestException("Erro ao obter o token: " + response.statusCode() + " - "
+                    + response.body());
+                }
+                String tempToken = JsonUtil.readProperty(response.body(), "access_token").toString();
+                this.access_token = "Bearer " + tempToken.substring(1, tempToken.length() - 1);
+                this.expires_in = Integer.parseInt(JsonUtil.readProperty(response.body(), "expires_in").toString());
+                this.updatedAt = LocalDateTime.now();
+                return this.access_token;
+            } catch (Exception e) {
+                System.err.println("Erro ao atualizar o token: " + e.getMessage());
+                return null;
+            }
         }
     }
 }

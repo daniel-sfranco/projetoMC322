@@ -92,7 +92,10 @@ public class Request {
      */
     public void requestExample() {
         try {
-            String requestUrl = Request.baseUrl + "tracks/6nH5L0CDejkvcMxlO1NLWf";
+            this.getToken().refreshToken();
+            this.getToken().refreshToken();
+            this.getToken().refreshToken();
+            String requestUrl = Request.baseUrl + "me";
             System.out.println(requestUrl);
             String response = this.sendGetRequest(requestUrl);
             System.out.println(response);

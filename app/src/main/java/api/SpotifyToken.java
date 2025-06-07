@@ -154,15 +154,22 @@ public class SpotifyToken {
         this.updatedAt = updatedAt;
     }
 
+    /**
+     * Define o objeto utilitário de autenticação.
+     * 
+     * @param utils O objeto utilitário de autenticação a ser definido.
+     */
     public void setUtils(authUtils utils) {
         this.utils = utils;
     }
 
     /**
      * Atualiza o token de autenticação.
-     * Faz uma requisição para a API do Spotify para obter um novo token.
+     * Se o token de atualização não estiver definido, inicia o processo de login
+     * para obter um novo token.
      * 
-     * @return O novo token de acesso ou null em caso de falha.
+     * @return O token de acesso atualizado.
+     * @throws RequestException se ocorrer um erro ao atualizar o token.
      */
     public String refreshToken() throws RequestException {
         if (this.refresh_token == null || this.refresh_token.isEmpty()) {
@@ -189,16 +196,16 @@ public class SpotifyToken {
                     .collect(Collectors.joining("&"));
             try {
                 HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(tokenUrl))
-                .header("Authorization", "Basic " + credentials)
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .POST(HttpRequest.BodyPublishers.ofString(bodyForm))
-                .build();
+                        .uri(URI.create(tokenUrl))
+                        .header("Authorization", "Basic " + credentials)
+                        .header("Content-Type", "application/x-www-form-urlencoded")
+                        .POST(HttpRequest.BodyPublishers.ofString(bodyForm))
+                        .build();
                 HttpResponse<String> response = HttpClientUtil.getClient().send(request,
-                HttpResponse.BodyHandlers.ofString());
+                        HttpResponse.BodyHandlers.ofString());
                 if (response.statusCode() != 200) {
                     throw new RequestException("Erro ao obter o token: " + response.statusCode() + " - "
-                    + response.body());
+                            + response.body());
                 }
                 String tempToken = JsonUtil.readProperty(response.body(), "access_token").toString();
                 this.access_token = "Bearer " + tempToken.substring(1, tempToken.length() - 1);

@@ -53,7 +53,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'fileManager.ClientDataFileManager'
+    mainClass = 'User'
 }
 
 tasks.named('test') {

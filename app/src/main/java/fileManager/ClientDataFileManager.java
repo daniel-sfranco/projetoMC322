@@ -16,6 +16,8 @@ import exceptions.IncorrectClientFileDataException;
  * Gerencia a leitura e escrita de dados de cliente (client ID e client secret) em um arquivo local.
  * Esta classe é responsável por persistir e recuperar as credenciais necessárias para a integração
  * com a API do Spotify.
+ * 
+ * @author Vinícius de Oliveira - 251527
  */
 public class ClientDataFileManager {
     /**
@@ -185,7 +187,7 @@ public class ClientDataFileManager {
         return null;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         ClientDataFileManager fileManager = new ClientDataFileManager();
         String clientId = "9afeb5fec9854592994aa191f842b529";
         String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";

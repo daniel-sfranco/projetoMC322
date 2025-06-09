@@ -86,25 +86,6 @@ public class Request {
     }
 
     /**
-     * Exemplo de requisição para obter informações de uma música específica.
-     * 
-     * @throws RequestException se ocorrer um erro ao enviar a requisição.
-     */
-    public void requestExample() {
-        try {
-            this.getToken().refreshToken();
-            this.getToken().refreshToken();
-            this.getToken().refreshToken();
-            String requestUrl = Request.baseUrl + "me";
-            System.out.println(requestUrl);
-            String response = this.sendGetRequest(requestUrl);
-            System.out.println(response);
-        } catch (RequestException e) {
-            System.out.println("Erro ao obter a música: " + e.getMessage());
-        }
-    }
-
-    /**
      * Método principal para testar a obtenção do token de autenticação.
      * 
      * @param args Argumentos da linha de comando (não utilizados).

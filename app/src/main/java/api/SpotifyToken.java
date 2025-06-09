@@ -286,19 +286,18 @@ class authUtils {
             e.printStackTrace();
         }
 
-        authCodeFuture.thenAccept(code -> {
+        String code = null;
+        try {
+            code = authCodeFuture.get();
             if (code != null && !code.isEmpty()) {
                 exchangeCodeForToken(token, code);
-                this.token.getRequest().requestExample();
             } else {
                 System.err.println("Nenhum código de autorização recebido.");
             }
-        }).exceptionally(ex -> {
-            System.err.println("Erro ao obter o código de autorização: " + ex.getMessage());
-            return null;
-        });
-
-        authCodeFuture.get();
+        } catch (Exception e) {
+            System.err.println("Erro ao obter o código de autorização: " + e.getMessage());
+            throw new ExecutionException(e);
+        }
     }
 
     /**

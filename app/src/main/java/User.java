@@ -1,5 +1,6 @@
 import java.util.List;
 
+import api.Request;
 import fileManager.JsonFileManager;
 import fileManager.Storable;
 
@@ -12,7 +13,8 @@ public class User implements Storable {
     private int followers;
     private List<Image> images;
 
-    public User(String country, String name, String email, String id, Boolean explicitContentFilter, int followers, List<Image> images) {
+    public User(String country, String name, String email, String id, Boolean explicitContentFilter, int followers,
+            List<Image> images) {
         this.country = country;
         this.name = name;
         this.email = email;
@@ -22,11 +24,19 @@ public class User implements Storable {
         this.images = images;
     }
 
-    public void saveData(){
+    public void saveData() {
         JsonFileManager.saveJsonFile(this, "User.json");
     }
 
     public static void main(String[] args) {
+        String userJson = null;
+        try {
+            Request request = new Request();
+            userJson = request.sendGetRequest("https://api.spotify.com/v1/me");
+            System.out.println(userJson);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         User user = new User("BR", "nome", "email", "12312", false, 12, null);
 
         user.saveData();

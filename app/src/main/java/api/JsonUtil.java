@@ -63,7 +63,26 @@ public class JsonUtil {
      * @param valueTypeReference o TypeReference do objeto de destino
      * @return o objeto convertido, ou null em caso de erro
      */
-    public static Map<String, Object> parseJson(String json){
+    public static <T> T parseJson(String json, TypeReference<T> valueTypeReference) {
+        try {
+            return mapper.readValue(json, valueTypeReference);
+        } catch (JsonMappingException e) {
+            System.out.println("Erro de mapeamento JSON: " + e.getMessage());
+        } catch (JsonProcessingException e) {
+            System.out.println("Erro ao processar JSON: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro desconhecido: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Converte uma string JSON para um Map<String, Object>.
+     * 
+     * @param json a string JSON a ser convertida
+     * @return o Map resultante, ou null em caso de erro
+     */
+    public static Map<String, Object> parseJson(String json) {
         try {
             return mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
         } catch (JsonMappingException e) {

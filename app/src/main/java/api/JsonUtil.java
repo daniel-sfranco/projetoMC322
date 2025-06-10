@@ -1,5 +1,7 @@
 package api;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -61,9 +63,9 @@ public class JsonUtil {
      * @param valueTypeReference o TypeReference do objeto de destino
      * @return o objeto convertido, ou null em caso de erro
      */
-    public static <T> T parseJson(String json, TypeReference<T> valueTypeReference) {
+    public static Map<String, Object> parseJson(String json){
         try {
-            return mapper.readValue(json, valueTypeReference);
+            return mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
         } catch (JsonMappingException e) {
             System.out.println("Erro de mapeamento JSON: " + e.getMessage());
         } catch (JsonProcessingException e) {

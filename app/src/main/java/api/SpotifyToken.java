@@ -23,6 +23,8 @@ import spark.Spark;
  * SpotifyToken
  * Classe que representa o token de autenticação retornado pela API do Spotify.
  * Contém os campos access_token, token_type e expires_in.
+ *
+ * @author Daniel Soares Franco - 259083
  */
 public class SpotifyToken {
     private Request request;
@@ -226,6 +228,8 @@ public class SpotifyToken {
  * Classe utilitária para gerenciar a autenticação com o Spotify.
  * Inicia um servidor local para receber o código de autorização após a
  * autenticação do usuário.
+ *
+ * @author Daniel Soares Franco - 259083
  */
 class authUtils {
     private String expectedState = null;

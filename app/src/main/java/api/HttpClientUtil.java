@@ -19,6 +19,8 @@ import exceptions.RequestException;
  * Fornece métodos para enviar requisições com cabeçalhos personalizados e
  * tratar
  * respostas, incluindo tratamento de erros.
+ *
+ * @author Daniel Soares Franco - 259083
  */
 public class HttpClientUtil {
     private static final HttpClient client = HttpClient.newBuilder().build();

@@ -14,21 +14,34 @@ import exceptions.RequestException;
  * Classe para objetos do tipo Json, para conversão entre tipos
  * Fornece métodos para serializar objetos em JSON e desserializar JSON em
  * objetos.
+ *
+ * @author Daniel Soares Franco - 259083
  */
 public class Json {
     private static final ObjectMapper mapper = new ObjectMapper();
     private final String value;
 
+    /**
+     * Construtor que recebe uma string JSON.
+     * 
+     * @param value a string JSON a ser armazenada
+     */
     public Json(String value) {
         this.value = value;
     }
 
+    /**
+     * Construtor que recebe um objeto e o converte para uma string JSON.
+     * 
+     * @param object o objeto a ser convertido em JSON
+     * @throws JsonProcessingException se ocorrer um erro ao processar o objeto
+     */
     public Json(Object object) throws JsonProcessingException {
         this.value = mapper.writeValueAsString(object);
     }
 
     /**
-     * Converte uma string JSON para um objeto do tipo especificado.
+     * Converte o valor armazenado para um objeto do tipo especificado.
      * 
      * @param json      a string JSON a ser convertida
      * @param valueType o tipo do objeto de destino
@@ -48,7 +61,7 @@ public class Json {
     }
 
     /**
-     * Converte uma string JSON para um objeto do tipo especificado usando
+     * Converte o valor armazenado para um objeto do tipo especificado usando
      * TypeReference.
      * TypeReference é útil quando se trabalha com tipos genéricos ou coleções, como
      * Map<String, Object> ou List<MyClass>.
@@ -71,7 +84,7 @@ public class Json {
     }
 
     /**
-     * Converte uma string JSON para um Map<String, Object>.
+     * Converte o valor armazenado para um Map<String, Object>.
      * 
      * @param json a string JSON a ser convertida
      * @return o Map resultante, ou null em caso de erro
@@ -91,7 +104,7 @@ public class Json {
     }
 
     /**
-     * Lê uma propriedade específica de um objeto JSON.
+     * Lê uma propriedade específica do valor armazenado
      * 
      * @param json         a string JSON
      * @param propertyName o nome da propriedade a ser lida
@@ -110,6 +123,11 @@ public class Json {
         return null;
     }
 
+    /**
+     * Retorna a representação em string do objeto JSON.
+     * 
+     * @return a string JSON
+     */
     public String toString() {
         return value;
     }
@@ -122,14 +140,14 @@ public class Json {
      */
     public static void main(String[] args) throws RequestException, JsonProcessingException {
         Map<String, String> info = Map.of(
-            "name", "John Doe",
-            "email", "123@gmail.com"
-        );
+                "name", "John Doe",
+                "email", "123@gmail.com");
         Json json;
         try {
             json = new Json(info);
             System.out.println(json);
-            Map<String, String> parsedMap = json.parseJson(new TypeReference<Map<String, String>>() {});
+            Map<String, String> parsedMap = json.parseJson(new TypeReference<Map<String, String>>() {
+            });
             System.out.println(parsedMap.toString());
         } catch (JsonProcessingException e) {
             System.out.println(e.getMessage());

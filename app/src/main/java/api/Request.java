@@ -11,6 +11,8 @@ import exceptions.RequestException;
  * Classe que representa uma requisição para a API do Spotify.
  * Contém informações básicas como URL base, clientId e clientSecret, e gerencia
  * as conexões com a API.
+ *
+ * @author Daniel Soares Franco - 259083
  */
 public class Request {
     private static String baseUrl = "https://api.spotify.com/v1/";
@@ -61,8 +63,8 @@ public class Request {
      * @param bodyObject O objeto que será convertido em JSON e enviado como corpo
      *                   da requisição.
      * @return A resposta da requisição como uma string.
-     * @throws RequestException se ocorrer um erro ao enviar a requisição.
-     * @throws JsonProcessingException 
+     * @throws RequestException        se ocorrer um erro ao enviar a requisição.
+     * @throws JsonProcessingException
      */
     public String sendPostRequest(String url, Object bodyObject) throws RequestException, JsonProcessingException {
         String accessToken = this.token.getAccess_token();

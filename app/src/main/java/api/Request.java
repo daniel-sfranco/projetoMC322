@@ -2,6 +2,8 @@ package api;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import exceptions.RequestException;
 
 /**
@@ -60,8 +62,9 @@ public class Request {
      *                   da requisição.
      * @return A resposta da requisição como uma string.
      * @throws RequestException se ocorrer um erro ao enviar a requisição.
+     * @throws JsonProcessingException 
      */
-    public String sendPostRequest(String url, Object bodyObject) throws RequestException {
+    public String sendPostRequest(String url, Object bodyObject) throws RequestException, JsonProcessingException {
         String accessToken = this.token.getAccess_token();
         Map<String, String> headers = Map.of(
                 "Authorization", "Bearer " + accessToken,
@@ -83,25 +86,6 @@ public class Request {
                 "Content-Type", "application/json");
         System.out.println(headers);
         return HttpClientUtil.sendGetRequest(url, headers);
-    }
-
-    /**
-     * Exemplo de requisição para obter informações de uma música específica.
-     * 
-     * @throws RequestException se ocorrer um erro ao enviar a requisição.
-     */
-    public void requestExample() {
-        try {
-            this.getToken().refreshToken();
-            this.getToken().refreshToken();
-            this.getToken().refreshToken();
-            String requestUrl = Request.baseUrl + "me";
-            System.out.println(requestUrl);
-            String response = this.sendGetRequest(requestUrl);
-            System.out.println(response);
-        } catch (RequestException e) {
-            System.out.println("Erro ao obter a música: " + e.getMessage());
-        }
     }
 
     /**

@@ -207,9 +207,10 @@ public class SpotifyToken {
                     throw new RequestException("Erro ao obter o token: " + response.statusCode() + " - "
                             + response.body());
                 }
-                String tempToken = JsonUtil.readProperty(response.body(), "access_token").toString();
+                Json responseJson = new Json(response.body());
+                String tempToken = responseJson.readProperty("access_token").toString();
                 this.access_token = "Bearer " + tempToken.substring(1, tempToken.length() - 1);
-                this.expires_in = Integer.parseInt(JsonUtil.readProperty(response.body(), "expires_in").toString());
+                this.expires_in = Integer.parseInt(responseJson.readProperty("expires_in").toString());
                 this.updatedAt = LocalDateTime.now();
                 return this.access_token;
             } catch (Exception e) {
@@ -286,19 +287,19 @@ class authUtils {
             e.printStackTrace();
         }
 
-        authCodeFuture.thenAccept(code -> {
+        String code = null;
+
+        try {
+            code = authCodeFuture.get();
             if (code != null && !code.isEmpty()) {
                 exchangeCodeForToken(token, code);
-                this.token.getRequest().requestExample();
             } else {
                 System.err.println("Nenhum código de autorização recebido.");
             }
-        }).exceptionally(ex -> {
-            System.err.println("Erro ao obter o código de autorização: " + ex.getMessage());
-            return null;
-        });
-
-        authCodeFuture.get();
+        } catch (Exception e) {
+            System.err.println("Erro ao obter o código de autorização: " + e.getMessage());
+            throw new ExecutionException("Erro ao obter o código de autorização", e);
+        }
     }
 
     /**
@@ -407,11 +408,12 @@ class authUtils {
             if (response.statusCode() != 200) {
                 throw new RequestException("Erro ao obter o token: " + response.statusCode() + " - " + response.body());
             }
-            String tempToken = JsonUtil.readProperty(response.body(), "access_token").toString();
-            String tempRefreshToken = JsonUtil.readProperty(response.body(), "refresh_token").toString();
+            Json responseBody = new Json(response.body());
+            String tempToken = responseBody.readProperty("access_token").toString();
+            String tempRefreshToken = responseBody.readProperty("refresh_token").toString();
             token.setAccess_token("Bearer " + tempToken.substring(1, tempToken.length() - 1));
             token.setRefresh_token(tempRefreshToken.substring(1, tempRefreshToken.length() - 1));
-            token.setExpires_in(Integer.parseInt(JsonUtil.readProperty(response.body(), "expires_in").toString()));
+            token.setExpires_in(Integer.parseInt(responseBody.readProperty("expires_in").toString()));
             token.setUpdatedAt(LocalDateTime.now());
         } catch (Exception e) {
             System.err.println("Erro ao trocar código por token: " + e.getMessage());

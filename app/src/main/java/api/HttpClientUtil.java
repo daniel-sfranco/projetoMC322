@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import exceptions.RequestException;
 
 /**
@@ -79,10 +81,10 @@ public class HttpClientUtil {
      *                              requisição
      */
     public static String sendPostRequest(String url, Map<String, String> headers, Object bodyObject)
-            throws RequestException {
-        String requestBodyJson = JsonUtil.parseObjectToJson(bodyObject);
+            throws RequestException, JsonProcessingException {
+        Json requestBodyJson = new Json(bodyObject);
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(url));
-        requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBodyJson));
+        requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBodyJson.toString()));
         if (headers != null) {
             headers.forEach(requestBuilder::header);
         }

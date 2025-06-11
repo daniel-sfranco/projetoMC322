@@ -1,9 +1,27 @@
+/*
+ * User.java
+ * 
+ * Material usado na disciplina MC322 - Programação orientada a objetos.
+ * 
+ * A documentação para javadoc deste arquivo foi feita com o uso de IA
+ * e posteriormente revisada e/ou corrigida.
+ */
+
 import java.util.List;
 
 import api.Request;
 import fileManager.JsonFileManager;
 import fileManager.Storable;
 
+
+/**
+ * Representa um usuário dentro do contexto da aplicação, contendo informações
+ * como país, nome, email, ID, filtro de conteúdo explícito e número de seguidores.
+ * Esta classe implementa a interface {@link Storable}, permitindo que suas instâncias
+ * sejam salvas e lidas de um arquivo JSON.
+ * 
+ * @author Vinícius de Oliveira - 251527
+ */
 public class User implements Storable {
     private String country;
     private String name;
@@ -11,90 +29,141 @@ public class User implements Storable {
     private String id;
     private Boolean explicitContentFilter;
     private int followers;
-    private List<Image> images;
 
-    public User(String country, String name, String email, String id, Boolean explicitContentFilter, int followers,
-            List<Image> images) {
+    /**
+     * Construtor vazio para a classe {@code User}.
+     * Este construtor é necessário para o correto funcionamento do parser JSON,
+     * permitindo a desserialização de objetos {@code User} a partir de dados JSON.
+     */
+    public User() {}
+
+    /**
+     * Construtor completo para a classe {@code User}.
+     *
+     * @param country O país do usuário (ex: "BR").
+     * @param name O nome de exibição do usuário.
+     * @param email O endereço de email do usuário.
+     * @param id O ID único do usuário na plataforma.
+     * @param explicitContentFilter Um booleano indicando se o filtro de conteúdo explícito está ativo para o usuário.
+     * @param followers O número de seguidores do usuário.
+     */
+    public User(String country, String name, String email, String id,
+    Boolean explicitContentFilter, int followers) {
         this.country = country;
         this.name = name;
         this.email = email;
         this.id = id;
         this.explicitContentFilter = explicitContentFilter;
         this.followers = followers;
-        this.images = images;
     }
-
+    
+    /**
+     * Salva os dados desta instância de usuário em um arquivo JSON.
+     * O arquivo será nomeado como "User.json" e gerenciado pelo {@link JsonFileManager}.
+     * Este método é uma implementação da interface {@link Storable}.
+     */
+    @Override
     public void saveData() {
         JsonFileManager.saveJsonFile(this, "User.json");
     }
 
+    /**
+     * Lê os dados de um usuário a partir do arquivo "User.json".
+     * Este é um método estático que permite carregar os dados do usuário persistidos
+     * sem a necessidade de uma instância de {@code User} preexistente.
+     *
+     * @return Um objeto {@code User} populado com os dados lidos do arquivo, ou {@code null} se o arquivo não puder ser lido ou estiver corrompido.
+     */
+    public static User readDataFile() {
+        return JsonFileManager.readJsonFile("User.json", User.class);
+    }
+
+    /**
+     * Método principal para demonstração do salvamento e leitura de dados do usuário.
+     * Cria uma nova instância de {@code User}, salva-a em um arquivo e, em seguida,
+     * lê os dados de volta do arquivo, imprimindo o resultado no console.
+     *
+     * @param args Argumentos da linha de comando (não utilizados neste método).
+     */
     public static void main(String[] args) {
-        String userJson = null;
+        /*String userJson = null;
         try {
             Request request = new Request();
             userJson = request.sendGetRequest("https://api.spotify.com/v1/me");
             System.out.println(userJson);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        User user = new User("BR", "nome", "email", "12312", false, 12, null);
+        }*/
+        User user = new User("BR", "batata", "email", "12312", false, 12);
 
         user.saveData();
+        // Ler arquivo:
+        System.out.println(readDataFile());
+        
     }
 
+    /**
+     * Retorna uma representação em String do objeto {@code User}.
+     *
+     * @return Uma String contendo os valores de todas as propriedades do usuário.
+     */
+    @Override
+    public String toString() {
+        return "User {" +
+                "country='" + country + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", id='" + id + '\'' +
+                ", explicitContentFilter=" + explicitContentFilter +
+                ", followers=" + followers +
+                '}';
+    }
+
+    /**
+     * Retorna o país do usuário.
+     * @return O país do usuário.
+     */
     public String getCountry() {
         return country;
     }
 
+    /**
+     * Retorna o nome de exibição do usuário.
+     * @return O nome do usuário.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Retorna o endereço de email do usuário.
+     * @return O email do usuário.
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Retorna o ID único do usuário.
+     * @return O ID do usuário.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Retorna o status do filtro de conteúdo explícito do usuário.
+     * @return {@code true} se o filtro de conteúdo explícito estiver ativo, {@code false} caso contrário.
+     */
     public Boolean getExplicitContentFilter() {
         return explicitContentFilter;
     }
 
+    /**
+     * Retorna o número de seguidores do usuário.
+     * @return O número de seguidores.
+     */
     public int getFollowers() {
         return followers;
-    }
-
-    public List<Image> getImages() {
-        return images;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setExplicitContentFilter(Boolean explicitContentFilter) {
-        this.explicitContentFilter = explicitContentFilter;
-    }
-
-    public void setFollowers(int followers) {
-        this.followers = followers;
-    }
-
-    public void setImages(List<Image> images) {
-        this.images = images;
     }
 }

@@ -1,8 +1,10 @@
 package fileManager;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Scanner;
 
 import api.JsonUtil;
 
@@ -27,11 +29,29 @@ public class JsonFileManager {
         String json = null;
         try {
             json = JsonUtil.parseObjectToJson(storable);
-            System.out.println(json);
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
 
         writeFile(json, fileName);
     }
+
+        public static <T> T readJsonFile(String fileName, Class<T> targetClass) {
+            File file = new File(JsonFileManager.FILES_lOCATION + fileName);
+            String json = null;
+
+            try{
+                Scanner reader = new Scanner(file);    
+                json = reader.nextLine();
+                reader.close();
+        
+                return JsonUtil.parseJson(json, targetClass);
+            } catch (FileNotFoundException e) {
+                System.out.println("Arquivo não encontrado.");
+                e.printStackTrace();
+            }
+
+            // Quando há excessão, retorna null
+            return null;
+        }
 }

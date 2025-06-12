@@ -7,10 +7,12 @@
  * e posteriormente revisada e/ou corrigida.
  */
 
+import java.io.File;
 import java.util.List;
 
 import api.Request;
 import fileManager.JsonFileManager;
+import fileManager.RefreshTokenFileManager;
 import fileManager.Storable;
 
 
@@ -64,7 +66,21 @@ public class User implements Storable {
      */
     @Override
     public void saveData() {
-        JsonFileManager.saveJsonFile(this, "User.json");
+        String userSpecificFolder = "Users" + File.separator +
+        this.id + File.separator;
+        JsonFileManager.saveJsonFile(this, userSpecificFolder + "User.json");
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        RefreshTokenFileManager.writeRefreshtoken(this.id, refreshToken);
+    }
+
+    public String getRefreshToken() {
+        return RefreshTokenFileManager.readRefreshToken(this.id);
+    }
+    
+    public Boolean deleteRefreshToken() {
+        return RefreshTokenFileManager.deleteRefreshToken(this.id);
     }
 
     /**
@@ -95,10 +111,22 @@ public class User implements Storable {
             e.printStackTrace();
         }*/
         User user = new User("BR", "batata", "email", "12312", false, 12);
+        User user2 = new User("BR", "BatGamer", "batcomputador", "jdfhlsdkjfa", false, 200);
 
         user.saveData();
+        user.setRefreshToken("fjsklafjsdlkf");
+        user2.saveData();
+        user2.setRefreshToken("pofijeslakçfd");
+
+        System.out.println("user1 refreshToken: " + user.getRefreshToken());
+        System.out.println("user2 refreshToken: " + user2.getRefreshToken());
+
+        // System.out.println(user2.deleteRefreshToken());
+        // System.out.println(user2.deleteRefreshToken());
+
+
         // Ler arquivo:
-        System.out.println(readDataFile());
+        // System.out.println(readDataFile());
         
     }
 

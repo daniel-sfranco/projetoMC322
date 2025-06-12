@@ -33,7 +33,7 @@ public class ClientDataFileManager {
      * O caminho para o arquivo onde os dados do cliente são armazenados.
      * O arquivo está localizado em `src/main/resources/savedFiles/ClientData.che`.
      */
-    private static String ClientDataFileLocation = "src" + File.separator + 
+    private static String CLIENTDATA_FILE_LOCATION = "src" + File.separator + 
                                      "main" + File.separator + "resources" + File.separator + 
                                      "savedFiles" + File.separator + "ClientData.che";
 
@@ -47,7 +47,7 @@ public class ClientDataFileManager {
     public void writeFile(String clientId, String clientSecret) {
         try {
             PrintWriter writer = new PrintWriter(
-                ClientDataFileManager.ClientDataFileLocation, "UTF-8");
+                ClientDataFileManager.CLIENTDATA_FILE_LOCATION, "UTF-8");
             writer.write("clientId:" + clientId);
             writer.write("\nclientSecret:" + clientSecret);
             writer.close();
@@ -72,7 +72,7 @@ public class ClientDataFileManager {
         Boolean updatedClientId = false;
 
         try {
-            File file = new File(ClientDataFileManager.ClientDataFileLocation);
+            File file = new File(ClientDataFileManager.CLIENTDATA_FILE_LOCATION);
             Scanner reader = new Scanner(file);
             do {
                 String line = reader.nextLine();
@@ -89,7 +89,7 @@ public class ClientDataFileManager {
                 throw new IncorrectClientFileDataException("Não foi possível alterar o clientId");
 
             PrintWriter writer = new PrintWriter(
-                ClientDataFileManager.ClientDataFileLocation, "UTF-8");
+                ClientDataFileManager.CLIENTDATA_FILE_LOCATION, "UTF-8");
             for (int i = 0; i < lines.size(); i++) {
                 if (i != 0) writer.write("\n");
                 writer.write(lines.get(i));
@@ -119,7 +119,7 @@ public class ClientDataFileManager {
         Boolean updatedClientSecret = false;
 
         try {
-            File file = new File(ClientDataFileManager.ClientDataFileLocation);
+            File file = new File(ClientDataFileManager.CLIENTDATA_FILE_LOCATION);
             Scanner reader = new Scanner(file);
             do {
                 String line = reader.nextLine();
@@ -136,7 +136,7 @@ public class ClientDataFileManager {
                 throw new IncorrectClientFileDataException("Não foi possível alterar o clientSecret");
 
             PrintWriter writer = new PrintWriter(
-                ClientDataFileManager.ClientDataFileLocation, "UTF-8");
+                ClientDataFileManager.CLIENTDATA_FILE_LOCATION, "UTF-8");
             for (int i = 0; i < lines.size(); i++) {
                 if (i != 0) writer.write("\n");
                 writer.write(lines.get(i));
@@ -165,7 +165,7 @@ public class ClientDataFileManager {
         clientData.put("clientSecret", null);
 
         try {
-            File file = new File(ClientDataFileManager.ClientDataFileLocation);
+            File file = new File(ClientDataFileManager.CLIENTDATA_FILE_LOCATION);
             Scanner reader = new Scanner(file);
             do {
                 String line = reader.nextLine();
@@ -204,8 +204,8 @@ public class ClientDataFileManager {
 
 
         try {
-            // fileManager.writeClientID("HAHAHAHAAHAHA");
-            // fileManager.writeClientSecret("fununcia he he");
+            // fileManager.writeClientID("novo ID");
+            // fileManager.writeClientSecret("novo Screcret");
 
             Map<String, String> clientData = fileManager.readFile();
             System.out.println("id: " + clientData.get("clientId"));

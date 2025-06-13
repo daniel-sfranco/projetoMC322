@@ -118,6 +118,7 @@ public class User implements Storable {
         user2.saveData();
         user2.setRefreshToken("pofijeslakçfd");
 
+        // Ver tempo de execução
         System.out.println("user1 refreshToken: " + user.getRefreshToken());
         System.out.println("user2 refreshToken: " + user2.getRefreshToken());
 

@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-import api.JsonUtil;
+import api.Json;
 
 public class JsonFileManager {
      private static String FILES_lOCATION = "src" + File.separator + 
@@ -36,26 +36,27 @@ public class JsonFileManager {
     }
 
     public static void saveJsonFile(Storable storable, String relativeFilePath){
-        String json = null;
+        Json json = null;
         try {
-            json = JsonUtil.parseObjectToJson(storable);
+            json = new Json(storable);
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
 
-        writeFile(json, relativeFilePath);
+        writeFile(json.toString(), relativeFilePath);
     }
 
     public static <T> T readJsonFile(String relativeFilePath, Class<T> targetClass) {
         File file = new File(FILES_lOCATION + relativeFilePath);
-        String json = null;
+        String jsonText = null;
 
         try{
             Scanner reader = new Scanner(file);    
-            json = reader.nextLine();
+            jsonText = reader.nextLine();
             reader.close();
-    
-            return JsonUtil.parseJson(json, targetClass);
+            
+            Json json = new Json(jsonText);
+            return json.parseJson(targetClass);
         } catch (FileNotFoundException e) {
             System.out.println("Arquivo não encontrado.");
             e.printStackTrace();

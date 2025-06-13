@@ -292,7 +292,6 @@ class authUtils {
         }
 
         String code = null;
-
         try {
             code = authCodeFuture.get();
             if (code != null && !code.isEmpty()) {
@@ -302,7 +301,7 @@ class authUtils {
             }
         } catch (Exception e) {
             System.err.println("Erro ao obter o código de autorização: " + e.getMessage());
-            throw new ExecutionException("Erro ao obter o código de autorização", e);
+            throw new ExecutionException(e);
         }
     }
 

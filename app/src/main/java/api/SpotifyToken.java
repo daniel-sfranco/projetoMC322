@@ -419,6 +419,7 @@ class authUtils {
             token.setRefresh_token(tempRefreshToken.substring(1, tempRefreshToken.length() - 1));
             token.setExpires_in(Integer.parseInt(responseBody.get("expires_in").toString()));
             token.setUpdatedAt(LocalDateTime.now());
+            RefreshTokenFileManager.writeRefreshtoken(token.getRefresh_token());
         } catch (Exception e) {
             System.err.println("Erro ao trocar código por token: " + e.getMessage());
             return;

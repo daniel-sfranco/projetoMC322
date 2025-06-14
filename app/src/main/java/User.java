@@ -27,6 +27,7 @@ import fileManager.Storable;
  * @author Vinícius de Oliveira - 251527
  */
 public class User implements Storable {
+    private Request request;
     private String country;
     private String name;
     private String email;
@@ -53,8 +54,8 @@ public class User implements Storable {
      */
     public User(String country, String name, String email, String id,
     Boolean explicitContentFilter, int followers) throws RequestException {
-        Request request = new Request();
-        Json userData = request.sendGetRequest("me");
+        this.request = new Request();
+        Json userData = this.request.sendGetRequest("me");
         System.out.println(userData.toString());
         this.id = userData.get("id").toString();
         this.country = userData.get("country").toString();

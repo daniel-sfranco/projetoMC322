@@ -1,11 +1,13 @@
 /*
- * User.java
- * 
- * Material usado na disciplina MC322 - Programação orientada a objetos.
- * 
- * A documentação para javadoc deste arquivo foi feita com o uso de IA
- * e posteriormente revisada e/ou corrigida.
- */
+* User.java
+* 
+* Material usado na disciplina MC322 - Programação orientada a objetos.
+* 
+* A documentação para javadoc deste arquivo foi feita com o uso de IA
+* e posteriormente revisada e/ou corrigida.
+*/
+
+package user;
 
 import java.io.File;
 import java.util.Map;
@@ -116,15 +118,15 @@ public class User implements Storable {
         } catch (Exception e) {
             e.printStackTrace();
         }*/
-        User user = new User("BR", "batata", "email", "12312", false, 12);
+        // User user = new User("BR", "batata", "email", "12312", false, 12);
         // User user2 = new User("BR", "BatGamer", "batcomputador", "jdfhlsdkjfa", false, 200);
 
-        user.saveData();
+        // user.saveData();
         // user2.setRefreshToken("pofijeslakçfd");
         // user2.saveData();
 
         // Ver tempo de execução
-        System.out.println("user1 refreshToken: " + user.getRefreshToken());
+        // System.out.println("user1 refreshToken: " + user.getRefreshToken());
         // System.out.println("user2 refreshToken: " + user2.getRefreshToken());
 
         // System.out.println(user2.deleteRefreshToken());
@@ -132,7 +134,9 @@ public class User implements Storable {
 
 
         // Ler arquivo:
-        System.out.println(readDataFile(user.getId()));
+        // System.out.println(readDataFile(user.getId()));
+
+        System.out.println(new User());
         
     }
 

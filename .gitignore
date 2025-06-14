@@ -31,3 +31,4 @@ build
 
 *.che
 app/build.gradle
+app/src/main/resources/savedFiles/Users

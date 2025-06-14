@@ -59,35 +59,35 @@ public class Request {
      * Envia uma requisição POST para a URL especificada com o corpo do objeto
      * fornecido.
      * 
-     * @param url        A URL para a qual a requisição será enviada.
+     * @param url        A URL relativa para a qual a requisição será enviada.
      * @param bodyObject O objeto que será convertido em JSON e enviado como corpo
      *                   da requisição.
      * @return A resposta da requisição como uma string.
      * @throws RequestException        se ocorrer um erro ao enviar a requisição.
      * @throws JsonProcessingException
      */
-    public String sendPostRequest(String url, Object bodyObject) throws RequestException, JsonProcessingException {
+    public Json sendPostRequest(String url, Object bodyObject) throws RequestException, JsonProcessingException {
         String accessToken = this.token.getAccess_token();
         Map<String, String> headers = Map.of(
                 "Authorization", "Bearer " + accessToken,
                 "Content-Type", "application/json");
-        return HttpClientUtil.sendPostRequest(url, headers, bodyObject);
+        return new Json(HttpClientUtil.sendPostRequest(baseUrl + url, headers, bodyObject));
     }
 
     /**
      * Envia uma requisição GET para a URL especificada.
      * 
-     * @param url A URL para a qual a requisição será enviada.
+     * @param url A URL relativa para a qual a requisição será enviada.
      * @return A resposta da requisição como uma string.
      * @throws RequestException se ocorrer um erro ao enviar a requisição.
      */
-    public String sendGetRequest(String url) throws RequestException {
+    public Json sendGetRequest(String url) throws RequestException {
         String accessToken = this.token.getAccess_token();
         Map<String, String> headers = Map.of(
                 "Authorization", accessToken,
                 "Content-Type", "application/json");
         System.out.println(headers);
-        return HttpClientUtil.sendGetRequest(url, headers);
+        return new Json(HttpClientUtil.sendGetRequest(baseUrl + url, headers));
     }
 
     /**
@@ -98,5 +98,7 @@ public class Request {
      */
     public static void main(String[] args) throws RequestException {
         Request request = new Request();
+        Json response = request.sendGetRequest("me");
+        System.out.println(response);
     }
 }

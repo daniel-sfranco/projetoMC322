@@ -12,11 +12,11 @@ import java.util.Scanner;
 public class RefreshTokenFileManager {
     private static String FILES_lOCATION = "src" + File.separator + 
                                      "main" + File.separator + "resources" + File.separator + 
-                                     "savedFiles" + File.separator + "Users" + File.separator;
+                                     "savedFiles" + File.separator + "User" + File.separator;
 
-    public static void writeRefreshtoken(String userId, String refreshToken) {
+    public static void writeRefreshtoken(String refreshToken) {
         try {
-            Path fullPath = Paths.get(FILES_lOCATION + userId + File.separator, "RefreshToken.che");
+            Path fullPath = Paths.get(FILES_lOCATION, "RefreshToken.che");
             Path parentDir = fullPath.getParent();
 
             // Se os diretórios não existir, cria todos os diretórios necessários.
@@ -33,8 +33,8 @@ public class RefreshTokenFileManager {
         }
     }
 
-    public static String readRefreshToken(String userId) {
-        File file = new File(FILES_lOCATION + userId + File.separator + "RefreshToken.che");
+    public static String readRefreshToken() {
+        File file = new File(FILES_lOCATION + "RefreshToken.che");
         String refreshToken = null;
 
         try {
@@ -52,7 +52,7 @@ public class RefreshTokenFileManager {
     }
 
     public static Boolean deleteRefreshToken(String userId) {
-        File file = new File(FILES_lOCATION + userId + File.separator + "RefreshToken.che");
+        File file = new File(FILES_lOCATION + "RefreshToken.che");
         // Retorna True se o arquivo foi deletado e false caso contrário.
         return file.delete();
     }

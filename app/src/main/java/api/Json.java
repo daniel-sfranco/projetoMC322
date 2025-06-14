@@ -1,10 +1,13 @@
 package api;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import exceptions.RequestException;
@@ -110,9 +113,18 @@ public class Json {
      * @param propertyName o nome da propriedade a ser lida
      * @return o valor da propriedade, ou null em caso de erro
      */
-    public Object readProperty(String propertyName) {
+    public Object get(String propertyName) {
         try {
-            return mapper.readTree(this.value).get(propertyName);
+            ArrayList<String> propertyPath = new ArrayList<>(Arrays.asList(propertyName.split("\\.")));
+            JsonNode currentNode = mapper.readTree(this.value);
+            for(String property : propertyPath) {
+                if (currentNode.has(property)) {
+                    currentNode = currentNode.get(property);
+                } else {
+                    return null; // Propriedade não encontrada
+                }
+            }
+            return currentNode;
         } catch (JsonMappingException e) {
             System.out.println("Erro de mapeamento JSON: " + e.getMessage());
         } catch (JsonProcessingException e) {

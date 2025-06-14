@@ -8,9 +8,11 @@
  */
 
 import java.io.File;
-import java.util.List;
+import java.util.Map;
 
+import api.Json;
 import api.Request;
+import exceptions.RequestException;
 import fileManager.JsonFileManager;
 import fileManager.RefreshTokenFileManager;
 import fileManager.Storable;
@@ -50,13 +52,17 @@ public class User implements Storable {
      * @param followers O número de seguidores do usuário.
      */
     public User(String country, String name, String email, String id,
-    Boolean explicitContentFilter, int followers) {
-        this.country = country;
-        this.name = name;
-        this.email = email;
-        this.id = id;
-        this.explicitContentFilter = explicitContentFilter;
-        this.followers = followers;
+    Boolean explicitContentFilter, int followers) throws RequestException {
+        Request request = new Request();
+        Json userData = request.sendGetRequest("me");
+        System.out.println(userData.toString());
+        this.id = userData.get("id").toString();
+        this.country = userData.get("country").toString();
+        this.name = userData.get("display_name").toString();
+        this.email = userData.get("email").toString();
+        this.explicitContentFilter = userData.get("explicit_content.filter_enabled").toString() == "true" ? true : false;
+        this.followers = userData.get("followers.total").toString() == "null" ? 0 : Integer.parseInt(userData.get("followers.total").toString());
+        this.setRefreshToken(request.getToken().getRefresh_token());
     }
     
     /**
@@ -66,17 +72,16 @@ public class User implements Storable {
      */
     @Override
     public void saveData() {
-        String userSpecificFolder = "Users" + File.separator +
-        this.id + File.separator;
+        String userSpecificFolder = "User" + File.separator;
         JsonFileManager.saveJsonFile(this, userSpecificFolder + "User.json");
     }
 
     public void setRefreshToken(String refreshToken) {
-        RefreshTokenFileManager.writeRefreshtoken(this.id, refreshToken);
+        RefreshTokenFileManager.writeRefreshtoken(refreshToken);
     }
 
     public String getRefreshToken() {
-        return RefreshTokenFileManager.readRefreshToken(this.id);
+        return RefreshTokenFileManager.readRefreshToken();
     }
     
     public Boolean deleteRefreshToken() {
@@ -90,8 +95,8 @@ public class User implements Storable {
      *
      * @return Um objeto {@code User} populado com os dados lidos do arquivo, ou {@code null} se o arquivo não puder ser lido ou estiver corrompido.
      */
-    public static User readDataFile() {
-        return JsonFileManager.readJsonFile("User.json", User.class);
+    public static User readDataFile(String userId) {
+        return JsonFileManager.readJsonFile("User" + File.separator + "User.json", User.class);
     }
 
     /**
@@ -101,7 +106,7 @@ public class User implements Storable {
      *
      * @param args Argumentos da linha de comando (não utilizados neste método).
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RequestException {
         /*String userJson = null;
         try {
             Request request = new Request();
@@ -111,23 +116,22 @@ public class User implements Storable {
             e.printStackTrace();
         }*/
         User user = new User("BR", "batata", "email", "12312", false, 12);
-        User user2 = new User("BR", "BatGamer", "batcomputador", "jdfhlsdkjfa", false, 200);
+        // User user2 = new User("BR", "BatGamer", "batcomputador", "jdfhlsdkjfa", false, 200);
 
         user.saveData();
-        user.setRefreshToken("fjsklafjsdlkf");
-        user2.saveData();
-        user2.setRefreshToken("pofijeslakçfd");
+        // user2.setRefreshToken("pofijeslakçfd");
+        // user2.saveData();
 
         // Ver tempo de execução
         System.out.println("user1 refreshToken: " + user.getRefreshToken());
-        System.out.println("user2 refreshToken: " + user2.getRefreshToken());
+        // System.out.println("user2 refreshToken: " + user2.getRefreshToken());
 
         // System.out.println(user2.deleteRefreshToken());
         // System.out.println(user2.deleteRefreshToken());
 
 
         // Ler arquivo:
-        // System.out.println(readDataFile());
+        System.out.println(readDataFile(user.getId()));
         
     }
 

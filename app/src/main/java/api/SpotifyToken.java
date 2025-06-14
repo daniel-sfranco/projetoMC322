@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import exceptions.RequestException;
+import fileManager.RefreshTokenFileManager;
 import spark.Spark;
 
 /**
@@ -44,7 +45,7 @@ public class SpotifyToken {
      */
     public SpotifyToken(Request request) throws RequestException {
         this.request = request;
-        this.refresh_token = null;
+        this.refresh_token = RefreshTokenFileManager.readRefreshToken();
         this.refreshToken();
     }
 
@@ -210,9 +211,9 @@ public class SpotifyToken {
                             + response.body());
                 }
                 Json responseJson = new Json(response.body());
-                String tempToken = responseJson.readProperty("access_token").toString();
+                String tempToken = responseJson.get("access_token").toString();
                 this.access_token = "Bearer " + tempToken.substring(1, tempToken.length() - 1);
-                this.expires_in = Integer.parseInt(responseJson.readProperty("expires_in").toString());
+                this.expires_in = Integer.parseInt(responseJson.get("expires_in").toString());
                 this.updatedAt = LocalDateTime.now();
                 return this.access_token;
             } catch (Exception e) {
@@ -270,7 +271,7 @@ class authUtils {
         String clientId = token.getClient_id();
         String redirectUri = "http://localhost:8000/callback";
         this.port = 8000;
-        String scopes = "playlist-modify-public playlist-modify-private user-read-private";
+        String scopes = "playlist-modify-public playlist-modify-private user-read-private user-read-email";
         String encodedRedirectUri = URLEncoder.encode(redirectUri, StandardCharsets.UTF_8.toString());
         String encodedScopes = URLEncoder.encode(scopes, StandardCharsets.UTF_8.toString());
 
@@ -412,11 +413,11 @@ class authUtils {
                 throw new RequestException("Erro ao obter o token: " + response.statusCode() + " - " + response.body());
             }
             Json responseBody = new Json(response.body());
-            String tempToken = responseBody.readProperty("access_token").toString();
-            String tempRefreshToken = responseBody.readProperty("refresh_token").toString();
+            String tempToken = responseBody.get("access_token").toString();
+            String tempRefreshToken = responseBody.get("refresh_token").toString();
             token.setAccess_token("Bearer " + tempToken.substring(1, tempToken.length() - 1));
             token.setRefresh_token(tempRefreshToken.substring(1, tempRefreshToken.length() - 1));
-            token.setExpires_in(Integer.parseInt(responseBody.readProperty("expires_in").toString()));
+            token.setExpires_in(Integer.parseInt(responseBody.get("expires_in").toString()));
             token.setUpdatedAt(LocalDateTime.now());
         } catch (Exception e) {
             System.err.println("Erro ao trocar código por token: " + e.getMessage());

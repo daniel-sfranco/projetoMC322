@@ -11,6 +11,12 @@ package music;
 
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import api.Json;
+import api.Request;
+import exceptions.RequestException;
+
 /**
  * Representa uma faixa (música) do Spotify.
  * Contém informações como duração, nome, ID, artistas, álbum e se é explícita.
@@ -21,9 +27,30 @@ public class Track {
     private int duration; // Duração em milissegundos
     private String name;
     private String id;
-    private ArrayList<Artist> artists;
-    private Album album;
+    private ArrayList<String> artistsIds;
+    private String albumId;
     private Boolean explicit;
+    private Request request;
+
+    public Track (String id) throws RequestException {
+        this.request = new Request();
+        Json trackData = this.request.sendGetRequest("tracks/" + id);
+        System.out.println(trackData.toString());
+        this.id = id;
+        this.name = trackData.get("name").toString();
+        
+        JsonNode artistsData = (JsonNode) trackData.get("artists");
+        ArrayList<String> artistsIds = new ArrayList<String>();
+        
+        for (JsonNode artistData : artistsData) {
+            artistsIds.add(artistData.get("id").toString());
+        }
+        
+        this.artistsIds = artistsIds;
+        this.albumId = trackData.get("album.id").toString();
+
+        this.explicit = (Boolean) trackData.get("explicit");
+    }
 
     /**
      * Construtor para criar uma nova instância de Track.
@@ -31,16 +58,16 @@ public class Track {
      * @param duration A duração da faixa em milissegundos.
      * @param name O nome da faixa.
      * @param id O ID único da faixa no Spotify.
-     * @param artists Uma lista de objetos Artist associados à faixa.
-     * @param album O objeto Album ao qual a faixa pertence.
+     * @param artistsIds Uma lista de ids de artistas associados à faixa.
+     * @param albumId O id do álbum ao qual a faixa pertence.
      * @param explicit Um booleano indicando se a faixa é explícita.
      */
-    public Track(int duration, String name, String id, ArrayList<Artist> artists, Album album, Boolean explicit) {
+    public Track(int duration, String name, String id, ArrayList<String> artistsIds, String albumId, Boolean explicit) {
         this.duration = duration;
         this.name = name;
         this.id = id;
-        this.artists = artists;
-        this.album = album;
+        this.artistsIds = artistsIds;
+        this.albumId = albumId;
         this.explicit = explicit;
     }
 
@@ -72,21 +99,21 @@ public class Track {
     }
 
     /**
-     * Retorna a lista de artistas associados à faixa.
+     * Retorna a lista de ids de artistas associados à faixa.
      *
-     * @return Uma ArrayList de objetos Artist.
+     * @return Uma ArrayList de ids de artistas.
      */
-    public ArrayList<Artist> getArtists() {
-        return artists;
+    public ArrayList<String> getArtistsIds() {
+        return artistsIds;
     }
 
     /**
-     * Retorna o álbum ao qual a faixa pertence.
+     * Retorna o id do álbum ao qual a faixa pertence.
      *
-     * @return O objeto Album.
+     * @return O id do álbum.
      */
-    public Album getAlbum() {
-        return album;
+    public String getAlbumId() {
+        return albumId;
     }
 
     /**

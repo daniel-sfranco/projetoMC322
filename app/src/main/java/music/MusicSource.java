@@ -20,12 +20,12 @@ import java.util.ArrayList;
  */
 public interface MusicSource {
     /**
-     * Retorna uma lista de faixas ({@link Track}) associadas a esta fonte de música.
+     * Retorna uma lista de ids de faixas associadas a esta fonte de música.
      * Dependendo da implementação, pode ser as faixas de uma playlist, de um álbum, ou as faixas mais populares de um artista/categoria.
      *
-     * @return Uma {@code ArrayList} de objetos {@link Track} contidos na fonte de música. Pode retornar uma lista vazia se não houver faixas.
+     * @return Uma {@code ArrayList} de ids de faixas contidos na fonte de música. Pode retornar uma lista vazia se não houver faixas.
      */
-    public ArrayList<Track> getTracks();
+    public ArrayList<String> getTracksIds();
 
     /**
      * Retorna o ID único da fonte de música.

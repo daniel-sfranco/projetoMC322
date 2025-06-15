@@ -10,7 +10,6 @@
 package user;
 
 import java.io.File;
-import java.util.Map;
 
 import api.Json;
 import api.Request;
@@ -29,6 +28,7 @@ import fileManager.Storable;
  * @author Vinícius de Oliveira - 251527
  */
 public class User implements Storable {
+    private static User INSTANCE = null;
     private Request request;
     private String country;
     private String name;
@@ -36,13 +36,6 @@ public class User implements Storable {
     private String id;
     private Boolean explicitContentFilter;
     private int followers;
-
-    /**
-     * Construtor vazio para a classe {@code User}.
-     * Este construtor é necessário para o correto funcionamento do parser JSON,
-     * permitindo a desserialização de objetos {@code User} a partir de dados JSON.
-     */
-    public User() {}
 
     /**
      * Construtor completo para a classe {@code User}.
@@ -54,8 +47,7 @@ public class User implements Storable {
      * @param explicitContentFilter Um booleano indicando se o filtro de conteúdo explícito está ativo para o usuário.
      * @param followers O número de seguidores do usuário.
      */
-    public User(String country, String name, String email, String id,
-    Boolean explicitContentFilter, int followers) throws RequestException {
+    private User() throws RequestException {
         this.request = new Request();
         Json userData = this.request.sendGetRequest("me");
         System.out.println(userData.toString());
@@ -68,6 +60,18 @@ public class User implements Storable {
         this.setRefreshToken(request.getToken().getRefresh_token());
     }
     
+    public static User getInstance() {
+        if (INSTANCE == null){
+            try {
+                INSTANCE = new User();
+            } catch (RequestException e) {
+                System.out.println("Ocorreu um erro ao requisitar o usuário");
+                System.out.println("Mensagem: " + e.getMessage());
+            }
+        }
+        return INSTANCE;
+    }
+
     /**
      * Salva os dados desta instância de usuário em um arquivo JSON.
      * O arquivo será nomeado como "User.json" e gerenciado pelo {@link JsonFileManager}.
@@ -110,34 +114,7 @@ public class User implements Storable {
      * @param args Argumentos da linha de comando (não utilizados neste método).
      */
     public static void main(String[] args) throws RequestException {
-        /*String userJson = null;
-        try {
-            Request request = new Request();
-            userJson = request.sendGetRequest("https://api.spotify.com/v1/me");
-            System.out.println(userJson);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-        // User user = new User("BR", "batata", "email", "12312", false, 12);
-        // User user2 = new User("BR", "BatGamer", "batcomputador", "jdfhlsdkjfa", false, 200);
-
-        // user.saveData();
-        // user2.setRefreshToken("pofijeslakçfd");
-        // user2.saveData();
-
-        // Ver tempo de execução
-        // System.out.println("user1 refreshToken: " + user.getRefreshToken());
-        // System.out.println("user2 refreshToken: " + user2.getRefreshToken());
-
-        // System.out.println(user2.deleteRefreshToken());
-        // System.out.println(user2.deleteRefreshToken());
-
-
-        // Ler arquivo:
-        // System.out.println(readDataFile(user.getId()));
-
-        System.out.println(new User());
-        
+        System.out.println(User.getInstance());
     }
 
     /**

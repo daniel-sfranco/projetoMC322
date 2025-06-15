@@ -11,6 +11,12 @@ package music;
 
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import api.Json;
+import api.Request;
+import exceptions.RequestException;
+
 /**
  * Representa um álbum de música no Spotify.
  * Um álbum contém um número de faixas, um ID único, um nome,
@@ -23,24 +29,52 @@ public class Album implements MusicSource{
     private int numTracks;
     private String id;
     private String name;
-    private ArrayList<Artist> artists;
-    private ArrayList<Track> tracks;
+    private ArrayList<String> artistsIds;
+    private ArrayList<String> tracksIds;
+    private Request request;
     
+    public Album(String id) throws RequestException {
+        this.request = new Request();
+        Json albumData = this.request.sendGetRequest("albuns/" + id);
+        this.id = id;
+        this.numTracks = Integer.parseInt(
+            albumData.get("total_tracks").toString());
+        this.name = albumData.get("name").toString();
+        
+        JsonNode artistsData = (JsonNode) albumData.get("artists");
+        ArrayList<String> artistsIds = new ArrayList<String>();
+
+        for (JsonNode artistData : artistsData) {
+            artistsIds.add(artistData.get("id").toString());
+        }
+
+        this.artistsIds = artistsIds;
+        
+        JsonNode tracksData = (JsonNode) albumData.get("tracks.items");
+        ArrayList<String> tracksIds = new ArrayList<String>();
+
+        for (JsonNode trackData : tracksData) {
+            tracksIds.add(trackData.get("id").toString());
+        }
+
+        this.tracksIds = tracksIds;
+    }
+
     /**
      * Construtor para criar uma nova instância de Album.
      *
      * @param numTracks O número total de faixas presentes no álbum.
      * @param id O ID único do álbum no Spotify.
      * @param name O nome do álbum.
-     * @param artists Uma {@code ArrayList} de objetos {@link Artist} que contribuíram para este álbum.
-     * @param tracks Uma {@code ArrayList} de objetos {@link Track} que fazem parte deste álbum.
+     * @param artistsIds Uma {@code ArrayList} de ids de artistas que contribuíram para este álbum.
+     * @param tracksIds Uma {@code ArrayList} de ids de músicas que fazem parte deste álbum.
      */
-    public Album(int numTracks, String id, String name, ArrayList<Artist> artists, ArrayList<Track> tracks) {
+    public Album(int numTracks, String id, String name, ArrayList<String> artistsIds, ArrayList<String> tracksIds) {
         this.numTracks = numTracks;
         this.id = id;
         this.name = name;
-        this.artists = artists;
-        this.tracks = tracks;
+        this.artistsIds = artistsIds;
+        this.tracksIds = tracksIds;
     }
 
     /**
@@ -79,8 +113,8 @@ public class Album implements MusicSource{
      *
      * @return Uma {@code ArrayList} de objetos {@link Artist}.
      */
-    public ArrayList<Artist> getArtists() {
-        return artists;
+    public ArrayList<String> getArtistsIds() {
+        return artistsIds;
     }
 
     /**
@@ -88,7 +122,8 @@ public class Album implements MusicSource{
      *
      * @return Uma {@code ArrayList} de objetos {@link Track}.
      */
-    public ArrayList<Track> getTracks() {
-        return tracks;
+    @Override
+    public ArrayList<String> getTracksIds() {
+        return tracksIds;
     }
 }

@@ -11,6 +11,10 @@ package music;
 
 import java.util.ArrayList;
 
+import api.Json;
+import api.Request;
+import exceptions.RequestException;
+
 /**
  * Representa um artista no Spotify.
  * Um artista possui um nome, um ID único e uma lista de álbuns associados.
@@ -21,19 +25,46 @@ import java.util.ArrayList;
 public class Artist implements MusicSource {
     private String name;
     private String Id;
-    private ArrayList<Album> albuns;
+    private ArrayList<String> albunsIds;
+    private Request request;
+
+    public Artist(String id) throws RequestException {
+        this.request = new Request();
+        Json artistData = this.request.sendGetRequest("artists/" + id);
+        System.out.println(artistData.toString());
+        this.Id = id;
+        this.name = artistData.get("name").toString();
+        
+        Json artistAlbuns = this.request.sendGetRequest("artists/" + id + "albuns");
+        System.out.println(artistAlbuns.toString());
+    }
 
     /**
      * Construtor para criar uma nova instância de Artist.
      *
      * @param name O nome do artista.
      * @param Id O ID único do artista no Spotify.
-     * @param albuns Uma lista de objetos {@link Album} associados a este artista.
+     * @param albunsId Uma lista de ids de álbuns associados a este artista.
      */
-    public Artist(String name, String Id, ArrayList<Album> albuns) {
+    public Artist(String name, String Id, ArrayList<String> albunsIds) {
         this.name = name;
         this.Id = Id;
-        this.albuns = albuns;
+        this.albunsIds = albunsIds;
+        this.request = null;
+    }
+
+    public static void main(String[] args) {
+        try {
+            System.out.println(new Artist("43ZHCT0cAZBISjO8DG9PnE"));
+        } catch (RequestException e) {
+            System.out.println("Erro na requisição do artista");
+            System.out.println("Mensagem: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Artist [name=" + name + ", Id=" + Id + ", albuns=" + albunsIds + "]";
     }
 
     /**
@@ -59,28 +90,28 @@ public class Artist implements MusicSource {
     }
 
     /**
-     * Retorna a lista de álbuns associados a este artista.
+     * Retorna a lista de ids de álbuns associados a este artista.
      *
-     * @return Uma {@code ArrayList} de objetos {@link Album}.
+     * @return Uma {@code ArrayList} de ids de álbuns.
      */
-    public ArrayList<Album> getAlbuns() {
-        return albuns;
+    public ArrayList<String> getAlbunsIds() {
+        return albunsIds;
     }
 
-    /**
-     * Retorna todas as faixas contidas nos álbuns deste artista.
-     * Este método itera sobre todos os álbuns associados ao artista e coleta todas as faixas de cada álbum.
-     * Implementação do método {@code getTracks()} da interface {@link MusicSource}.
-     *
-     * @return Uma {@code ArrayList} de objetos {@link Track} que representam todas as faixas encontradas nos álbuns do artista.
-     * Retorna uma lista vazia se o artista não tiver álbuns ou se os álbuns não contiverem faixas.
-     */
-    public ArrayList<Track> getTracks() {
-        ArrayList<Track> tracks = new ArrayList<Track>();
-        for (Album album : albuns) {
-            tracks.addAll(album.getTracks());
+    @Override
+    public ArrayList<String> getTracksIds() {
+        ArrayList<String> tracksIds = new ArrayList<String>();
+
+        for (String albumId : albunsIds) {
+            try {
+                Album currentAlbum = new Album(albumId);
+                tracksIds.addAll(currentAlbum.getTracksIds());
+            } catch (RequestException e) {
+                System.out.println("Eu ao adicionar faixas do álbum com id " + albumId);
+                System.out.println(e.getMessage());
+            }
         }
 
-        return tracks;
+        return tracksIds;
     }
 }

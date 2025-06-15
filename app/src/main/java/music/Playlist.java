@@ -11,6 +11,7 @@ package music;
 
 import java.util.ArrayList;
 
+import exceptions.RequestException;
 import user.User;
 
 /**
@@ -26,8 +27,12 @@ public class Playlist implements MusicSource {
     private String id;
     private String name;
     private User owner;
-    private ArrayList<Track> tracks;
-   
+    private ArrayList<String> tracksIds;
+    
+    public Playlist (String id) throws RequestException {
+
+    }
+
     /**
      * Construtor para criar uma nova instância de Playlist.
      *
@@ -35,14 +40,14 @@ public class Playlist implements MusicSource {
      * @param id O ID único da playlist no Spotify.
      * @param name O nome da playlist.
      * @param owner O objeto User que representa o proprietário da playlist.
-     * @param tracks Uma lista de objetos Track contidos na playlist.
+     * @param tracks Uma lista de strings das faixas contidos na playlist.
      */
-    public Playlist(int numTracks, String id, String name, User owner, ArrayList<Track> tracks) {
+    public Playlist(int numTracks, String id, String name, User owner, ArrayList<String> tracksIds) {
         this.numTracks = numTracks;
         this.id = id;
         this.name = name;
         this.owner = owner;
-        this.tracks = tracks;
+        this.tracksIds = tracksIds;
     }
 
     /**
@@ -86,11 +91,11 @@ public class Playlist implements MusicSource {
     }
 
     /**
-     * Retorna a lista de faixas contidas na playlist.
+     * Retorna a lista de ids de faixas contidas na playlist.
      *
      * @return Uma ArrayList de objetos Track.
      */
-    public ArrayList<Track> getTracks() {
-        return tracks;
+    public ArrayList<String> getTracksIds() {
+        return tracksIds;
     }
 }

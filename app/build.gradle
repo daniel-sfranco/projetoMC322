@@ -58,7 +58,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'music.Category'
+    mainClass = 'App'
 }
 
 tasks.named('test') {

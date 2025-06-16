@@ -45,7 +45,7 @@ public class Album implements MusicSource {
      */
     public Album(String id) throws RequestException {
         this.request = User.getInstance().getRequest();
-        Json albumData = this.request.sendGetRequest("albuns/" + id);
+        Json albumData = this.request.sendGetRequest("albums/" + id);
         this.id = id;
         this.numTracks = Integer.parseInt(
                 albumData.get("total_tracks").toString());
@@ -138,5 +138,15 @@ public class Album implements MusicSource {
     @Override
     public ArrayList<String> getTracksIds() {
         return tracksIds;
+    }
+
+    public String toString() {
+        return "Album [numTracks=" + numTracks + ", id=" + id + ", name=" + name + ", artistsIds=" + artistsIds
+                + ", tracksIds=" + tracksIds + "]";
+    }
+
+    public static void main(String[] args) throws RequestException {
+        Album album = new Album("4aawyAB9vmqN3uQ7FjRGTy");
+        System.out.println(album);
     }
 }

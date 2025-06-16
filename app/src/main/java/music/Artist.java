@@ -10,6 +10,9 @@
 package music;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import api.Json;
 import api.Request;
@@ -27,7 +30,7 @@ import user.User;
 public class Artist implements MusicSource {
     private String name;
     private String Id;
-    private ArrayList<String> albunsIds;
+    private ArrayList<String> albumsIds;
     private Request request;
 
     /**
@@ -41,26 +44,32 @@ public class Artist implements MusicSource {
     public Artist(String id) throws RequestException {
         this.request = User.getInstance().getRequest();
         Json artistData = this.request.sendGetRequest("artists/" + id);
-        System.out.println(artistData.toString());
         this.Id = id;
         this.name = artistData.get("name").toString();
 
-        Json artistAlbuns = this.request.sendGetRequest("artists/" + id + "albuns");
-        System.out.println(artistAlbuns.toString());
+        Json artistAlbums = this.request.sendGetRequest("artists/" + id + "/albums");
+        Json artistAlbumsData = new Json(artistAlbums.get("items").toString());
+        ArrayList<HashMap<String, Object>> items = artistAlbumsData.parseJson(
+                new TypeReference<ArrayList<HashMap<String, Object>>>() {
+                });
+        this.albumsIds = new ArrayList<String>();
+        for (HashMap<String, Object> item : items) {
+            albumsIds.add(item.get("id").toString());
+        }
     }
 
     /**
      * Construtor para criar uma nova instância de Artist.
      *
-     * @param name     O nome do artista.
-     * @param Id       O ID único do artista no Spotify.
+     * @param name      O nome do artista.
+     * @param Id        O ID único do artista no Spotify.
      * @param albunsIds Uma lista de ids de álbuns associados a este artista.
      */
-    public Artist(String name, String Id, ArrayList<String> albunsIds) {
+    public Artist(String name, String Id, ArrayList<String> albumsIds) {
         this.request = User.getInstance().getRequest();
         this.name = name;
         this.Id = Id;
-        this.albunsIds = albunsIds;
+        this.albumsIds = albumsIds;
     }
 
     /**
@@ -71,7 +80,7 @@ public class Artist implements MusicSource {
      */
     @Override
     public String toString() {
-        return "Artist [name=" + name + ", Id=" + Id + ", albuns=" + albunsIds + "]";
+        return "Artist [name=" + name + ", Id=" + Id + ", albuns=" + albumsIds + "]";
     }
 
     /**
@@ -101,8 +110,8 @@ public class Artist implements MusicSource {
      *
      * @return Uma {@code ArrayList} de ids de álbuns.
      */
-    public ArrayList<String> getAlbunsIds() {
-        return albunsIds;
+    public ArrayList<String> getAlbumsIds() {
+        return albumsIds;
     }
 
     /**
@@ -119,7 +128,7 @@ public class Artist implements MusicSource {
     public ArrayList<String> getTracksIds() {
         ArrayList<String> tracksIds = new ArrayList<String>();
 
-        for (String albumId : albunsIds) {
+        for (String albumId : albumsIds) {
             try {
                 Album currentAlbum = new Album(albumId);
                 tracksIds.addAll(currentAlbum.getTracksIds());
@@ -140,7 +149,9 @@ public class Artist implements MusicSource {
      */
     public static void main(String[] args) {
         try {
-            System.out.println(new Artist("43ZHCT0cAZBISjO8DG9PnE"));
+            Artist elvis = new Artist("43ZHCT0cAZBISjO8DG9PnE");
+            System.out.println(elvis);
+            System.out.println(elvis.getAlbumsIds());
         } catch (RequestException e) {
             System.out.println("Erro na requisição do artista");
             System.out.println("Mensagem: " + e.getMessage());

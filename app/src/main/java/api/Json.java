@@ -46,8 +46,8 @@ public class Json {
     /**
      * Converte o valor armazenado para um objeto do tipo especificado.
      * 
-     * @param json      a string JSON a ser convertida
-     * @param valueType o tipo do objeto de destino
+     * @param valueType a classe do objeto a ser lido
+     * @param <T>       a classe do objeto a ser retornado
      * @return o objeto convertido, ou null em caso de erro
      */
     public <T> T parseJson(Class<T> valueType) {
@@ -67,10 +67,10 @@ public class Json {
      * Converte o valor armazenado para um objeto do tipo especificado usando
      * TypeReference.
      * TypeReference é útil quando se trabalha com tipos genéricos ou coleções, como
-     * Map<String, Object> ou List<MyClass>.
+     * Map de String e Object ou List de Object.
      * 
-     * @param json               a string JSON a ser convertida
-     * @param valueTypeReference o TypeReference do objeto de destino
+     * @param valueTypeReference o TypeReference do objeto a ser lido
+     * @param <T>                a classe do objeto a ser retornado
      * @return o objeto convertido, ou null em caso de erro
      */
     public <T> T parseJson(TypeReference<T> valueTypeReference) {
@@ -87,9 +87,8 @@ public class Json {
     }
 
     /**
-     * Converte o valor armazenado para um Map<String, Object>.
+     * Converte o valor armazenado para um Map de String e Object.
      * 
-     * @param json a string JSON a ser convertida
      * @return o Map resultante, ou null em caso de erro
      */
     public Map<String, Object> parseJson() {
@@ -109,7 +108,6 @@ public class Json {
     /**
      * Lê uma propriedade específica do valor armazenado
      * 
-     * @param json         a string JSON
      * @param propertyName o nome da propriedade a ser lida
      * @return o valor da propriedade, ou null em caso de erro
      */
@@ -148,7 +146,8 @@ public class Json {
      * Método principal para testar a conversão de objeto para JSON e vice-versa.
      * 
      * @param args argumentos da linha de comando (não utilizados)
-     * @throws RequestException
+     * @throws RequestException        caso ocorra um erro de requisição
+     * @throws JsonProcessingException caso ocorra um erro ao processar JSON
      */
     public static void main(String[] args) throws RequestException, JsonProcessingException {
         Map<String, String> info = Map.of(

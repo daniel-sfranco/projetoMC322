@@ -64,7 +64,7 @@ public class Request {
      *                   da requisição.
      * @return A resposta da requisição como uma string.
      * @throws RequestException        se ocorrer um erro ao enviar a requisição.
-     * @throws JsonProcessingException
+     * @throws JsonProcessingException se ocorrer um erro ao processar o objeto
      */
     public Json sendPostRequest(String url, Object bodyObject) throws RequestException, JsonProcessingException {
         String accessToken = this.token.getAccess_token();
@@ -94,7 +94,7 @@ public class Request {
      * Método principal para testar a obtenção do token de autenticação.
      * 
      * @param args Argumentos da linha de comando (não utilizados).
-     * @throws RequestException
+     * @throws RequestException se ocorrer um erro ao enviar a requisição.
      */
     public static void main(String[] args) throws RequestException {
         Request request = new Request();

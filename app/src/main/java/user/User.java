@@ -147,7 +147,7 @@ public class User implements Storable {
      * @return Um objeto {@code User} populado com os dados lidos do arquivo, ou
      *         {@code null} se o arquivo não puder ser lido ou estiver corrompido.
      */
-    public static User readDataFile(String userId) {
+    public static User readDataFile() {
         return JsonFileManager.readJsonFile("User" + File.separator + "User.json", User.class);
     }
 
@@ -230,6 +230,7 @@ public class User implements Storable {
      * lê os dados de volta do arquivo, imprimindo o resultado no console.
      *
      * @param args Argumentos da linha de comando (não utilizados neste método).
+     * @throws RequestException Se ocorrer um erro ao fazer a requisição para a API.
      */
     public static void main(String[] args) throws RequestException {
         System.out.println(User.getInstance());

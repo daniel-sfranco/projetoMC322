@@ -79,6 +79,7 @@ public class JsonFileManager {
      * 
      * @param relativeFilePath O caminho relativo do arquivo JSON a ser lido.
      * @param targetClass      A classe do tipo para o qual o JSON será convertido.
+     * @param <T>              O tipo do objeto a ser retornado.
      * @return Um objeto do tipo especificado, ou null se ocorrer um erro ao ler o
      *         arquivo.
      */

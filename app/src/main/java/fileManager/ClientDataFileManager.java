@@ -208,6 +208,15 @@ public class ClientDataFileManager {
         return null;
     }
 
+    /**
+     * Método principal para testar a funcionalidade de leitura e escrita de dados
+     * do cliente.
+     * Este método cria uma instância de {@code ClientDataFileManager}, escreve um
+     * Client ID e um Client Secret,
+     * e depois lê os dados do arquivo, exibindo-os no console.
+     *
+     * @param args Argumentos da linha de comando (não utilizados).
+     */
     public static void main(String[] args) {
         ClientDataFileManager fileManager = new ClientDataFileManager();
         String clientId = "9afeb5fec9854592994aa191f842b529";

@@ -53,7 +53,7 @@ public class Artist implements MusicSource {
      *
      * @param name     O nome do artista.
      * @param Id       O ID único do artista no Spotify.
-     * @param albunsId Uma lista de ids de álbuns associados a este artista.
+     * @param albunsIds Uma lista de ids de álbuns associados a este artista.
      */
     public Artist(String name, String Id, ArrayList<String> albunsIds) {
         this.name = name;

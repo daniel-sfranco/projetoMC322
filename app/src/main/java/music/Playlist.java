@@ -31,6 +31,14 @@ public class Playlist implements MusicSource {
     private User owner;
     private ArrayList<String> tracksIds;
 
+    /**
+     * Construtor para criar uma nova instância de Playlist a partir de um ID.
+     * Este construtor faz uma requisição à API do Spotify para obter os dados da
+     * playlist.
+     *
+     * @param id O ID único da playlist no Spotify.
+     * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
+     */
     public Playlist(String id) throws RequestException {
 
     }
@@ -42,7 +50,7 @@ public class Playlist implements MusicSource {
      * @param id        O ID único da playlist no Spotify.
      * @param name      O nome da playlist.
      * @param owner     O objeto User que representa o proprietário da playlist.
-     * @param tracks    Uma lista de strings das faixas contidos na playlist.
+     * @param tracksIds Uma lista de ids de faixas contidas na playlist.
      */
     public Playlist(int numTracks, String id, String name, User owner, ArrayList<String> tracksIds) {
         this.numTracks = numTracks;

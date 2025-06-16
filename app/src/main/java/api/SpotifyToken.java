@@ -41,6 +41,8 @@ public class SpotifyToken {
      * Construtor da classe SpotifyToken.
      * Inicializa o token de autenticação chamando o método refreshToken().
      * 
+     * @param request A instância da classe Request que contém informações sobre a
+     *                requisição.
      * @throws RequestException se ocorrer um erro ao atualizar o token.
      */
     public SpotifyToken(Request request) throws RequestException {

@@ -21,26 +21,35 @@ import exceptions.RequestException;
  * Representa um álbum de música no Spotify.
  * Um álbum contém um número de faixas, um ID único, um nome,
  * os artistas associados e a lista de faixas que compõem o álbum.
- * Implementa a interface {@link MusicSource} por ser uma fonte de conteúdo musical.
+ * Implementa a interface {@link MusicSource} por ser uma fonte de conteúdo
+ * musical.
  * 
  * @author Vinícius de Oliveira - 251527
  */
-public class Album implements MusicSource{
+public class Album implements MusicSource {
     private int numTracks;
     private String id;
     private String name;
     private ArrayList<String> artistsIds;
     private ArrayList<String> tracksIds;
     private Request request;
-    
+
+    /**
+     * Construtor para criar uma nova instância de Album a partir de um ID.
+     * Este construtor faz uma requisição à API do Spotify para obter os dados do
+     * álbum.
+     *
+     * @param id O ID único do álbum no Spotify.
+     * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
+     */
     public Album(String id) throws RequestException {
         this.request = new Request();
         Json albumData = this.request.sendGetRequest("albuns/" + id);
         this.id = id;
         this.numTracks = Integer.parseInt(
-            albumData.get("total_tracks").toString());
+                albumData.get("total_tracks").toString());
         this.name = albumData.get("name").toString();
-        
+
         JsonNode artistsData = (JsonNode) albumData.get("artists");
         ArrayList<String> artistsIds = new ArrayList<String>();
 
@@ -49,7 +58,7 @@ public class Album implements MusicSource{
         }
 
         this.artistsIds = artistsIds;
-        
+
         JsonNode tracksData = (JsonNode) albumData.get("tracks.items");
         ArrayList<String> tracksIds = new ArrayList<String>();
 
@@ -63,11 +72,13 @@ public class Album implements MusicSource{
     /**
      * Construtor para criar uma nova instância de Album.
      *
-     * @param numTracks O número total de faixas presentes no álbum.
-     * @param id O ID único do álbum no Spotify.
-     * @param name O nome do álbum.
-     * @param artistsIds Uma {@code ArrayList} de ids de artistas que contribuíram para este álbum.
-     * @param tracksIds Uma {@code ArrayList} de ids de músicas que fazem parte deste álbum.
+     * @param numTracks  O número total de faixas presentes no álbum.
+     * @param id         O ID único do álbum no Spotify.
+     * @param name       O nome do álbum.
+     * @param artistsIds Uma {@code ArrayList} de ids de artistas que contribuíram
+     *                   para este álbum.
+     * @param tracksIds  Uma {@code ArrayList} de ids de músicas que fazem parte
+     *                   deste álbum.
      */
     public Album(int numTracks, String id, String name, ArrayList<String> artistsIds, ArrayList<String> tracksIds) {
         this.numTracks = numTracks;

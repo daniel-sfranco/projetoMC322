@@ -117,7 +117,7 @@ public class Json {
         try {
             ArrayList<String> propertyPath = new ArrayList<>(Arrays.asList(propertyName.split("\\.")));
             JsonNode currentNode = mapper.readTree(this.value);
-            for(String property : propertyPath) {
+            for (String property : propertyPath) {
                 if (currentNode.has(property)) {
                     currentNode = currentNode.get(property);
                 } else {

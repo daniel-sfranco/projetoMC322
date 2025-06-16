@@ -32,20 +32,28 @@ public class Track {
     private Boolean explicit;
     private Request request;
 
-    public Track (String id) throws RequestException {
+    /**
+     * Construtor para criar uma nova instância de Track a partir de um ID.
+     * Este construtor faz uma requisição à API do Spotify para obter os dados da
+     * faixa.
+     *
+     * @param id O ID único da faixa no Spotify.
+     * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
+     */
+    public Track(String id) throws RequestException {
         this.request = new Request();
         Json trackData = this.request.sendGetRequest("tracks/" + id);
         System.out.println(trackData.toString());
         this.id = id;
         this.name = trackData.get("name").toString();
-        
+
         JsonNode artistsData = (JsonNode) trackData.get("artists");
         ArrayList<String> artistsIds = new ArrayList<String>();
-        
+
         for (JsonNode artistData : artistsData) {
             artistsIds.add(artistData.get("id").toString());
         }
-        
+
         this.artistsIds = artistsIds;
         this.albumId = trackData.get("album.id").toString();
 
@@ -55,12 +63,12 @@ public class Track {
     /**
      * Construtor para criar uma nova instância de Track.
      *
-     * @param duration A duração da faixa em milissegundos.
-     * @param name O nome da faixa.
-     * @param id O ID único da faixa no Spotify.
+     * @param duration   A duração da faixa em milissegundos.
+     * @param name       O nome da faixa.
+     * @param id         O ID único da faixa no Spotify.
      * @param artistsIds Uma lista de ids de artistas associados à faixa.
-     * @param albumId O id do álbum ao qual a faixa pertence.
-     * @param explicit Um booleano indicando se a faixa é explícita.
+     * @param albumId    O id do álbum ao qual a faixa pertence.
+     * @param explicit   Um booleano indicando se a faixa é explícita.
      */
     public Track(int duration, String name, String id, ArrayList<String> artistsIds, String albumId, Boolean explicit) {
         this.duration = duration;

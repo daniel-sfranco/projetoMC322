@@ -11,12 +11,28 @@ import java.util.Scanner;
 
 import api.Json;
 
+/**
+ * Classe responsável por gerenciar arquivos JSON dentro da aplicação.
+ * Permite salvar objetos que implementam a interface {@link Storable} em
+ * arquivos
+ * JSON e ler esses arquivos de volta, convertendo-os para o tipo especificado.
+ * 
+ * @author Vinícius de Oliveira - 251527
+ */
 public class JsonFileManager {
-     private static String FILES_lOCATION = "src" + File.separator + 
-                                     "main" + File.separator + "resources" + File.separator + 
-                                     "savedFiles" + File.separator;
+    private static String FILES_lOCATION = "src" + File.separator +
+            "main" + File.separator + "resources" + File.separator +
+            "savedFiles" + File.separator;
 
-    private static void writeFile(String json, String relativeFilePath){
+    /**
+     * Método auxiliar para escrever um JSON em um arquivo.
+     * O arquivo será criado se não existir, e o diretório pai será criado se
+     * necessário.
+     * 
+     * @param json             O conteúdo JSON a ser salvo no arquivo.
+     * @param relativeFilePath O caminho relativo do arquivo onde o JSON será salvo.
+     */
+    private static void writeFile(String json, String relativeFilePath) {
         try {
             Path fullPath = Paths.get(FILES_lOCATION, relativeFilePath);
             Path parentDir = fullPath.getParent();
@@ -25,7 +41,7 @@ public class JsonFileManager {
             if (parentDir != null) {
                 Files.createDirectories(parentDir);
             }
-            
+
             Files.write(fullPath, json.getBytes(StandardCharsets.UTF_8));
 
         } catch (IOException e) {
@@ -35,33 +51,53 @@ public class JsonFileManager {
         }
     }
 
-    public static void saveJsonFile(Storable storable, String relativeFilePath){
+    /**
+     * Método para salvar um objeto que implementa a interface {@link Storable} em
+     * um
+     * arquivo JSON.
+     * O arquivo será criado se não existir, e o diretório pai será criado se
+     * necessário.
+     * 
+     * @param storable         O objeto a ser salvo no arquivo JSON.
+     * @param relativeFilePath O caminho relativo do arquivo onde o JSON será salvo.
+     */
+    public static void saveJsonFile(Storable storable, String relativeFilePath) {
         Json json = null;
         try {
             json = new Json(storable);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
         writeFile(json.toString(), relativeFilePath);
     }
 
+    /**
+     * Método para ler um arquivo JSON e convertê-lo em um objeto do tipo
+     * especificado.
+     * O arquivo deve estar localizado no caminho relativo fornecido.
+     * 
+     * @param relativeFilePath O caminho relativo do arquivo JSON a ser lido.
+     * @param targetClass      A classe do tipo para o qual o JSON será convertido.
+     * @return Um objeto do tipo especificado, ou null se ocorrer um erro ao ler o
+     *         arquivo.
+     */
     public static <T> T readJsonFile(String relativeFilePath, Class<T> targetClass) {
         File file = new File(FILES_lOCATION + relativeFilePath);
         String jsonText = null;
 
-        try{
-            Scanner reader = new Scanner(file);    
+        try {
+            Scanner reader = new Scanner(file);
             jsonText = reader.nextLine();
             reader.close();
-            
+
             Json json = new Json(jsonText);
             return json.parseJson(targetClass);
         } catch (FileNotFoundException e) {
             System.out.println("Arquivo não encontrado.");
             e.printStackTrace();
         }
-        
+
         // Quando há excessão, retorna null
         return null;
     }

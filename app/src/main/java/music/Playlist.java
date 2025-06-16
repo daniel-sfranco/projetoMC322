@@ -16,9 +16,11 @@ import user.User;
 
 /**
  * Representa uma playlist no Spotify.
- * Uma playlist é uma coleção de faixas (músicas), com informações como o número total de faixas,
+ * Uma playlist é uma coleção de faixas (músicas), com informações como o número
+ * total de faixas,
  * um ID único, nome, o usuário proprietário e a lista de faixas contidas nela.
- * Implementa a interface {@link MusicSource} para indicar que pode ser uma fonte de música.
+ * Implementa a interface {@link MusicSource} para indicar que pode ser uma
+ * fonte de música.
  * 
  * @author Vinícius de Oliveira - 251527
  */
@@ -28,8 +30,8 @@ public class Playlist implements MusicSource {
     private String name;
     private User owner;
     private ArrayList<String> tracksIds;
-    
-    public Playlist (String id) throws RequestException {
+
+    public Playlist(String id) throws RequestException {
 
     }
 
@@ -37,10 +39,10 @@ public class Playlist implements MusicSource {
      * Construtor para criar uma nova instância de Playlist.
      *
      * @param numTracks O número total de faixas na playlist.
-     * @param id O ID único da playlist no Spotify.
-     * @param name O nome da playlist.
-     * @param owner O objeto User que representa o proprietário da playlist.
-     * @param tracks Uma lista de strings das faixas contidos na playlist.
+     * @param id        O ID único da playlist no Spotify.
+     * @param name      O nome da playlist.
+     * @param owner     O objeto User que representa o proprietário da playlist.
+     * @param tracks    Uma lista de strings das faixas contidos na playlist.
      */
     public Playlist(int numTracks, String id, String name, User owner, ArrayList<String> tracksIds) {
         this.numTracks = numTracks;

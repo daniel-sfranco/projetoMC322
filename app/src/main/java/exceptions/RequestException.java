@@ -1,7 +1,12 @@
 package exceptions;
 
 /**
- * requestException
+ * Exceção personalizada para erros relacionados a requisições HTTP.
+ * Esta classe estende a classe {@link Exception} e é usada para indicar
+ * problemas ao fazer requisições para APIs, como erros de conexão ou respostas
+ * com códigos de status HTTP indicando falhas.
+ * 
+ * @author Daniel Soares Franco - 259083
  */
 public class RequestException extends Exception {
     /**

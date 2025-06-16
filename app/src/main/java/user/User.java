@@ -52,9 +52,8 @@ public class User implements Storable {
     private User() throws RequestException {
         this.request = new Request();
         Json userData = this.request.sendGetRequest("me");
-        System.out.println(userData.toString());
         this.id = userData.get("id").toString();
-        this.country = userData.get("country").toString();
+        this.country = userData.get("country").toString().substring(1, 3);
         this.name = userData.get("display_name").toString();
         this.email = userData.get("email").toString();
         this.explicitContentFilter = userData.get("explicit_content.filter_enabled").toString() == "true" ? true
@@ -89,6 +88,9 @@ public class User implements Storable {
      * {@link JsonFileManager}.
      * Este método é uma implementação da interface {@link Storable}.
      */
+    public static User readDataFile(String userId) {
+        return JsonFileManager.readJsonFile("User" + File.separator + "User.json", User.class);
+    }
 
     /**
      * Salva os dados do usuário no arquivo "User.json" dentro da pasta específica
@@ -221,6 +223,17 @@ public class User implements Storable {
      */
     public int getFollowers() {
         return followers;
+    }
+
+    /**
+     * Retorna a requisição associada a este usuário.
+     * Este método pode ser usado para acessar informações adicionais ou fazer
+     * requisições relacionadas ao usuário.
+     *
+     * @return A instância de {@link Request} associada ao usuário.
+     */
+    public Request getRequest() {
+        return request;
     }
 
     /**

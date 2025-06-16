@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import api.Json;
 import api.Request;
 import exceptions.RequestException;
+import user.User;
 
 /**
  * Representa um artista no Spotify.
@@ -38,7 +39,7 @@ public class Artist implements MusicSource {
      * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
      */
     public Artist(String id) throws RequestException {
-        this.request = new Request();
+        this.request = User.getInstance().getRequest();
         Json artistData = this.request.sendGetRequest("artists/" + id);
         System.out.println(artistData.toString());
         this.Id = id;
@@ -56,10 +57,10 @@ public class Artist implements MusicSource {
      * @param albunsIds Uma lista de ids de álbuns associados a este artista.
      */
     public Artist(String name, String Id, ArrayList<String> albunsIds) {
+        this.request = User.getInstance().getRequest();
         this.name = name;
         this.Id = Id;
         this.albunsIds = albunsIds;
-        this.request = null;
     }
 
     /**

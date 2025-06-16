@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import api.Json;
 import api.Request;
 import exceptions.RequestException;
+import user.User;
 
 /**
  * Representa um álbum de música no Spotify.
@@ -43,7 +44,7 @@ public class Album implements MusicSource {
      * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
      */
     public Album(String id) throws RequestException {
-        this.request = new Request();
+        this.request = User.getInstance().getRequest();
         Json albumData = this.request.sendGetRequest("albuns/" + id);
         this.id = id;
         this.numTracks = Integer.parseInt(
@@ -81,6 +82,7 @@ public class Album implements MusicSource {
      *                   deste álbum.
      */
     public Album(int numTracks, String id, String name, ArrayList<String> artistsIds, ArrayList<String> tracksIds) {
+        this.request = User.getInstance().getRequest();
         this.numTracks = numTracks;
         this.id = id;
         this.name = name;

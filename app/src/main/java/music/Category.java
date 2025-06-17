@@ -142,11 +142,12 @@ public class Category implements MusicSource {
         Json items = new Json(categoryList.get("items").toString());
         ArrayList<Json> categoriesData = items.parseJsonArray();
         for (Json categoryData : categoriesData) {
+            if(categories.size() == 3) break;
             String categoryId = categoryData.get("id").toString();
             try {
                 Category category = new Category(categoryId);
                 categories.add(category);
-                System.out.println("Category: " + category.getName());
+                System.out.print(category);
             } catch (RequestException e) {
                 System.out.println("Erro ao processar a categoria com id " + categoryId);
                 System.out.println(e.getMessage());

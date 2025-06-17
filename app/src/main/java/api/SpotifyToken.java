@@ -213,13 +213,13 @@ public class SpotifyToken {
                             + response.body());
                 }
                 Json responseJson = new Json(response.body());
-                String tempToken = responseJson.get("access_token").toString();
-                this.access_token = "Bearer " + tempToken.replaceAll("\"", "");
-                this.expires_in = Integer.parseInt(responseJson.get("expires_in").toString());
+                this.access_token = "Bearer " + responseJson.get("access_token").toString().replaceAll("\"", "");
+                this.expires_in = Integer.parseInt(responseJson.get("expires_in").toString().replaceAll("\"", ""));
                 this.updatedAt = LocalDateTime.now();
                 return this.access_token;
             } catch (Exception e) {
                 System.err.println("Erro ao atualizar o token: " + e.getMessage());
+                e.printStackTrace();
                 return null;
             }
         }

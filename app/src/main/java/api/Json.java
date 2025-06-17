@@ -167,7 +167,19 @@ public class Json {
      * 
      * @return a string JSON
      */
-    public String toString() {
+    public void print(){
+        JsonNode node;
+        String returnString = value;
+        try {
+			node = mapper.readTree(value);
+			returnString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+        System.out.println(returnString);
+    }
+
+    public String toString(){
         return value;
     }
 
@@ -185,7 +197,7 @@ public class Json {
         Json json;
         try {
             json = new Json(info);
-            System.out.println(json);
+            json.print();
             Map<String, Json> parsedMap = json.parseJson();
             System.out.println(parsedMap.toString());
         } catch (JsonProcessingException e) {

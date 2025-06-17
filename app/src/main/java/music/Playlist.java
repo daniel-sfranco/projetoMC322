@@ -51,15 +51,16 @@ public class Playlist implements MusicSource {
 
         for (Json trackObject : playlistData.get("tracks.items").parseJsonArray()) {
             Json trackData = trackObject.get("track");
-            if (trackData != null) {
-                Track track = new Track(
-                    trackData.get("duration_ms").parseJson(Integer.class), 
-                    trackData.get("name").toString(), 
-                    trackData.get("id").toString(), 
-                    trackData.get("explicit").parseJson(Boolean.class)
-                );
-                this.tracks.add(track);
+            if (trackData == null || trackData.toString().equals("null")) {
+                continue;
             }
+            Track track = new Track(
+                    trackData.get("duration_ms").parseJson(Integer.class),
+                    trackData.get("name").toString(),
+                    trackData.get("id").toString(),
+                    trackData.get("explicit").parseJson(Boolean.class));
+            this.tracks.add(track);
+
         }
     }
 
@@ -69,7 +70,7 @@ public class Playlist implements MusicSource {
      * @param numTracks O número total de faixas na playlist.
      * @param id        O ID único da playlist no Spotify.
      * @param name      O nome da playlist.
-     * @param ownerId     O id do usuário proprietário da playlist.
+     * @param ownerId   O id do usuário proprietário da playlist.
      * @param tracksIds Uma lista de ids de faixas contidas na playlist.
      */
     public Playlist(int numTracks, String id, String name, String ownerId, ArrayList<Track> tracks) {
@@ -130,8 +131,9 @@ public class Playlist implements MusicSource {
     }
 
     @Override
-    public String toString(){
-        return "\n    Playlist [numTracks=" + numTracks + ", id=" + id + ", name=" + name + ", ownerId=" + ownerId + ", tracks=" + tracks + "]";
+    public String toString() {
+        return "\n    Playlist [numTracks=" + numTracks + ", id=" + id + ", name=" + name + ", ownerId=" + ownerId
+                + ", tracks=" + tracks + "]";
     }
 
     public static void main(String[] args) throws RequestException {

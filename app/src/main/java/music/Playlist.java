@@ -10,7 +10,12 @@
 package music;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import api.Json;
 import exceptions.RequestException;
 import user.User;
 
@@ -28,7 +33,7 @@ public class Playlist implements MusicSource {
     private int numTracks;
     private String id;
     private String name;
-    private User owner;
+    private String ownerId;
     private ArrayList<String> tracksIds;
 
     /**
@@ -40,7 +45,23 @@ public class Playlist implements MusicSource {
      * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
      */
     public Playlist(String id) throws RequestException {
+        this.id = id;
+        Json playlistData = User.getInstance().getRequest()
+                .sendGetRequest("playlists/" + id);
+        this.name = playlistData.get("name").toString();
+        this.ownerId = playlistData.get("owner.id").toString();
+        this.numTracks = Integer.parseInt(playlistData.get("tracks.total").toString());
+        this.tracksIds = new ArrayList<>();
 
+        ArrayList<HashMap<String, Object>> tracksData = playlistData.get("tracks.items").parseJson(new TypeReference<ArrayList<HashMap<String, Object>>>() {
+        });
+        ArrayList<Json> tracks = playlistData.get("tracks.items").parseJsonArray();
+        for (Json trackData : tracks) {
+            String trackId = trackData.get("track.id").toString();
+            if (trackId != null) {
+                this.tracksIds.add(trackId);
+            }
+        }
     }
 
     /**
@@ -49,14 +70,14 @@ public class Playlist implements MusicSource {
      * @param numTracks O número total de faixas na playlist.
      * @param id        O ID único da playlist no Spotify.
      * @param name      O nome da playlist.
-     * @param owner     O objeto User que representa o proprietário da playlist.
+     * @param ownerId     O id do usuário proprietário da playlist.
      * @param tracksIds Uma lista de ids de faixas contidas na playlist.
      */
-    public Playlist(int numTracks, String id, String name, User owner, ArrayList<String> tracksIds) {
+    public Playlist(int numTracks, String id, String name, String ownerId, ArrayList<String> tracksIds) {
         this.numTracks = numTracks;
         this.id = id;
         this.name = name;
-        this.owner = owner;
+        this.ownerId = ownerId;
         this.tracksIds = tracksIds;
     }
 
@@ -96,8 +117,8 @@ public class Playlist implements MusicSource {
      *
      * @return O objeto User que é o proprietário.
      */
-    public User getOwner() {
-        return owner;
+    public String getOwnerId() {
+        return ownerId;
     }
 
     /**
@@ -107,5 +128,13 @@ public class Playlist implements MusicSource {
      */
     public ArrayList<String> getTracksIds() {
         return tracksIds;
+    }
+
+    public static void main(String[] args) throws RequestException {
+        String playlistId = "29RMt61ETYJG3k6okGJdi2";
+        Playlist rock = new Playlist(playlistId);
+        System.out.println(rock.getName());
+        System.out.println(rock.getNumTracks());
+        System.out.println(rock.getTracksIds());
     }
 }

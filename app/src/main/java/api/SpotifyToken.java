@@ -269,7 +269,7 @@ class authUtils {
         String clientId = token.getClient_id();
         String redirectUri = "http://localhost:8000/callback";
         this.port = 8000;
-        String scopes = "playlist-modify-public playlist-modify-private user-read-private user-read-email";
+        String scopes = "playlist-modify-public playlist-modify-private user-read-private user-read-email user-follow-read";
         String encodedRedirectUri = URLEncoder.encode(redirectUri, StandardCharsets.UTF_8.toString());
         String encodedScopes = URLEncoder.encode(scopes, StandardCharsets.UTF_8.toString());
 

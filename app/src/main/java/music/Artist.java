@@ -26,7 +26,7 @@ import user.User;
  */
 public class Artist implements MusicSource {
     private String name;
-    private String Id;
+    private String id;
     private ArrayList<Album> albums;
     private Request request;
 
@@ -41,16 +41,9 @@ public class Artist implements MusicSource {
     public Artist(String id) throws RequestException {
         this.request = User.getInstance().getRequest();
         Json artistData = this.request.sendGetRequest("artists/" + id);
-        this.Id = id;
+        this.id = id;
         this.name = artistData.get("name").toString();
-
-        Json artistAlbums = this.request.sendGetRequest("artists/" + id + "/albums");
-        Json artistAlbumsData = new Json(artistAlbums.get("items").toString());
-        ArrayList<Json> items = artistAlbumsData.parseJsonArray();
         this.albums = new ArrayList<Album>();
-        for (Json item : items) {
-            albums.add(new Album(item.get("id").toString().replaceAll("\"", "")));
-        }
     }
 
     /**
@@ -60,11 +53,34 @@ public class Artist implements MusicSource {
      * @param Id     O ID único do artista no Spotify.
      * @param albums Uma lista de álbuns associados a este artista.
      */
-    public Artist(String name, String Id, ArrayList<Album> albums) {
+    public Artist(String name, String id, ArrayList<Album> albums) {
         this.request = User.getInstance().getRequest();
         this.name = name;
-        this.Id = Id;
+        this.id = id;
         this.albums = albums;
+    }
+
+    public Artist(String name, String id) {
+        User user = User.getInstance();
+        this.request = user.getRequest();
+        this.name = name;
+        this.id = id;
+        this.albums = new ArrayList<>();
+
+    }
+
+    public void addAlbums() {
+        try {
+            ArrayList<Json> albumsJson = this.request
+                    .sendGetRequest("artists/" + this.id + "/albums?market=" + User.getInstance().getCountry())
+                    .get("items").parseJsonArray();
+            for (Json albumJson : albumsJson) {
+                this.albums.add(new Album(
+                        albumJson.get("id").toString().replaceAll("\"", "")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -75,7 +91,7 @@ public class Artist implements MusicSource {
      */
     @Override
     public String toString() {
-        return "\nArtist [name=" + name + ", Id=" + Id + ", albuns=" + albums + "]";
+        return "\nArtist [name=" + name + ", Id=" + id + ", albuns=" + albums + "]";
     }
 
     /**
@@ -97,7 +113,7 @@ public class Artist implements MusicSource {
      */
     @Override
     public String getId() {
-        return Id;
+        return id;
     }
 
     /**
@@ -134,16 +150,19 @@ public class Artist implements MusicSource {
      *
      * @param args Argumentos de linha de comando (não utilizados).
      */
-    public static void main(String[] args) {
-        try {
-            Artist elvis = new Artist("43ZHCT0cAZBISjO8DG9PnE");
-            // System.out.println(elvis);
-
-            Artist theocracy = new Artist("627g4H0WzOhvuRRsbdBR6T");
-            // System.out.println(theocracy);
-        } catch (RequestException e) {
-            System.out.println("Erro na requisição do artista");
-            System.out.println("Mensagem: " + e.getMessage());
+    public static void main(String[] args) throws RequestException {
+        Json followed = User.getInstance().getRequest().sendGetRequest("me/following?type=artist");
+        ArrayList<Json> artistList = followed.get("artists.items").parseJsonArray();
+        ArrayList<Artist> artists = new ArrayList<>();
+        for (Json artist : artistList) {
+            Artist newArtist = new Artist(
+                    artist.get("name").toString().replaceAll("\"", ""),
+                    artist.get("id").toString().replaceAll("\"", ""));
+            artists.add(newArtist);
+            System.out.print(newArtist);
         }
+        Artist example = artists.get(0);
+        example.addAlbums();
+        System.out.println(example);
     }
 }

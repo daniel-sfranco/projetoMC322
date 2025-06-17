@@ -33,7 +33,7 @@ public class Playlist implements MusicSource {
     private String id;
     private String name;
     private String ownerId;
-    private ArrayList<String> tracksIds;
+    private ArrayList<Track> tracks;
 
     /**
      * Construtor para criar uma nova instância de Playlist a partir de um ID.
@@ -50,15 +50,21 @@ public class Playlist implements MusicSource {
         this.name = playlistData.get("name").toString();
         this.ownerId = playlistData.get("owner.id").toString();
         this.numTracks = Integer.parseInt(playlistData.get("tracks.total").toString());
-        this.tracksIds = new ArrayList<>();
+        this.tracks = new ArrayList<>();
 
         ArrayList<HashMap<String, Object>> tracksData = playlistData.get("tracks.items").parseJson(new TypeReference<ArrayList<HashMap<String, Object>>>() {
         });
         ArrayList<Json> tracks = playlistData.get("tracks.items").parseJsonArray();
-        for (Json trackData : tracks) {
-            String trackId = trackData.get("track.id").toString();
-            if (trackId != null) {
-                this.tracksIds.add(trackId);
+        for (Json trackObject : tracks) {
+            Json trackData = trackObject.get("track");
+            if (trackData != null) {
+                Track track = new Track(
+                    trackData.get("duration_ms").parseJson(Integer.class), 
+                    trackData.get("name").toString(), 
+                    trackData.get("id").toString(), 
+                    trackData.get("explicit").parseJson(Boolean.class)
+                );
+                this.tracks.add(track);
             }
         }
     }
@@ -72,12 +78,12 @@ public class Playlist implements MusicSource {
      * @param ownerId     O id do usuário proprietário da playlist.
      * @param tracksIds Uma lista de ids de faixas contidas na playlist.
      */
-    public Playlist(int numTracks, String id, String name, String ownerId, ArrayList<String> tracksIds) {
+    public Playlist(int numTracks, String id, String name, String ownerId, ArrayList<Track> tracks) {
         this.numTracks = numTracks;
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
-        this.tracksIds = tracksIds;
+        this.tracks = tracks;
     }
 
     /**
@@ -125,15 +131,18 @@ public class Playlist implements MusicSource {
      *
      * @return Uma ArrayList de objetos Track.
      */
-    public ArrayList<String> getTracksIds() {
-        return tracksIds;
+    public ArrayList<Track> getTracks() {
+        return tracks;
+    }
+
+    @Override
+    public String toString(){
+        return "\n    Playlist [numTracks=" + numTracks + ", id=" + id + ", name=" + name + ", ownerId=" + ownerId + ", tracks=" + tracks + "]";
     }
 
     public static void main(String[] args) throws RequestException {
         String playlistId = "29RMt61ETYJG3k6okGJdi2";
         Playlist rock = new Playlist(playlistId);
-        System.out.println(rock.getName());
-        System.out.println(rock.getNumTracks());
-        System.out.println(rock.getTracksIds());
+        System.out.println(rock);
     }
 }

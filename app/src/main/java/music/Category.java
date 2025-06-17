@@ -33,19 +33,15 @@ import user.User;
 public class Category implements MusicSource {
     private String id;
     private String name;
-    private ArrayList<String> playlistsIds;
+    private ArrayList<Playlist> playlists;
     private Request request;
 
     public Category(String categoryId) throws RequestException {
         this.request = User.getInstance().getRequest();
         this.id = categoryId;
-        this.playlistsIds = new ArrayList<String>();
+        this.playlists = new ArrayList<Playlist>();
         Json categoryData = this.request.sendGetRequest("browse/categories/" + categoryId);
-        this.name = categoryData.get("name").toString();
-        if (this.name.startsWith("\"") && this.name.endsWith("\"")) {
-            this.name = this.name.substring(1, this.name.length() - 1); // Remove aspas
-        }
-
+        this.name = categoryData.get("name").toString().replaceAll("\"", "");
     }
 
     /**
@@ -56,11 +52,11 @@ public class Category implements MusicSource {
      * @param playlistsIds Uma {@code ArrayList} de ids de playlists que fazem parte
      *                     desta categoria.
      */
-    public Category(String id, String name, ArrayList<String> playlistsIds) {
+    public Category(String id, String name, ArrayList<Playlist> playlists) {
         this.request = User.getInstance().getRequest();
         this.id = id;
         this.name = name;
-        this.playlistsIds = playlistsIds;
+        this.playlists = playlists;
     }
 
     public void addPlaylists() throws RequestException {
@@ -74,7 +70,7 @@ public class Category implements MusicSource {
             if (playlistData == null) {
                 continue;
             }
-            this.playlistsIds.add(playlistData.get("id").toString());
+            this.playlists.add(new Playlist(playlistData.get("id").toString()));
         }
     }
 
@@ -105,8 +101,8 @@ public class Category implements MusicSource {
      *
      * @return Uma {@code ArrayList} de ids de playlists.
      */
-    public ArrayList<String> getPlaylistsIds() {
-        if (playlistsIds.isEmpty()) {
+    public ArrayList<Playlist> getPlaylists() {
+        if (playlists.isEmpty()) {
             try {
                 addPlaylists();
             } catch (RequestException e) {
@@ -114,7 +110,7 @@ public class Category implements MusicSource {
                 System.out.println(e.getMessage());
             }
         }
-        return playlistsIds;
+        return playlists;
     }
 
     /**
@@ -124,8 +120,8 @@ public class Category implements MusicSource {
      * @return Uma string representando a categoria.
      */
     @Override
-    public ArrayList<String> getTracksIds() {
-        if (playlistsIds.isEmpty()) {
+    public ArrayList<Track> getTracks() {
+        if (playlists.isEmpty()) {
             try {
                 addPlaylists();
             } catch (RequestException e) {
@@ -133,25 +129,22 @@ public class Category implements MusicSource {
                 System.out.println(e.getMessage());
             }
         }
-        ArrayList<String> tracksIds = new ArrayList<String>();
-
-        for (String playlistId : playlistsIds) {
-            try {
-                Playlist currentPlaylist = new Playlist(playlistId);
-                tracksIds.addAll(currentPlaylist.getTracksIds());
-            } catch (RequestException e) {
-                System.out.println("Eu ao adicionar faixas da playlist com id " + playlistId);
-                System.out.println(e.getMessage());
-            }
+        ArrayList<Track> tracks = new ArrayList<Track>();
+        for (Playlist playlist : playlists) {
+            tracks.addAll(playlist.getTracks());
         }
+        return tracks;
+    }
 
-        return tracksIds;
+    @Override
+    public String toString() {
+        return "\nCategory [id=" + id + ", name=" + name + ", playlists=" + playlists + "]";
     }
 
     public static void main(String[] args) throws RequestException, JsonProcessingException {
         ArrayList<Category> categories = new ArrayList<Category>();
         Request request = User.getInstance().getRequest();
-        Json categoryList = new Json(request.sendGetRequest("browse/categories").get("categories"));
+        Json categoryList = request.sendGetRequest("browse/categories?locale=pt_" + User.getInstance().getCountry()).get("categories");
         Json items = new Json(categoryList.get("items").toString());
         ArrayList<LinkedHashMap<String, Object>> categoriesData = items
                 .parseJson(new TypeReference<ArrayList<LinkedHashMap<String, Object>>>() {
@@ -169,8 +162,6 @@ public class Category implements MusicSource {
         }
         Category example = categories.get(0);
         example.addPlaylists();
-        for (String playlistId : example.getPlaylistsIds()) {
-            System.out.println("Playlist ID: " + playlistId);
-        }
+        System.out.println(example);
     }
 }

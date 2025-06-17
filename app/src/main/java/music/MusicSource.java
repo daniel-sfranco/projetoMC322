@@ -26,10 +26,10 @@ public interface MusicSource {
      * Dependendo da implementação, pode ser as faixas de uma playlist, de um álbum,
      * ou as faixas mais populares de um artista/categoria.
      *
-     * @return Uma {@code ArrayList} de ids de faixas contidos na fonte de música.
+     * @return Uma {@code ArrayList} de {@code Track} contidos na fonte de música.
      *         Pode retornar uma lista vazia se não houver faixas.
      */
-    public ArrayList<String> getTracksIds();
+    public ArrayList<Track> getTracks();
 
     /**
      * Retorna o ID único da fonte de música.

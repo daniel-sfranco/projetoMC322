@@ -53,7 +53,7 @@ public class User implements Storable {
         this.request = new Request();
         Json userData = this.request.sendGetRequest("me");
         this.id = userData.get("id").toString();
-        this.country = userData.get("country").toString().substring(1, 3);
+        this.country = userData.get("country").toString().replaceAll("\"", "");
         this.name = userData.get("display_name").toString();
         this.email = userData.get("email").toString();
         this.explicitContentFilter = userData.get("explicit_content.filter_enabled").toString() == "true" ? true

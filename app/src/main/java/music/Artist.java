@@ -10,9 +10,6 @@
 package music;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import api.Json;
 import api.Request;
@@ -30,7 +27,7 @@ import user.User;
 public class Artist implements MusicSource {
     private String name;
     private String Id;
-    private ArrayList<String> albumsIds;
+    private ArrayList<Album> albums;
     private Request request;
 
     /**
@@ -49,27 +46,25 @@ public class Artist implements MusicSource {
 
         Json artistAlbums = this.request.sendGetRequest("artists/" + id + "/albums");
         Json artistAlbumsData = new Json(artistAlbums.get("items").toString());
-        ArrayList<HashMap<String, Object>> items = artistAlbumsData.parseJson(
-                new TypeReference<ArrayList<HashMap<String, Object>>>() {
-                });
-        this.albumsIds = new ArrayList<String>();
-        for (HashMap<String, Object> item : items) {
-            albumsIds.add(item.get("id").toString());
+        ArrayList<Json> items = artistAlbumsData.parseJsonArray();
+        this.albums = new ArrayList<Album>();
+        for (Json item : items) {
+            albums.add(new Album(item.get("id").toString().replaceAll("\"", "")));
         }
     }
 
     /**
      * Construtor para criar uma nova instância de Artist.
      *
-     * @param name      O nome do artista.
-     * @param Id        O ID único do artista no Spotify.
-     * @param albunsIds Uma lista de ids de álbuns associados a este artista.
+     * @param name   O nome do artista.
+     * @param Id     O ID único do artista no Spotify.
+     * @param albums Uma lista de álbuns associados a este artista.
      */
-    public Artist(String name, String Id, ArrayList<String> albumsIds) {
+    public Artist(String name, String Id, ArrayList<Album> albums) {
         this.request = User.getInstance().getRequest();
         this.name = name;
         this.Id = Id;
-        this.albumsIds = albumsIds;
+        this.albums = albums;
     }
 
     /**
@@ -80,7 +75,7 @@ public class Artist implements MusicSource {
      */
     @Override
     public String toString() {
-        return "Artist [name=" + name + ", Id=" + Id + ", albuns=" + albumsIds + "]";
+        return "\nArtist [name=" + name + ", Id=" + Id + ", albuns=" + albums + "]";
     }
 
     /**
@@ -110,8 +105,8 @@ public class Artist implements MusicSource {
      *
      * @return Uma {@code ArrayList} de ids de álbuns.
      */
-    public ArrayList<String> getAlbumsIds() {
-        return albumsIds;
+    public ArrayList<Album> getAlbums() {
+        return albums;
     }
 
     /**
@@ -125,20 +120,12 @@ public class Artist implements MusicSource {
      * @return Uma {@code ArrayList} de ids de faixas.
      */
     @Override
-    public ArrayList<String> getTracksIds() {
-        ArrayList<String> tracksIds = new ArrayList<String>();
-
-        for (String albumId : albumsIds) {
-            try {
-                Album currentAlbum = new Album(albumId);
-                tracksIds.addAll(currentAlbum.getTracksIds());
-            } catch (RequestException e) {
-                System.out.println("Eu ao adicionar faixas do álbum com id " + albumId);
-                System.out.println(e.getMessage());
-            }
+    public ArrayList<Track> getTracks() {
+        ArrayList<Track> tracks = new ArrayList<Track>();
+        for (Album album : albums) {
+            tracks.addAll(album.getTracks());
         }
-
-        return tracksIds;
+        return tracks;
     }
 
     /**
@@ -150,8 +137,10 @@ public class Artist implements MusicSource {
     public static void main(String[] args) {
         try {
             Artist elvis = new Artist("43ZHCT0cAZBISjO8DG9PnE");
-            System.out.println(elvis);
-            System.out.println(elvis.getAlbumsIds());
+            // System.out.println(elvis);
+
+            Artist theocracy = new Artist("627g4H0WzOhvuRRsbdBR6T");
+            // System.out.println(theocracy);
         } catch (RequestException e) {
             System.out.println("Erro na requisição do artista");
             System.out.println("Mensagem: " + e.getMessage());

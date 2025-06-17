@@ -214,7 +214,7 @@ public class SpotifyToken {
                 }
                 Json responseJson = new Json(response.body());
                 String tempToken = responseJson.get("access_token").toString();
-                this.access_token = "Bearer " + tempToken.substring(1, tempToken.length() - 1);
+                this.access_token = "Bearer " + tempToken.replaceAll("\"", "");
                 this.expires_in = Integer.parseInt(responseJson.get("expires_in").toString());
                 this.updatedAt = LocalDateTime.now();
                 return this.access_token;
@@ -413,8 +413,8 @@ class authUtils {
             Json responseBody = new Json(response.body());
             String tempToken = responseBody.get("access_token").toString();
             String tempRefreshToken = responseBody.get("refresh_token").toString();
-            token.setAccess_token("Bearer " + tempToken.substring(1, tempToken.length() - 1));
-            token.setRefresh_token(tempRefreshToken.substring(1, tempRefreshToken.length() - 1));
+            token.setAccess_token("Bearer " + tempToken.replaceAll("\"", ""));
+            token.setRefresh_token(tempRefreshToken.replaceAll("\"", ""));
             token.setExpires_in(Integer.parseInt(responseBody.get("expires_in").toString()));
             token.setUpdatedAt(LocalDateTime.now());
             RefreshTokenFileManager.writeRefreshtoken(token.getRefresh_token());

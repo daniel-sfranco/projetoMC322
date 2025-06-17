@@ -30,7 +30,7 @@ public class Album implements MusicSource {
     private int numTracks;
     private String id;
     private String name;
-    private ArrayList<String> tracksIds;
+    private ArrayList<Track> tracks;
     private Request request;
 
     /**
@@ -48,13 +48,19 @@ public class Album implements MusicSource {
         this.numTracks = albumData.get("total_tracks").parseJson(Integer.class);
         this.name = albumData.get("name").toString();
         ArrayList<Json> tracksData = albumData.get("tracks.items").parseJsonArray();
-        ArrayList<String> tracksIds = new ArrayList<String>();
+        ArrayList<Track> tracks = new ArrayList<Track>();
 
         for (Json trackData : tracksData) {
-            tracksIds.add(trackData.get("id").toString());
+            Track track = new Track(
+                trackData.get("duration_ms").parseJson(Integer.class),
+                trackData.get("name").toString(),
+                trackData.get("id").toString(),
+                trackData.get("explicit").parseJson(Boolean.class)
+            );
+            tracks.add(track);
         }
 
-        this.tracksIds = tracksIds;
+        this.tracks = tracks;
     }
 
     /**
@@ -63,15 +69,15 @@ public class Album implements MusicSource {
      * @param numTracks  O número total de faixas presentes no álbum.
      * @param id         O ID único do álbum no Spotify.
      * @param name       O nome do álbum.
-     * @param tracksIds  Uma {@code ArrayList} de ids de músicas que fazem parte
+     * @param tracks  Uma {@code ArrayList} de ids de músicas que fazem parte
      *                   deste álbum.
      */
-    public Album(int numTracks, String id, String name, ArrayList<String> tracksIds) {
+    public Album(int numTracks, String id, String name, ArrayList<Track> tracks) {
         this.request = User.getInstance().getRequest();
         this.numTracks = numTracks;
         this.id = id;
         this.name = name;
-        this.tracksIds = tracksIds;
+        this.tracks = tracks;
     }
 
     /**
@@ -111,8 +117,8 @@ public class Album implements MusicSource {
      * @return Uma {@code ArrayList} de objetos {@link Track}.
      */
     @Override
-    public ArrayList<String> getTracksIds() {
-        return tracksIds;
+    public ArrayList<Track> getTracks() {
+        return tracks;
     }
 
     /**
@@ -121,11 +127,11 @@ public class Album implements MusicSource {
      * @return Uma string representando o álbum.
      */
     public String toString() {
-        return "Album [numTracks=" + numTracks + ", id=" + id + ", name=" + name + ", tracksIds=" + tracksIds + "]";
+        return "\n    Album [numTracks=" + numTracks + ", id=" + id + ", name=" + name + ", tracks=" + tracks + "]";
     }
 
     public static void main(String[] args) throws RequestException {
-        Album album = new Album("4aawyAB9vmqN3uQ7FjRGTy");
+        Album album = new Album("5qRQ53QZuqnpjDedQmfsLJ");
         System.out.println(album);
     }
 }

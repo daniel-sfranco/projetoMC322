@@ -120,7 +120,7 @@ public class Json {
             ArrayList<Object> list = mapper.readValue(this.value, new TypeReference<ArrayList<Object>>() {
             });
             ArrayList<Json> jsonList = new ArrayList<>();
-            for(Object item : list) {
+            for (Object item : list) {
                 jsonList.add(new Json(item));
             }
             return jsonList;
@@ -186,8 +186,7 @@ public class Json {
         try {
             json = new Json(info);
             System.out.println(json);
-            Map<String, String> parsedMap = json.parseJson(new TypeReference<Map<String, String>>() {
-            });
+            Map<String, Json> parsedMap = json.parseJson();
             System.out.println(parsedMap.toString());
         } catch (JsonProcessingException e) {
             System.out.println(e.getMessage());

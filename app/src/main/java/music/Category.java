@@ -10,11 +10,8 @@
 package music;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import api.Json;
 import api.Request;
@@ -38,9 +35,9 @@ public class Category implements MusicSource {
 
     public Category(String categoryId) throws RequestException {
         this.request = User.getInstance().getRequest();
-        this.id = categoryId;
+        this.id = categoryId.toString().replaceAll("\"", "");
         this.playlists = new ArrayList<Playlist>();
-        Json categoryData = this.request.sendGetRequest("browse/categories/" + categoryId);
+        Json categoryData = this.request.sendGetRequest("browse/categories/" + this.id);
         this.name = categoryData.get("name").toString().replaceAll("\"", "");
     }
 
@@ -63,14 +60,11 @@ public class Category implements MusicSource {
         String query = String.format("search?type=playlist&market=%s&q=%s", User.getInstance().getCountry(),
                 this.name.replace(" ", "+"));
         Json playlistsData = new Json(this.request.sendGetRequest(query).get("playlists.items").toString());
-        ArrayList<HashMap<String, Object>> playlistsDataList = playlistsData
-                .parseJson(new TypeReference<ArrayList<HashMap<String, Object>>>() {
-                });
-        for (HashMap<String, Object> playlistData : playlistsDataList) {
-            if (playlistData == null) {
+        for (Json playlistData : playlistsData.parseJsonArray()) {
+            if (playlistData == null || playlistData.get("id") == null) {
                 continue;
             }
-            this.playlists.add(new Playlist(playlistData.get("id").toString()));
+            this.playlists.add(new Playlist(playlistData.get("id").toString().replaceAll("\"", "")));
         }
     }
 
@@ -146,10 +140,8 @@ public class Category implements MusicSource {
         Request request = User.getInstance().getRequest();
         Json categoryList = request.sendGetRequest("browse/categories?locale=pt_" + User.getInstance().getCountry()).get("categories");
         Json items = new Json(categoryList.get("items").toString());
-        ArrayList<LinkedHashMap<String, Object>> categoriesData = items
-                .parseJson(new TypeReference<ArrayList<LinkedHashMap<String, Object>>>() {
-                });
-        for (LinkedHashMap<String, Object> categoryData : categoriesData) {
+        ArrayList<Json> categoriesData = items.parseJsonArray();
+        for (Json categoryData : categoriesData) {
             String categoryId = categoryData.get("id").toString();
             try {
                 Category category = new Category(categoryId);

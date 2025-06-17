@@ -10,9 +10,6 @@
 package music;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import api.Json;
 import exceptions.RequestException;
@@ -52,10 +49,7 @@ public class Playlist implements MusicSource {
         this.numTracks = Integer.parseInt(playlistData.get("tracks.total").toString());
         this.tracks = new ArrayList<>();
 
-        ArrayList<HashMap<String, Object>> tracksData = playlistData.get("tracks.items").parseJson(new TypeReference<ArrayList<HashMap<String, Object>>>() {
-        });
-        ArrayList<Json> tracks = playlistData.get("tracks.items").parseJsonArray();
-        for (Json trackObject : tracks) {
+        for (Json trackObject : playlistData.get("tracks.items").parseJsonArray()) {
             Json trackData = trackObject.get("track");
             if (trackData != null) {
                 Track track = new Track(

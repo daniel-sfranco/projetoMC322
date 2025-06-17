@@ -35,7 +35,7 @@ public class SpotifyToken {
     private LocalDateTime updatedAt;
     private String clientId = "9afeb5fec9854592994aa191f842b529";
     private String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2"; // Eu juro que vou fazer isso ser mais seguro
-    private authUtils utils = new authUtils(this);
+    private authUtils utils = new authUtils();
 
     /**
      * Construtor da classe SpotifyToken.
@@ -236,18 +236,15 @@ public class SpotifyToken {
  */
 class authUtils {
     private String expectedState = null;
-    private SpotifyToken token;
     private CompletableFuture<String> authCodeFuture = new CompletableFuture<>();
     private int port;
 
     /**
      * Construtor da classe authUtils.
-     * Inicializa o token de autenticação do Spotify.
-     * 
-     * @param token O token de autenticação do Spotify.
+     * Gera um estado esperado aleatório para validação
      */
-    public authUtils(SpotifyToken token) {
-        this.token = token;
+    public authUtils() {
+        this.expectedState = UUID.randomUUID().toString();
     }
 
     /**
@@ -269,7 +266,6 @@ class authUtils {
      */
     public void firstLogin(SpotifyToken token)
             throws UnsupportedEncodingException, InterruptedException, ExecutionException {
-        this.expectedState = UUID.randomUUID().toString();
         String clientId = token.getClient_id();
         String redirectUri = "http://localhost:8000/callback";
         this.port = 8000;

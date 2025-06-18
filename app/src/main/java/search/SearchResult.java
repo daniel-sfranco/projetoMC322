@@ -9,6 +9,11 @@ public class SearchResult {
         this.id = id;
     }
 
+	@Override
+	public String toString() {
+		return "SearchResult [name=" + name + ", id=" + id + "]";
+	}
+
 	public String getName() {
 		return name;
 	}

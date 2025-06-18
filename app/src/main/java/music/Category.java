@@ -56,6 +56,13 @@ public class Category implements MusicSource {
         this.playlists = playlists;
     }
 
+    public Category(String id, String name){
+        this.request = User.getInstance().getRequest();
+        this.id = id;
+        this.name = name;
+        this.playlists = new ArrayList<>();
+    }
+
     public void addPlaylists() throws RequestException {
         String query = String.format("search?type=playlist&market=%s&q=%s", User.getInstance().getCountry(),
                 this.name.replace(" ", "+"));

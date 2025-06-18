@@ -10,6 +10,8 @@
 package music;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -56,10 +58,10 @@ public class Category implements MusicSource {
         this.playlists = playlists;
     }
 
-    public Category(String id, String name){
+    public Category(String id, String name) {
         this.request = User.getInstance().getRequest();
-        this.id = id;
-        this.name = name;
+        this.id = id.toString().replaceAll("\"", "");
+        this.name = name.toString().replaceAll("\"", "");
         this.playlists = new ArrayList<>();
     }
 
@@ -71,7 +73,9 @@ public class Category implements MusicSource {
             if (playlistData == null || playlistData.get("id") == null) {
                 continue;
             }
-            this.playlists.add(new Playlist(playlistData.get("id").toString().replaceAll("\"", "")));
+            Playlist actPlaylist = new Playlist(playlistData.get("id").toString().replaceAll("\"", ""));
+            this.playlists.add(actPlaylist);
+            // System.out.println(actPlaylist);
         }
     }
 
@@ -145,23 +149,24 @@ public class Category implements MusicSource {
     public static void main(String[] args) throws RequestException, JsonProcessingException {
         ArrayList<Category> categories = new ArrayList<Category>();
         Request request = User.getInstance().getRequest();
-        Json categoryList = request.sendGetRequest("browse/categories?locale=pt_" + User.getInstance().getCountry()).get("categories");
+        Json categoryList = request
+                .sendGetRequest("browse/categories?limit=50&locale=pt_" + User.getInstance().getCountry())
+                .get("categories");
         Json items = new Json(categoryList.get("items").toString());
         ArrayList<Json> categoriesData = items.parseJsonArray();
+        List<String> excluded = Arrays.asList("0JQ5DAt0tbjZptfcdMSKl3");
         for (Json categoryData : categoriesData) {
-            if(categories.size() == 3) break;
-            String categoryId = categoryData.get("id").toString();
-            try {
-                Category category = new Category(categoryId);
-                categories.add(category);
-                System.out.print(category);
-            } catch (RequestException e) {
-                System.out.println("Erro ao processar a categoria com id " + categoryId);
-                System.out.println(e.getMessage());
+            String id = categoryData.get("id").toString().replaceAll("\"", "");
+            if(excluded.contains(id)){
+                continue;
             }
+            Category category = new Category(id, categoryData.get("name").toString().replaceAll("\"", ""));
+            categories.add(category);
+            System.out.print(category);
         }
         Category example = categories.get(0);
         example.addPlaylists();
-        System.out.println(example);
+        System.out.println("\n" + example.getName());
+        System.out.println(example.getId());
     }
 }

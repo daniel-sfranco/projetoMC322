@@ -81,6 +81,14 @@ public class Playlist implements MusicSource {
         this.tracks = tracks;
     }
 
+    public Playlist(int numTracks, String id, String name, String ownerId){
+        this.numTracks = numTracks;
+        this.id = id;
+        this.name = name;
+        this.ownerId = ownerId;
+        this.tracks = new ArrayList<>();
+    }
+
     /**
      * Retorna o número total de faixas na playlist.
      *

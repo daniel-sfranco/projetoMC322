@@ -16,8 +16,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import exceptions.IncorrectClientFileDataException;
 import exceptions.RequestException;
 import fileManager.RefreshTokenFileManager;
+import fileManager.ClientDataFileManager;
 import spark.Spark;
 
 /**
@@ -33,8 +35,8 @@ public class SpotifyToken {
     private String refresh_token;
     private int expires_in;
     private LocalDateTime updatedAt;
-    private String clientId = "9afeb5fec9854592994aa191f842b529";
-    private String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2"; // Eu juro que vou fazer isso ser mais seguro
+    private String clientId;
+    private String clientSecret;
     private authUtils utils = new authUtils();
 
     /**
@@ -44,9 +46,14 @@ public class SpotifyToken {
      * @param request A instância da classe Request que contém informações sobre a
      *                requisição.
      * @throws RequestException se ocorrer um erro ao atualizar o token.
+     * @throws IncorrectClientFileDataException 
      */
-    public SpotifyToken(Request request) throws RequestException {
+    public SpotifyToken(Request request) throws RequestException{
         this.request = request;
+        ClientDataFileManager credentialManager = new ClientDataFileManager();
+        Map<String, String> credentials = credentialManager.readFile();
+        this.clientId = credentials.get("clientId");
+        this.clientSecret = credentials.get("clientSecret");
         this.refresh_token = RefreshTokenFileManager.readRefreshToken();
         this.refreshToken();
     }

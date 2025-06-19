@@ -13,6 +13,7 @@ import java.io.File;
 
 import api.Json;
 import api.Request;
+import exceptions.IncorrectClientFileDataException;
 import exceptions.RequestException;
 import fileManager.JsonFileManager;
 import fileManager.RefreshTokenFileManager;
@@ -48,8 +49,9 @@ public class User implements Storable {
      * @param explicitContentFilter Um booleano indicando se o filtro de conteúdo
      *                              explícito está ativo para o usuário.
      * @param followers             O número de seguidores do usuário.
+     * @throws IncorrectClientFileDataException 
      */
-    private User() throws RequestException {
+    private User() throws RequestException{
         this.request = new Request();
         Json userData = this.request.sendGetRequest("me");
         this.id = userData.get("id").toString();

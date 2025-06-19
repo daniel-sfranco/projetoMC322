@@ -57,9 +57,10 @@ java {
 }
 
 application {
-        //fileManager.ClientDataFileManager
 
-    mainClass = 'projetofinal.App' // Mude 'com.example' se o seu pacote for diferente
+    // Define the main class for the application.
+    mainClass = 'App'
+
 }
 
 tasks.named('test') {

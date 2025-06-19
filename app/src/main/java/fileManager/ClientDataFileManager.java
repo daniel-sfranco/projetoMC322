@@ -37,7 +37,7 @@ public class ClientDataFileManager {
      */
     private static String CLIENTDATA_FILE_LOCATION = "src" + File.separator +
             "main" + File.separator + "resources" + File.separator +
-            "savedFiles";
+            "savedFiles" + File.separator + "ClientData.che";
 
     /**
      * Escreve o Client ID e o Client Secret no arquivo de dados do cliente.

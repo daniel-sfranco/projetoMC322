@@ -30,3 +30,4 @@ replay_pid*
 build
 
 app/src/main/resources/savedFiles/User/*
+app/src/main/resources/savedFiles/ClientData.che

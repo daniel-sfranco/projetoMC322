@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import exceptions.IncorrectClientFileDataException;
 import exceptions.RequestException;
 
 /**
@@ -23,8 +24,9 @@ public class Request {
      * Inicializa o token de autenticação
      * 
      * @throws RequestException se ocorrer um erro ao inicializar o token.
+     * @throws IncorrectClientFileDataException 
      */
-    public Request() throws RequestException {
+    public Request() throws RequestException{
         this.token = new SpotifyToken(this);
     }
 
@@ -94,8 +96,9 @@ public class Request {
      * 
      * @param args Argumentos da linha de comando (não utilizados).
      * @throws RequestException se ocorrer um erro ao enviar a requisição.
+     * @throws IncorrectClientFileDataException 
      */
-    public static void main(String[] args) throws RequestException {
+    public static void main(String[] args) throws RequestException, IncorrectClientFileDataException {
         Request request = new Request();
         Json response = request.sendGetRequest("me");
         System.out.println(response);

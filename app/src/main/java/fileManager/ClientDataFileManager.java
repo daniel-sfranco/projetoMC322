@@ -46,8 +46,10 @@ public class ClientDataFileManager {
      * @param clientId     O ID do cliente a ser salvo.
      * @param clientSecret O segredo do cliente a ser salvo.
      */
-    public void writeFile(String clientId, String clientSecret) {
+    public void writeFile() {
         try {
+            String clientId = "9afeb5fec9854592994aa191f842b529";
+            String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";
             PrintWriter writer = new PrintWriter(
                     ClientDataFileManager.CLIENTDATA_FILE_LOCATION, "UTF-8");
             writer.write("clientId:" + clientId);
@@ -219,9 +221,7 @@ public class ClientDataFileManager {
      */
     public static void main(String[] args) {
         ClientDataFileManager fileManager = new ClientDataFileManager();
-        String clientId = "9afeb5fec9854592994aa191f842b529";
-        String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";
-        fileManager.writeFile(clientId, clientSecret);
+        fileManager.writeFile();
 
         try {
             // fileManager.writeClientID("novo ID");

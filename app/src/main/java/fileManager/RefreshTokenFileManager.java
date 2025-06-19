@@ -65,11 +65,11 @@ public class RefreshTokenFileManager {
             reader.close();
             return refreshToken;
         } catch (FileNotFoundException e) {
-            System.out.println("Arquivo não encontrado.");
-            e.printStackTrace();
+            ClientDataFileManager fileManager = new ClientDataFileManager();
+            fileManager.writeFile();
         }
 
-        // Caso tenha ocorrido uma excessão, retorna null
+        // Caso tenha ocorrido uma exceção, retorna null
         return null;
     }
 

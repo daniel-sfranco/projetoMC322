@@ -29,5 +29,4 @@ replay_pid*
 # Ignore Gradle build output directory
 build
 
-*.che
-app/src/main/resources/savedFiles/Users
+app/src/main/resources/savedFiles/User/*

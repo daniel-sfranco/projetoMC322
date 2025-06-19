@@ -38,19 +38,18 @@ public class SearchManager {
 	}
 
 	public static void main(String[] args) {
-		TrackResearcher  trackResearcher = new TrackResearcher();
-		SearchManager searchManagerTrack = new SearchManager(trackResearcher);
-		// ArrayList<SearchResult> trackResults = searchManagerTrack.search("Bohemian Rhapsody");
-// 
-		// for (SearchResult result : trackResults) {
-			// System.out.println(result);
-		// }
+		GenreResearcher  genreResearcher = new GenreResearcher();
+		SearchManager searchManagerGenre = new SearchManager(genreResearcher);
+		ArrayList<SearchResult> genreResults = searchManagerGenre.search("cristão");
+
+		for (SearchResult result : genreResults) {
+			System.out.println(result);
+		}
 	
-		ArtistResearcher  artistResearcher = new ArtistResearcher();
-		SearchManager searchManagerArtist = new SearchManager(artistResearcher);
+		// ArtistResearcher  artistResearcher = new ArtistResearcher();
+		// SearchManager searchManagerArtist = new SearchManager(artistResearcher);
 		
 		// ArrayList<SearchResult> artistResults = searchManagerArtist.search("Frank Si");
-// 
 		// for (SearchResult result : artistResults) {
 			// System.out.println(result);
 		// }

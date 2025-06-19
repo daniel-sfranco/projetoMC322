@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class SearchManager {
     public SearchManager() {}
 
-    private String QueryURLEncode(String query) {
+    private static String QueryURLEncode(String query) {
         try {
             return URLEncoder.encode(query, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
@@ -17,7 +17,7 @@ public class SearchManager {
         return null;
     }
 
-    public ArrayList<SearchResult> search(String query, String type) {
+    public static ArrayList<SearchResult> search(String query, String type) {
         ArrayList<SearchResult> results = new ArrayList<>();
         String encodedQuery = QueryURLEncode(query);
         Researcher researcher;
@@ -43,8 +43,7 @@ public class SearchManager {
     }
 
     public static void main(String[] args) {
-        SearchManager searchManager = new SearchManager();
-        ArrayList<SearchResult> results = searchManager.search("pop", "playlist");
+        ArrayList<SearchResult> results = SearchManager.search("pop", "playlist");
         for (SearchResult result : results) {
             System.out.println(result);
         }

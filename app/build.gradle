@@ -57,11 +57,18 @@ java {
 }
 
 application {
-    // Define the main class for the application.
-    mainClass = 'App'
+    mainClass = 'projetofinal.App' // Mude 'com.example' se o seu pacote for diferente
 }
 
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+javafx {
+    // Versão do JavaFX que queremos usar
+    version = "17.0.10" // Pode usar versões mais recentes, como "21"
+    
+    // Módulos do JavaFX que nossa aplicação precisa
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }

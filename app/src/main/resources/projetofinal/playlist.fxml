@@ -30,11 +30,14 @@
             </Button>
          </children>
       </HBox>
-      <ImageView fitHeight="160.0" fitWidth="1189.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@/Img/banner.png" />
-         </image>
-      </ImageView>
+     <HBox prefWidth="1186.0">
+         <ImageView fitHeight="160.0" fitWidth="1186.0" pickOnBounds="true" preserveRatio="false">
+            <image>
+               <Image url="@/Img/banner.png" />
+            </image>
+         </ImageView>
+      </HBox>
+
       <HBox alignment="CENTER" prefHeight="79.0" prefWidth="1060.0" spacing="8.0">
          <padding>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
@@ -59,11 +62,13 @@
             <Insets left="25.0" right="25.0" />
          </padding>
          <children>
-            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.5, 0, 0);">
+
+            <!-- PLAYLISTS -->
+            <VBox layoutX="69.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.5, 0, 0);">
                <children>
                   <HBox alignment="CENTER" prefHeight="49.0" prefWidth="188.0">
                      <children>
-                        <Label alignment="CENTER" prefHeight="16.0" prefWidth="161.0" text="Playlists" textFill="#333333">
+                        <Label alignment="CENTER" prefHeight="16.0" prefWidth="161.0" text="Playlist" textFill="#333333">
                            <font>
                               <Font name="System Bold Italic" size="18.0" />
                            </font>
@@ -72,23 +77,22 @@
                   </HBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                      <children>
-                        <TextField promptText="Digite aqui..." style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-image-width: 0;" />
-                        <ScrollPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="190.0" prefWidth="150.0" VBox.vgrow="ALWAYS">
+                        <TextField fx:id="playlistTextField" promptText="Digite aqui..." style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-image-width: 0;" />
+                        <ScrollPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="150.0" VBox.vgrow="ALWAYS">
                            <content>
-                              <FlowPane hgap="8.0" prefHeight="190.0" prefWidth="149.0" style="-fx-background-color: transparent;" vgap="8.0">
-                                 <children>
-                                    <VBox prefHeight="151.0" prefWidth="149.0" />
-                                 </children>
-                              </FlowPane>
+                              <FlowPane fx:id="playlistAdicionadosFlow" hgap="8.0" prefHeight="140.0" prefWidth="149.0" style="-fx-background-color: transparent;" vgap="8.0" />
                            </content>
                         </ScrollPane>
+                        <Button onAction="#adicionarPlaylist" text="+" style="-fx-background-color: #FF1AA8; -fx-text-fill: white; -fx-font-size: 18; -fx-background-radius: 10;" />
                      </children>
                   </VBox>
                </children>
                <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" />
+                  <Insets bottom="14.0" left="14.0" right="14.0" />
                </padding>
             </VBox>
+ 
+            <!-- GENERO -->
             <VBox layoutX="69.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.5, 0, 0);">
                <children>
                   <HBox alignment="CENTER" prefHeight="49.0" prefWidth="188.0">
@@ -102,16 +106,13 @@
                   </HBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                      <children>
-                        <TextField promptText="Digite aqui..." style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-image-width: 0;" />
-                        <ScrollPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="190.0" prefWidth="150.0" VBox.vgrow="ALWAYS">
+                        <TextField fx:id="generoTextField" promptText="Digite aqui..." style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-image-width: 0;" />
+                        <ScrollPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="150.0" VBox.vgrow="ALWAYS">
                            <content>
-                              <FlowPane hgap="8.0" prefHeight="190.0" prefWidth="149.0" style="-fx-background-color: transparent;" vgap="8.0">
-                                 <children>
-                                    <VBox prefHeight="151.0" prefWidth="149.0" />
-                                 </children>
-                              </FlowPane>
+                              <FlowPane fx:id="generosAdicionadosFlow" hgap="8.0" prefHeight="140.0" prefWidth="149.0" style="-fx-background-color: transparent;" vgap="8.0" />
                            </content>
                         </ScrollPane>
+                        <Button onAction="#adicionarGenero" text="+" style="-fx-background-color: #FF1AA8; -fx-text-fill: white; -fx-font-size: 18; -fx-background-radius: 10;" />
                      </children>
                   </VBox>
                </children>
@@ -119,105 +120,96 @@
                   <Insets bottom="14.0" left="14.0" right="14.0" />
                </padding>
             </VBox>
-            <StackPane prefHeight="150.0" prefWidth="200.0">
+            
+
+            <!-- ARTISTAS -->
+            <VBox layoutX="69.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.5, 0, 0);">
                <children>
-                  <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.5, 0, 0);;">
+                  <HBox alignment="CENTER" prefHeight="49.0" prefWidth="188.0">
                      <children>
-                        <HBox prefHeight="50.0" prefWidth="200.0">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="16.0" prefWidth="199.0" text="Artistas">
-                                 <font>
-                                    <Font name="System Bold Italic" size="18.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets top="5.0" />
-                                 </padding>
-                              </Label>
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <TextField promptText="Digite aqui..." style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-image-width: 0;">
-                           <VBox.margin>
-                              <Insets left="15.0" right="15.0" top="10.0" />
-                           </VBox.margin>
-                        </TextField>
+                        <Label alignment="CENTER" prefHeight="16.0" prefWidth="161.0" text="Artistas" textFill="#333333">
+                           <font>
+                              <Font name="System Bold Italic" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                     <children>
+                        <TextField fx:id="artistasTextField" promptText="Digite aqui..." style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-image-width: 0;" />
+                        <ScrollPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="150.0" VBox.vgrow="ALWAYS">
+                           <content>
+                              <FlowPane fx:id="artistasAdicionadosFlow" hgap="8.0" prefHeight="140.0" prefWidth="149.0" style="-fx-background-color: transparent;" vgap="8.0" />
+                           </content>
+                        </ScrollPane>
+                        <Button onAction="#adicionarArtista" text="+" style="-fx-background-color: #FF1AA8; -fx-text-fill: white; -fx-font-size: 18; -fx-background-radius: 10;" />
                      </children>
                   </VBox>
-                  <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="33.0" style="-fx-background-color: FF1AA8; -fx-border-radius: 50; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: white; -fx-pref-height: 45; -fx-pref-width: 45;" text="+" StackPane.alignment="BOTTOM_CENTER">
-                     <StackPane.margin>
-                        <Insets bottom="15.0" />
-                     </StackPane.margin>
-                  </Button>
                </children>
-            </StackPane>
-            <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0">
+               <padding>
+                  <Insets bottom="14.0" left="14.0" right="14.0" />
+               </padding>
+            </VBox>
+ 
+
+            <!-- ALBUM -->
+            <VBox layoutX="69.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.5, 0, 0);">
                <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.5, 0, 0);;">
+                  <HBox alignment="CENTER" prefHeight="49.0" prefWidth="188.0">
                      <children>
-                        <HBox prefHeight="50.0" prefWidth="200.0">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="16.0" prefWidth="199.0" text="Álbum">
-                                 <font>
-                                    <Font name="System Bold Italic" size="18.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets top="5.0" />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <TextField promptText="Digite aqui..." style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-image-width: 0;">
-                           <VBox.margin>
-                              <Insets left="15.0" right="15.0" top="10.0" />
-                           </VBox.margin>
-                        </TextField>
+                        <Label alignment="CENTER" prefHeight="16.0" prefWidth="161.0" text="Álbum" textFill="#333333">
+                           <font>
+                              <Font name="System Bold Italic" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                     <children>
+                        <TextField fx:id="albumTextField" promptText="Digite aqui..." style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-image-width: 0;" />
+                        <ScrollPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="150.0" VBox.vgrow="ALWAYS">
+                           <content>
+                              <FlowPane fx:id="albumAdicionadosFlow" hgap="8.0" prefHeight="140.0" prefWidth="149.0" style="-fx-background-color: transparent;" vgap="8.0" />
+                           </content>
+                        </ScrollPane>
+                        <Button onAction="#adicionarAlbum" text="+" style="-fx-background-color: #FF1AA8; -fx-text-fill: white; -fx-font-size: 18; -fx-background-radius: 10;" />
                      </children>
                   </VBox>
-                  <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="33.0" style="-fx-background-color: FF1AA8; -fx-border-radius: 50; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: white; -fx-pref-height: 45; -fx-pref-width: 45;" text="+" StackPane.alignment="BOTTOM_CENTER">
-                     <StackPane.margin>
-                        <Insets bottom="15.0" />
-                     </StackPane.margin>
-                  </Button>
                </children>
-            </StackPane>
-            <StackPane layoutX="538.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0">
+               <padding>
+                  <Insets bottom="14.0" left="14.0" right="14.0" />
+               </padding>
+            </VBox>
+       
+            <!-- MUSICAS -->
+            <VBox layoutX="69.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.5, 0, 0);">
                <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.5, 0, 0);;">
+                  <HBox alignment="CENTER" prefHeight="49.0" prefWidth="188.0">
                      <children>
-                        <HBox prefHeight="50.0" prefWidth="200.0">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="16.0" prefWidth="199.0" text="Músicas">
-                                 <font>
-                                    <Font name="System Bold Italic" size="18.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets top="5.0" />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <TextField promptText="Digite aqui..." style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-image-width: 0;">
-                           <VBox.margin>
-                              <Insets left="15.0" right="15.0" top="10.0" />
-                           </VBox.margin>
-                        </TextField>
+                        <Label alignment="CENTER" prefHeight="16.0" prefWidth="161.0" text="Música" textFill="#333333">
+                           <font>
+                              <Font name="System Bold Italic" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                     <children>
+                        <TextField fx:id="musicaTextField" promptText="Digite aqui..." style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-image-width: 0;" />
+                        <ScrollPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="150.0" VBox.vgrow="ALWAYS">
+                           <content>
+                              <FlowPane fx:id="musicaAdicionadosFlow" hgap="8.0" prefHeight="140.0" prefWidth="149.0" style="-fx-background-color: transparent;" vgap="8.0" />
+                           </content>
+                        </ScrollPane>
+                        <Button onAction="#adicionarMusica" text="+" style="-fx-background-color: #FF1AA8; -fx-text-fill: white; -fx-font-size: 18; -fx-background-radius: 10;" />
                      </children>
                   </VBox>
-                  <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="33.0" style="-fx-background-color: FF1AA8; -fx-border-radius: 50; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: white; -fx-pref-height: 45; -fx-pref-width: 45;" text="+" StackPane.alignment="BOTTOM_CENTER">
-                     <StackPane.margin>
-                        <Insets bottom="15.0" />
-                     </StackPane.margin>
-                  </Button>
                </children>
-            </StackPane>
+               <padding>
+                  <Insets bottom="14.0" left="14.0" right="14.0" />
+               </padding>
+            </VBox>
+            
          </children>
       </HBox>
       <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="125.0" prefWidth="1185.0">

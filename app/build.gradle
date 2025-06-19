@@ -57,6 +57,8 @@ java {
 }
 
 application {
+        //fileManager.ClientDataFileManager
+
     mainClass = 'projetofinal.App' // Mude 'com.example' se o seu pacote for diferente
 }
 

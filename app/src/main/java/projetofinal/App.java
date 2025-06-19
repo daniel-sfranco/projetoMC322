@@ -14,9 +14,11 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("playlist"), 820, 600);
+        scene = new Scene(loadFXML("playlist"), 1186, 706);
         stage.setScene(scene);
         stage.setTitle("Montar Playlist");
+        stage.setResizable(false); // impedir que o usuário redimensione a janela (opcional)
+
         stage.show();
     }
 

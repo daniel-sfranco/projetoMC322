@@ -18,10 +18,13 @@
                 <Button fx:id="btn_acessar" prefHeight="42.0" prefWidth="102.0 " style="-fx-background-color: #FF1AA8; -fx-text-fill: white;" text="Acessar" />
             </children>
         </HBox>
-      <ImageView fitHeight="161.0" fitWidth="1063.0" pickOnBounds="true">
-         <image>
-            <Image url="@../Img/banner.png" />
-         </image>
+      <HBox prefWidth="1186.0">
+         <ImageView fitHeight="160.0" fitWidth="1186.0" pickOnBounds="true" preserveRatio="false">
+            <image>
+               <Image url="@/Img/banner.png" />
+            </image>
+         </ImageView>
+      </HBox>
       </ImageView>
       <HBox alignment="CENTER" prefHeight="79.0" prefWidth="1060.0" spacing="8.0">
          <padding>

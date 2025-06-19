@@ -6,11 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class SearchManager {
-    private Researcher researcher;
-
-    public SearchManager(Researcher researcher) {
-        this.researcher = researcher;
-    }
+    public SearchManager() {}
 
     private String QueryURLEncode(String query) {
         try {
@@ -21,28 +17,35 @@ public class SearchManager {
         return null;
     }
 
-    public ArrayList<SearchResult> search(String query) {
+    public ArrayList<SearchResult> search(String query, String type) {
         ArrayList<SearchResult> results = new ArrayList<>();
         String encodedQuery = QueryURLEncode(query);
-        results = this.researcher.search(encodedQuery);
-
+        Researcher researcher;
+        switch (type) {
+            case "genre":
+                researcher = new GenreResearcher();
+                break;
+            case "album":
+                researcher = new AlbumResearcher();
+                break;
+            case "artist":
+                researcher = new ArtistResearcher();
+                break;
+            case "playlist":
+                researcher = new PlaylistResearcher();
+                break;
+            default:
+                researcher = new TrackResearcher();
+                break;
+        }
+        results = researcher.search(encodedQuery);
         return results;
     }
 
-    public Researcher getResearcher() {
-        return researcher;
-    }
-
-    public void setResearcher(Researcher researcher) {
-        this.researcher = researcher;
-    }
-
     public static void main(String[] args) {
-        GenreResearcher genreResearcher = new GenreResearcher();
-        SearchManager searchManagerGenre = new SearchManager(genreResearcher);
-        ArrayList<SearchResult> genreResults = searchManagerGenre.search("pop");
-
-        for (SearchResult result : genreResults) {
+        SearchManager searchManager = new SearchManager();
+        ArrayList<SearchResult> results = searchManager.search("pop", "playlist");
+        for (SearchResult result : results) {
             System.out.println(result);
         }
     }

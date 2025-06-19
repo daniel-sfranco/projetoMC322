@@ -34,8 +34,8 @@ public class PlaylistResearcher implements Researcher {
 
     public static void main(String[] args) {
         PlaylistResearcher playlistResearcher = new PlaylistResearcher();
-        SearchManager searchManagerPlaylist = new SearchManager(playlistResearcher);
-        ArrayList<SearchResult> playlistResults = searchManagerPlaylist.search("guerra e paz");
+        SearchManager searchManagerPlaylist = new SearchManager();
+        ArrayList<SearchResult> playlistResults = searchManagerPlaylist.search("", "playlist");
 
         for (SearchResult result : playlistResults) {
             System.out.println(result);

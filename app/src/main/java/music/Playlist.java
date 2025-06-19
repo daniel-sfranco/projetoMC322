@@ -24,6 +24,7 @@ import user.User;
  * fonte de música.
  * 
  * @author Vinícius de Oliveira - 251527
+ * @author Daniel Soares Franco - 259083
  */
 public class Playlist implements MusicSource {
     private int numTracks;

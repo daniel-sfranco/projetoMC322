@@ -32,8 +32,8 @@ public class AlbumResearcher implements Researcher {
 
     public static void main(String[] args) {
         AlbumResearcher albumResearcher = new AlbumResearcher();
-        SearchManager searchManagerAlbum = new SearchManager(albumResearcher);
-        ArrayList<SearchResult> albumResults = searchManagerAlbum.search("guerra e paz");
+        SearchManager searchManagerAlbum = new SearchManager();
+        ArrayList<SearchResult> albumResults = searchManagerAlbum.search("guerra e paz", "album");
 
         for (SearchResult result : albumResults) {
             System.out.println(result);

@@ -33,8 +33,8 @@ public class GenreResearcher implements Researcher {
 
     public static void main(String[] args) {
         GenreResearcher genreResearcher = new GenreResearcher();
-        SearchManager searchManagerGenre = new SearchManager(genreResearcher);
-        ArrayList<SearchResult> genreResults = searchManagerGenre.search("pop");
+        SearchManager searchManagerGenre = new SearchManager();
+        ArrayList<SearchResult> genreResults = searchManagerGenre.search("pop", "genre");
 
         for (SearchResult result : genreResults) {
             System.out.println(result);

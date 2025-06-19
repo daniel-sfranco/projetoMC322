@@ -225,7 +225,7 @@ public class ClientDataFileManager {
 
         try {
             // fileManager.writeClientID("novo ID");
-            // fileManager.writeClientSecret("novo Screcret");
+            // fileManager.writeClientSecret("novo Secret");
 
             Map<String, String> clientData = fileManager.readFile();
             System.out.println("id: " + clientData.get("clientId"));

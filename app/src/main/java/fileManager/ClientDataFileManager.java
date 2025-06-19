@@ -46,8 +46,10 @@ public class ClientDataFileManager {
      * @param clientId     O ID do cliente a ser salvo.
      * @param clientSecret O segredo do cliente a ser salvo.
      */
-    public void writeFile(String clientId, String clientSecret) {
+    public void writeFile() {
         try {
+            String clientId = "9afeb5fec9854592994aa191f842b529";
+            String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";
             PrintWriter writer = new PrintWriter(
                     ClientDataFileManager.CLIENTDATA_FILE_LOCATION, "UTF-8");
             writer.write("clientId:" + clientId);
@@ -169,8 +171,7 @@ public class ClientDataFileManager {
      * @throws IncorrectClientFileDataException Se o arquivo estiver incompleto ou
      *                                          com formatação incorreta.
      */
-    public Map<String, String> readFile()
-            throws IncorrectClientFileDataException {
+    public Map<String, String> readFile() {
 
         Map<String, String> clientData = new HashMap<String, String>();
         clientData.put("clientId", null);
@@ -192,20 +193,11 @@ public class ClientDataFileManager {
                 }
             } while (reader.hasNextLine());
             reader.close();
-
-            // É necessário que todas as informações estejam no arquivo.
-            if (clientData.get("clientId") == null ||
-                    clientData.get("clientSecret") == null) {
-                throw new IncorrectClientFileDataException(
-                        "Arquivo incompleto ou com formatação incorreta.");
-            }
-
             return clientData;
         } catch (FileNotFoundException e) {
-            System.out.println("Arquivo não encontrado.");
-            e.printStackTrace();
+            writeFile();
+            return readFile();
         }
-        return null;
     }
 
     /**
@@ -219,20 +211,11 @@ public class ClientDataFileManager {
      */
     public static void main(String[] args) {
         ClientDataFileManager fileManager = new ClientDataFileManager();
-        String clientId = "9afeb5fec9854592994aa191f842b529";
-        String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";
-        fileManager.writeFile(clientId, clientSecret);
+        fileManager.writeFile();
 
-        try {
-            // fileManager.writeClientID("novo ID");
-            // fileManager.writeClientSecret("novo Screcret");
-
-            Map<String, String> clientData = fileManager.readFile();
-            System.out.println("id: " + clientData.get("clientId"));
-            System.out.println("segredo: " + clientData.get("clientSecret"));
-        } catch (IncorrectClientFileDataException e) {
-            System.out.println(e.getMessage());
-        }
+        Map<String, String> clientData = fileManager.readFile();
+        System.out.println("id: " + clientData.get("clientId"));
+        System.out.println("segredo: " + clientData.get("clientSecret"));
 
     }
 }

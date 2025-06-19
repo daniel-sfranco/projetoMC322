@@ -9,19 +9,19 @@ import user.User;
 
 public class TrackResearcher implements Researcher {
 
-    public ArrayList<SearchResult> search(String query){
+    public ArrayList<SearchResult> search(String query) {
         Request request = User.getInstance().getRequest();
         ArrayList<SearchResult> results = new ArrayList<>();
-        
-        try{
-            Json searchData = request.sendGetRequest("search?q="+ query + "&type=track");
+
+        try {
+            Json searchData = request.sendGetRequest("search?q=" + query + "&type=track");
             ArrayList<Json> tracksData = searchData.get("tracks.items").parseJsonArray();
 
             for (Json trackData : tracksData) {
                 SearchResult currenResult = new SearchResult(
-                    trackData.get("name").toString(),
-                    trackData.get("id").toString());
-                
+                        trackData.get("name").toString(),
+                        trackData.get("id").toString());
+
                 results.add(currenResult);
             }
         } catch (RequestException e) {
@@ -31,9 +31,13 @@ public class TrackResearcher implements Researcher {
         return results;
     }
 
-
     public static void main(String[] args) {
         TrackResearcher trackResearcher = new TrackResearcher();
-        trackResearcher.search("coisa");
+        SearchManager searchManagerTrack = new SearchManager(trackResearcher);
+        ArrayList<SearchResult> trackResults = searchManagerTrack.search("Lá(r)");
+
+        for (SearchResult result : trackResults) {
+            System.out.println(result);
+        }
     }
 }

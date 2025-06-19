@@ -12,7 +12,7 @@ public class GenreResearcher implements Researcher {
             "main" + File.separator + "resources" + File.separator +
             "savedFiles" + File.separator + "genres.che";
 
-    public ArrayList<SearchResult> search(String query){
+    public ArrayList<SearchResult> search(String query) {
         ArrayList<SearchResult> results = new ArrayList<>();
         query = URLDecoder.decode(query, StandardCharsets.UTF_8);
         try {
@@ -20,14 +20,24 @@ public class GenreResearcher implements Researcher {
             Scanner reader = new Scanner(file);
             do {
                 String[] line = reader.nextLine().split(";");
-                if(line[1].toLowerCase().contains(query.toLowerCase())){
+                if (line[1].toLowerCase().contains(query.toLowerCase())) {
                     results.add(new SearchResult(line[1], line[0]));
                 }
-            } while(reader.hasNextLine());
+            } while (reader.hasNextLine());
             reader.close();
-        } catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
         return results;
+    }
+
+    public static void main(String[] args) {
+        GenreResearcher genreResearcher = new GenreResearcher();
+        SearchManager searchManagerGenre = new SearchManager(genreResearcher);
+        ArrayList<SearchResult> genreResults = searchManagerGenre.search("pop");
+
+        for (SearchResult result : genreResults) {
+            System.out.println(result);
+        }
     }
 }

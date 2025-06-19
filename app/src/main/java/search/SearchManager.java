@@ -40,17 +40,17 @@ public class SearchManager {
 	public static void main(String[] args) {
 		GenreResearcher  genreResearcher = new GenreResearcher();
 		SearchManager searchManagerGenre = new SearchManager(genreResearcher);
-		ArrayList<SearchResult> genreResults = searchManagerGenre.search("cristão");
+		ArrayList<SearchResult> genreResults = searchManagerGenre.search("pop");
 
 		for (SearchResult result : genreResults) {
 			System.out.println(result);
 		}
 	
-		// ArtistResearcher  artistResearcher = new ArtistResearcher();
-		// SearchManager searchManagerArtist = new SearchManager(artistResearcher);
+		// GenreResearcher genreResearcher = new GenreResearcher();
+		// SearchManager searchManagerGenre= new SearchManager(genreResearcher);
 		
-		// ArrayList<SearchResult> artistResults = searchManagerArtist.search("Frank Si");
-		// for (SearchResult result : artistResults) {
+		// ArrayList<SearchResult> genreResults = searchManagerArtist.search("Frank Si");
+		// for (SearchResult result : genreResults) {
 			// System.out.println(result);
 		// }
 

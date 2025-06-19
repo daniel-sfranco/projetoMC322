@@ -9,26 +9,22 @@
 
 package music;
 
-import java.util.ArrayList;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
 import api.Json;
 import api.Request;
 import exceptions.RequestException;
+import user.User;
 
 /**
  * Representa uma faixa (música) do Spotify.
  * Contém informações como duração, nome, ID, artistas, álbum e se é explícita.
  * 
  * @author Vinícius de Oliveira - 251527
+ * @author Daniel Soares Franco - 259083
  */
 public class Track {
+    private String id;
     private int duration; // Duração em milissegundos
     private String name;
-    private String id;
-    private ArrayList<String> artistsIds;
-    private String albumId;
     private Boolean explicit;
     private Request request;
 
@@ -40,24 +36,18 @@ public class Track {
      * @param id O ID único da faixa no Spotify.
      * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
      */
-    public Track(String id) throws RequestException {
-        this.request = new Request();
-        Json trackData = this.request.sendGetRequest("tracks/" + id);
-        System.out.println(trackData.toString());
+    public Track(String id){
+        this.request = User.getInstance().getRequest();
+        Json trackData;
+        try {
+            trackData = this.request.sendGetRequest("tracks/" + id);
+        } catch (RequestException e) {
+            System.out.println("Erro ao obter dados da faixa: " + e.getMessage());
+            return;
+        }
         this.id = id;
         this.name = trackData.get("name").toString();
-
-        JsonNode artistsData = (JsonNode) trackData.get("artists");
-        ArrayList<String> artistsIds = new ArrayList<String>();
-
-        for (JsonNode artistData : artistsData) {
-            artistsIds.add(artistData.get("id").toString());
-        }
-
-        this.artistsIds = artistsIds;
-        this.albumId = trackData.get("album.id").toString();
-
-        this.explicit = (Boolean) trackData.get("explicit");
+        this.explicit = trackData.get("explicit").parseJson(Boolean.class);
     }
 
     /**
@@ -70,12 +60,11 @@ public class Track {
      * @param albumId    O id do álbum ao qual a faixa pertence.
      * @param explicit   Um booleano indicando se a faixa é explícita.
      */
-    public Track(int duration, String name, String id, ArrayList<String> artistsIds, String albumId, Boolean explicit) {
+    public Track(int duration, String name, String id, Boolean explicit) {
+        this.request = User.getInstance().getRequest();
         this.duration = duration;
         this.name = name;
         this.id = id;
-        this.artistsIds = artistsIds;
-        this.albumId = albumId;
         this.explicit = explicit;
     }
 
@@ -107,29 +96,25 @@ public class Track {
     }
 
     /**
-     * Retorna a lista de ids de artistas associados à faixa.
-     *
-     * @return Uma ArrayList de ids de artistas.
-     */
-    public ArrayList<String> getArtistsIds() {
-        return artistsIds;
-    }
-
-    /**
-     * Retorna o id do álbum ao qual a faixa pertence.
-     *
-     * @return O id do álbum.
-     */
-    public String getAlbumId() {
-        return albumId;
-    }
-
-    /**
      * Retorna um booleano indicando se a faixa é explícita.
      *
      * @return True se a faixa for explícita, false caso contrário.
      */
     public Boolean getExplicit() {
         return explicit;
+    }
+
+    /**
+     * Retorna uma representação em string da faixa.
+     *
+     * @return Uma string contendo o ID, duração, nome e se é explícita.
+     */
+    public String toString() {
+        return "\n      Track [id=" + id + ", duration=" + duration + ", name=" + name + ", explicit=" + explicit + "]";
+    }
+
+    public static void main(String[] args) {
+        Track dominion = new Track("08y95NOBjAM41gJfSqTogE");
+        System.out.println(dominion);
     }
 }

@@ -86,7 +86,6 @@ public class Request {
         Map<String, String> headers = Map.of(
                 "Authorization", accessToken,
                 "Content-Type", "application/json");
-        System.out.println(headers);
         return new Json(HttpClientUtil.sendGetRequest(baseUrl + url, headers));
     }
 

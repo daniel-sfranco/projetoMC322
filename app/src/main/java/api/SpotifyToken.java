@@ -35,7 +35,7 @@ public class SpotifyToken {
     private LocalDateTime updatedAt;
     private String clientId = "9afeb5fec9854592994aa191f842b529";
     private String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2"; // Eu juro que vou fazer isso ser mais seguro
-    private authUtils utils = new authUtils(this);
+    private authUtils utils = new authUtils();
 
     /**
      * Construtor da classe SpotifyToken.
@@ -213,13 +213,13 @@ public class SpotifyToken {
                             + response.body());
                 }
                 Json responseJson = new Json(response.body());
-                String tempToken = responseJson.get("access_token").toString();
-                this.access_token = "Bearer " + tempToken.substring(1, tempToken.length() - 1);
-                this.expires_in = Integer.parseInt(responseJson.get("expires_in").toString());
+                this.access_token = "Bearer " + responseJson.get("access_token").toString().replaceAll("\"", "");
+                this.expires_in = Integer.parseInt(responseJson.get("expires_in").toString().replaceAll("\"", ""));
                 this.updatedAt = LocalDateTime.now();
                 return this.access_token;
             } catch (Exception e) {
                 System.err.println("Erro ao atualizar o token: " + e.getMessage());
+                e.printStackTrace();
                 return null;
             }
         }
@@ -236,18 +236,15 @@ public class SpotifyToken {
  */
 class authUtils {
     private String expectedState = null;
-    private SpotifyToken token;
     private CompletableFuture<String> authCodeFuture = new CompletableFuture<>();
     private int port;
 
     /**
      * Construtor da classe authUtils.
-     * Inicializa o token de autenticação do Spotify.
-     * 
-     * @param token O token de autenticação do Spotify.
+     * Gera um estado esperado aleatório para validação
      */
-    public authUtils(SpotifyToken token) {
-        this.token = token;
+    public authUtils() {
+        this.expectedState = UUID.randomUUID().toString();
     }
 
     /**
@@ -269,11 +266,10 @@ class authUtils {
      */
     public void firstLogin(SpotifyToken token)
             throws UnsupportedEncodingException, InterruptedException, ExecutionException {
-        this.expectedState = UUID.randomUUID().toString();
         String clientId = token.getClient_id();
         String redirectUri = "http://localhost:8000/callback";
         this.port = 8000;
-        String scopes = "playlist-modify-public playlist-modify-private user-read-private user-read-email";
+        String scopes = "playlist-modify-public playlist-modify-private user-read-private user-read-email user-follow-read";
         String encodedRedirectUri = URLEncoder.encode(redirectUri, StandardCharsets.UTF_8.toString());
         String encodedScopes = URLEncoder.encode(scopes, StandardCharsets.UTF_8.toString());
 
@@ -417,8 +413,8 @@ class authUtils {
             Json responseBody = new Json(response.body());
             String tempToken = responseBody.get("access_token").toString();
             String tempRefreshToken = responseBody.get("refresh_token").toString();
-            token.setAccess_token("Bearer " + tempToken.substring(1, tempToken.length() - 1));
-            token.setRefresh_token(tempRefreshToken.substring(1, tempRefreshToken.length() - 1));
+            token.setAccess_token("Bearer " + tempToken.replaceAll("\"", ""));
+            token.setRefresh_token(tempRefreshToken.replaceAll("\"", ""));
             token.setExpires_in(Integer.parseInt(responseBody.get("expires_in").toString()));
             token.setUpdatedAt(LocalDateTime.now());
             RefreshTokenFileManager.writeRefreshtoken(token.getRefresh_token());

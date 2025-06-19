@@ -91,10 +91,39 @@ public class Json {
      * 
      * @return o Map resultante, ou null em caso de erro
      */
-    public Map<String, Object> parseJson() {
+    public Map<String, Json> parseJson() {
         try {
-            return mapper.readValue(this.value, new TypeReference<Map<String, Object>>() {
+            Map<String, Object> map = mapper.readValue(this.value, new TypeReference<Map<String, Object>>() {
             });
+            Map<String, Json> jsonMap = new java.util.HashMap<>();
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                jsonMap.put(entry.getKey(), new Json(entry.getValue()));
+            }
+            return jsonMap;
+        } catch (JsonMappingException e) {
+            System.out.println("Erro de mapeamento JSON: " + e.getMessage());
+        } catch (JsonProcessingException e) {
+            System.out.println("Erro ao processar JSON: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro desconhecido: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Converte o valor armazenado para um ArrayList de objetos Json.
+     * 
+     * @return o ArrayList resultante, ou null em caso de erro
+     */
+    public ArrayList<Json> parseJsonArray() {
+        try {
+            ArrayList<Object> list = mapper.readValue(this.value, new TypeReference<ArrayList<Object>>() {
+            });
+            ArrayList<Json> jsonList = new ArrayList<>();
+            for (Object item : list) {
+                jsonList.add(new Json(item));
+            }
+            return jsonList;
         } catch (JsonMappingException e) {
             System.out.println("Erro de mapeamento JSON: " + e.getMessage());
         } catch (JsonProcessingException e) {
@@ -111,7 +140,7 @@ public class Json {
      * @param propertyName o nome da propriedade a ser lida
      * @return o valor da propriedade, ou null em caso de erro
      */
-    public Object get(String propertyName) {
+    public Json get(String propertyName) {
         try {
             ArrayList<String> propertyPath = new ArrayList<>(Arrays.asList(propertyName.split("\\.")));
             JsonNode currentNode = mapper.readTree(this.value);
@@ -122,7 +151,7 @@ public class Json {
                     return null; // Propriedade não encontrada
                 }
             }
-            return currentNode;
+            return new Json(currentNode.toString());
         } catch (JsonMappingException e) {
             System.out.println("Erro de mapeamento JSON: " + e.getMessage());
         } catch (JsonProcessingException e) {
@@ -138,7 +167,19 @@ public class Json {
      * 
      * @return a string JSON
      */
-    public String toString() {
+    public void print(){
+        JsonNode node;
+        String returnString = value;
+        try {
+			node = mapper.readTree(value);
+			returnString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+        System.out.println(returnString);
+    }
+
+    public String toString(){
         return value;
     }
 
@@ -156,9 +197,8 @@ public class Json {
         Json json;
         try {
             json = new Json(info);
-            System.out.println(json);
-            Map<String, String> parsedMap = json.parseJson(new TypeReference<Map<String, String>>() {
-            });
+            json.print();
+            Map<String, Json> parsedMap = json.parseJson();
             System.out.println(parsedMap.toString());
         } catch (JsonProcessingException e) {
             System.out.println(e.getMessage());

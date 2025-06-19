@@ -11,6 +11,7 @@ package music;
 
 import java.util.ArrayList;
 
+import api.Json;
 import exceptions.RequestException;
 import user.User;
 
@@ -23,13 +24,14 @@ import user.User;
  * fonte de música.
  * 
  * @author Vinícius de Oliveira - 251527
+ * @author Daniel Soares Franco - 259083
  */
 public class Playlist implements MusicSource {
     private int numTracks;
     private String id;
     private String name;
-    private User owner;
-    private ArrayList<String> tracksIds;
+    private String ownerId;
+    private ArrayList<Track> tracks;
 
     /**
      * Construtor para criar uma nova instância de Playlist a partir de um ID.
@@ -40,7 +42,27 @@ public class Playlist implements MusicSource {
      * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
      */
     public Playlist(String id) throws RequestException {
+        this.id = id;
+        Json playlistData = User.getInstance().getRequest()
+                .sendGetRequest("playlists/" + id);
+        this.name = playlistData.get("name").toString();
+        this.ownerId = playlistData.get("owner.id").toString();
+        this.numTracks = Integer.parseInt(playlistData.get("tracks.total").toString());
+        this.tracks = new ArrayList<>();
 
+        for (Json trackObject : playlistData.get("tracks.items").parseJsonArray()) {
+            Json trackData = trackObject.get("track");
+            if (trackData == null || trackData.toString().equals("null")) {
+                continue;
+            }
+            Track track = new Track(
+                    trackData.get("duration_ms").parseJson(Integer.class),
+                    trackData.get("name").toString(),
+                    trackData.get("id").toString(),
+                    trackData.get("explicit").parseJson(Boolean.class));
+            this.tracks.add(track);
+
+        }
     }
 
     /**
@@ -49,15 +71,23 @@ public class Playlist implements MusicSource {
      * @param numTracks O número total de faixas na playlist.
      * @param id        O ID único da playlist no Spotify.
      * @param name      O nome da playlist.
-     * @param owner     O objeto User que representa o proprietário da playlist.
+     * @param ownerId   O id do usuário proprietário da playlist.
      * @param tracksIds Uma lista de ids de faixas contidas na playlist.
      */
-    public Playlist(int numTracks, String id, String name, User owner, ArrayList<String> tracksIds) {
+    public Playlist(int numTracks, String id, String name, String ownerId, ArrayList<Track> tracks) {
         this.numTracks = numTracks;
         this.id = id;
         this.name = name;
-        this.owner = owner;
-        this.tracksIds = tracksIds;
+        this.ownerId = ownerId;
+        this.tracks = tracks;
+    }
+
+    public Playlist(int numTracks, String id, String name, String ownerId){
+        this.numTracks = numTracks;
+        this.id = id;
+        this.name = name;
+        this.ownerId = ownerId;
+        this.tracks = new ArrayList<>();
     }
 
     /**
@@ -96,8 +126,8 @@ public class Playlist implements MusicSource {
      *
      * @return O objeto User que é o proprietário.
      */
-    public User getOwner() {
-        return owner;
+    public String getOwnerId() {
+        return ownerId;
     }
 
     /**
@@ -105,7 +135,19 @@ public class Playlist implements MusicSource {
      *
      * @return Uma ArrayList de objetos Track.
      */
-    public ArrayList<String> getTracksIds() {
-        return tracksIds;
+    public ArrayList<Track> getTracks() {
+        return tracks;
+    }
+
+    @Override
+    public String toString() {
+        return "\n    Playlist [numTracks=" + numTracks + ", id=" + id + ", name=" + name + ", ownerId=" + ownerId
+                + ", tracks=" + tracks + "]";
+    }
+
+    public static void main(String[] args) throws RequestException {
+        String playlistId = "29RMt61ETYJG3k6okGJdi2";
+        Playlist rock = new Playlist(playlistId);
+        System.out.println(rock);
     }
 }

@@ -50,25 +50,39 @@ public class Playlist implements MusicSource {
     public Playlist(String id) throws RequestException {
         this.id = id;
         Json playlistData = User.getInstance().getRequest()
-                .sendGetRequest("playlists/" + id);
+                .sendGetRequest("playlists/" + id + "?market=" + User.getInstance().getCountry()
+                        + "&fields=name%2C+owner.id%2C+tracks.total%2C");
         this.name = playlistData.get("name").toString();
         this.ownerId = playlistData.get("owner.id").toString();
         this.numTracks = Integer.parseInt(playlistData.get("tracks.total").toString());
         this.tracks = new ArrayList<>();
 
-        for (Json trackObject : playlistData.get("tracks.items").parseJsonArray()) {
-            Json trackData = trackObject.get("track");
-            if (trackData == null || trackData.toString().equals("null")) {
-                continue;
-            }
-            Track track = new Track(
-                    trackData.get("duration_ms").parseJson(Integer.class),
-                    trackData.get("name").toString(),
-                    trackData.get("id").toString(),
-                    trackData.get("explicit").parseJson(Boolean.class));
-            this.tracks.add(track);
+        String urlRequest = "playlists/" + id + "/tracks?market=" + User.getInstance().getCountry()
+                + "&fields=items.track%28duration_ms%2C+name%2C+id%2C+explicit%29&limit=50&offset=0";
+        int page = 0;
+        playlistData = User.getInstance().getRequest()
+                .sendGetRequest(urlRequest);
+        do {
+            for (Json trackObject : playlistData.get("items").parseJsonArray()) {
+                Json trackData = trackObject.get("track");
+                if (trackData == null || trackData.toString().equals("null")) {
+                    continue;
+                }
+                Track track = new Track(
+                        trackData.get("duration_ms").parseJson(Integer.class),
+                        trackData.get("name").toString(),
+                        trackData.get("id").toString(),
+                        trackData.get("explicit").parseJson(Boolean.class));
+                this.tracks.add(track);
 
-        }
+            }
+            if (this.tracks.size() < this.numTracks) {
+                page++;
+                urlRequest = urlRequest.replace("offset=" + (page - 1), "offset=" + page);
+                playlistData = User.getInstance().getRequest()
+                        .sendGetRequest(urlRequest);
+            }
+        } while (this.tracks.size() < this.numTracks);
     }
 
     /**
@@ -110,7 +124,8 @@ public class Playlist implements MusicSource {
         this.id = response.get("id").toString().replaceAll("\"", "");
         this.ownerId = response.get("owner.id").toString().replaceAll("\"", "");
         this.numTracks = builder.numTracks;
-        this.tracks = new ArrayList<>(builder.tracks); // a api não retorna todas as músicas de uma vez, tenho que fazer ela retornar todas as músicas
+        this.tracks = new ArrayList<>(builder.tracks); // a api não retorna todas as músicas de uma vez, tenho que fazer
+                                                       // ela retornar todas as músicas
         ArrayList<String> uris = new ArrayList<>();
         bodyMap = new HashMap<>();
         int page = 0;

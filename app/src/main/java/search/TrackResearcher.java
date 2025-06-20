@@ -32,9 +32,7 @@ public class TrackResearcher implements Researcher {
     }
 
     public static void main(String[] args) {
-        TrackResearcher trackResearcher = new TrackResearcher();
-        SearchManager searchManagerTrack = new SearchManager();
-        ArrayList<SearchResult> trackResults = searchManagerTrack.search("Lá(r)", "track");
+        ArrayList<SearchResult> trackResults = SearchManager.search("Lá(r)", "track");
 
         for (SearchResult result : trackResults) {
             System.out.println(result);

@@ -1,10 +1,13 @@
 package api;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,9 +81,8 @@ public class HttpClientUtil {
      *                                 400
      * @throws JsonProcessingException se ocorrer um erro ao processar o objeto
      */
-    public static String sendPostRequest(String url, Map<String, String> headers, Object bodyObject)
+    public static String sendPostRequest(String url, Map<String, String> headers, Json requestBodyJson)
             throws RequestException, JsonProcessingException {
-        Json requestBodyJson = new Json(bodyObject);
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(url));
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBodyJson.toString()));
         if (headers != null) {
@@ -134,6 +136,15 @@ public class HttpClientUtil {
         return response.body();
     }
 
+    public static String QueryURLEncode(String query) {
+        try {
+            return URLEncoder.encode(query, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("Erro ao codificar URl da query: " + e.getMessage());
+        }
+        return null;
+    }
+
     /**
      * Método principal para testar o envio de requisições GET e POST.
      *
@@ -145,7 +156,7 @@ public class HttpClientUtil {
         try {
             HttpClientUtil.sendGetRequest("https://jsonplaceholder.typicode.com/posts", headers);
             System.out.println("Requisição get enviada com sucesso");
-            HttpClientUtil.sendPostRequest("https://jsonplaceholder.typicode.com/posts", headers, headers);
+            HttpClientUtil.sendPostRequest("https://jsonplaceholder.typicode.com/posts", headers, new Json(headers));
             System.out.println("Requisição post enviada com sucesso");
         } catch (Exception e) {
             e.printStackTrace();

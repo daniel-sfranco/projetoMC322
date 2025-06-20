@@ -71,7 +71,7 @@ public class Request {
     public Json sendPostRequest(String url, Json bodyJson) throws RequestException, JsonProcessingException {
         String accessToken = this.token.getAccess_token();
         Map<String, String> headers = Map.of(
-                "Authorization", "Bearer " + accessToken,
+                "Authorization", accessToken,
                 "Content-Type", "application/json");
         return new Json(HttpClientUtil.sendPostRequest(baseUrl + url, headers, bodyJson));
     }

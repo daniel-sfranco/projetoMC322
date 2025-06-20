@@ -18,7 +18,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import api.HttpClientUtil;
 import api.Json;
-import api.Request;
 import exceptions.InvalidNumTracksException;
 import exceptions.RequestException;
 import user.User;
@@ -233,10 +232,10 @@ public class Playlist implements MusicSource {
         private int numTracks;
         private int minTracks;
         private String genreId;
-        private String basePlaylistId;
-        private ArrayList<String> artistId;
-        private ArrayList<String> albumId;
-        private ArrayList<String> addedTrackId;
+        private Playlist basePlaylist;
+        private ArrayList<Artist> artists;
+        private ArrayList<Album> albums;
+        private ArrayList<Track> addedTracks;
         private ArrayList<Track> tracks;
         private ArrayList<String> tracksIds;
 
@@ -244,10 +243,10 @@ public class Playlist implements MusicSource {
             this.numTracks = numTracks;
             this.minTracks = 0;
             this.genreId = null;
-            this.basePlaylistId = null;
-            this.artistId = null;
-            this.albumId = null;
-            this.addedTrackId = null;
+            this.basePlaylist = null;
+            this.artists = new ArrayList<>();
+            this.albums = new ArrayList<>();
+            this.addedTracks = new ArrayList<>();
             this.tracks = new ArrayList<>();
             this.tracksIds = new ArrayList<>();
         }
@@ -261,42 +260,47 @@ public class Playlist implements MusicSource {
         public PlaylistBuilder addPlaylist(String basePlaylistId) throws RequestException {
             Playlist actPlaylist = new Playlist(basePlaylistId);
             this.minTracks += actPlaylist.getNumTracks();
-            this.basePlaylistId = basePlaylistId;
+            this.basePlaylist = new Playlist(basePlaylistId);
             return this;
         }
 
-        public PlaylistBuilder addArtist(ArrayList<String> artistId) {
+        public PlaylistBuilder addArtist(ArrayList<String> artistId) throws RequestException {
             this.minTracks += artistId.size();
-            this.artistId = artistId;
+            for(String id : artistId){
+                this.artists.add(new Artist(id));
+            }
             return this;
         }
 
-        public PlaylistBuilder addAlbum(ArrayList<String> albumId) {
+        public PlaylistBuilder addAlbum(ArrayList<String> albumId) throws RequestException {
             this.minTracks += albumId.size();
-            this.albumId = albumId;
+            for(String id : albumId){
+                this.albums.add(new Album(id));
+            }
             return this;
         }
 
         public PlaylistBuilder addTrack(ArrayList<String> trackId) {
             this.minTracks += trackId.size();
-            this.addedTrackId = trackId;
+            for(String id: trackId){
+                this.addedTracks.add(new Track(id));
+                this.tracksIds.add(id);
+            }
             return this;
         }
 
         private void resolveTrack(){
-            if (addedTrackId != null) {
-                for (String track : addedTrackId) {
-                    tracks.add(new Track(track));
-                    tracksIds.add(track);
+            if (addedTracks != null) {
+                for (Track track : addedTracks) {
+                    tracks.add(track);
+                    tracksIds.add(track.getId());
                 }
             }
         }
 
         private void resolvePlaylist() throws RequestException{
-            if (basePlaylistId != null) {
-                Playlist actPlaylist = new Playlist(basePlaylistId);
-                ArrayList<Track> playlistTracks = actPlaylist.getTracks();
-                for (Track track : playlistTracks) {
+            if (basePlaylist != null) {
+                for (Track track : basePlaylist.getTracks()) {
                     if (!this.tracksIds.contains(track.getId())) {
                         this.tracks.add(track);
                         this.tracksIds.add(track.getId().toString().replaceAll("\"", ""));
@@ -346,10 +350,6 @@ public class Playlist implements MusicSource {
         }
 
         private void resolveArtist(int numTracksPerCategory) throws RequestException {
-            ArrayList<Artist> artists = new ArrayList<>();
-            for(String id : artistId){
-                artists.add(new Artist(id));
-            }
             ArrayList<Track> tracks;
             int counter;
             for(Artist artist : artists){
@@ -366,10 +366,6 @@ public class Playlist implements MusicSource {
         }
 
         private void resolveAlbum(int numTracksPerCategory) throws RequestException {
-            ArrayList<Album> albums = new ArrayList<>();
-            for(String id : albumId){
-                albums.add(new Album(id));
-            }
             ArrayList<Track> tracks;
             int counter;
             for(Album album : albums){
@@ -414,20 +410,18 @@ public class Playlist implements MusicSource {
         ArrayList<String> tracks = new ArrayList<>();
         ArrayList<String> artists = new ArrayList<>();
         ArrayList<String> albums = new ArrayList<>();
-        tracks.add("3PYdxIDuBIuJSDGwfptFx4"); // My Immortal - Evanescence
-        tracks.add("0COqiPhxzoWICwFCS4eZcp"); // Bring Me To Life - Evanescence
-        tracks.add("3UygY7qW2cvG9Llkay6i1i"); // Going Under - Evanescence
-        tracks.add("4iDQezFTnOwgnrPYiqQ6TP"); // All That I'm Living For - Evanescence
-        artists.add("6KO6G41BBLTDNYOLefWTMU"); // P.O.D
-        artists.add("3G7qoMSLvu9Pmb0xGtf9fl"); // Bride
-        albums.add("0yppsQTW8pACnrnH75Rvhv"); // Dominion: Day of Destiny - Skillet
-        Playlist.PlaylistBuilder builder = Playlist.builder(300);
+        tracks.add("0Mp5NW8pLD0EjL8JBM0FGD"); // Se foi - Marco Telles
+        tracks.add("2obR9E84AXLzWv0gFbTu37"); // Lá(r) - Marco Telles
+        artists.add("2fBxIdkeMcxcjtBlPuWZl7"); // Pedro Valença
+        artists.add("1Ja8qReIBoi7Z6ik0AQ6zS"); // Os Arrais
+        albums.add("2wHwSfo4COWRXocywNnlWN"); // Estima - Stenio Marcius
+        Playlist.PlaylistBuilder builder = Playlist.builder(100);
         builder = builder.addTrack(tracks);
-        builder = builder.addPlaylist("29RMt61ETYJG3k6okGJdi2"); // Minha playlist de rock, não vai funcionar para outros usuários
-        builder = builder.addGenre("Christian Rock");
+        builder = builder.addPlaylist("7H4HBQGgj3ZvvdITHJHbhi"); // Minha playlist de rock, não vai funcionar para outros usuários
+        builder = builder.addGenre("Worship");
         builder = builder.addArtist(artists);
         builder = builder.addAlbum(albums);
         Playlist newPlaylist = builder.build();
-        // System.out.println(newPlaylist);
+        System.out.println(newPlaylist);
     }
 }

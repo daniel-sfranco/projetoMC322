@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import music.Playlist;
 import projetofinal.App;
 import search.SearchManager;
 import search.SearchResult;
@@ -75,32 +76,33 @@ public class PlaylistController {
             }
 
             // 2. Começa a construção
-            // Playlist.PlaylistBuilder builder = Playlist.builder(numeroDeMusicas);
+            Playlist.PlaylistBuilder builder = Playlist.builder(numeroDeMusicas);
 
             // 3. Adiciona valores se existirem
-            // if (generosSelecionados.length() > 0) {
-               // builder = builder.addGenre(generosSelecionados.toString());
-            //}
+            if (generosSelecionados.length() > 0) {
+               builder = builder.addGenre(generosSelecionados.toString());
+            }
 
-            //if (playlistSelecionadas.length() > 0) {
-            //    builder = builder.addPlaylist(playlistSelecionadas.toString());
-            //}
+            if (playlistSelecionadas.length() > 0) {
+                builder = builder.addPlaylist(playlistSelecionadas.toString());
+            }
 
-            //for (SearchResult artista : artistasSelecionados) {
-              //  builder = builder.addArtist(artista.getName());
-            //}
+            for (SearchResult artista : artistasSelecionados) {
+                builder = builder.addArtist(new ArrayList<>(List.of(artista.getId())));
+            }
 
-            //for (SearchResult album : albunsSelecionados) {
-              //  builder = builder.addAlbum(album.getName());
-            //}
-
-            //for (SearchResult musica : musicasSelecionadas) {
-              //  builder = builder.addTrack(musica.getName());
-            //}
+            for (SearchResult album : albunsSelecionados) {
+                builder = builder.addAlbum(new ArrayList<>(List.of(album.getId())));
+            }
+            
+            for (SearchResult musica : musicasSelecionadas) {
+                builder = builder.addTrack(new ArrayList<>(List.of(musica.getId())));
+            }
+            
 
             // 4. Finaliza a construção
-            //Playlist novaPlaylist = builder.build();
-            //System.out.println("Playlist criada com sucesso: " + novaPlaylist);
+            Playlist novaPlaylist = builder.build();
+            System.out.println("Playlist criada com sucesso: " + novaPlaylist);
 
         } catch (Exception e) {
             mensagemErroLabel.setText("Erro ao gerar playlist: " + e.getMessage());

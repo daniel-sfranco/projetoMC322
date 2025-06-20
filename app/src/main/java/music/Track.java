@@ -92,7 +92,7 @@ public class Track {
      * @return O ID da faixa.
      */
     public String getId() {
-        return id;
+        return id.toString().replaceAll("\"", "");
     }
 
     /**

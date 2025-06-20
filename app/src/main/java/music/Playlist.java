@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import api.HttpClientUtil;
 import api.Json;
+import api.Request;
 import exceptions.InvalidNumTracksException;
 import exceptions.RequestException;
 import user.User;
@@ -39,6 +40,7 @@ public class Playlist implements MusicSource {
     private String name;
     private String ownerId;
     private ArrayList<Track> tracks;
+    private ArrayList<String> tracksIds;
 
     /**
      * Construtor para criar uma nova instância de Playlist a partir de um ID.
@@ -57,6 +59,7 @@ public class Playlist implements MusicSource {
         this.ownerId = playlistData.get("owner.id").toString();
         this.numTracks = Integer.parseInt(playlistData.get("tracks.total").toString());
         this.tracks = new ArrayList<>();
+        this.tracksIds = new ArrayList<>();
 
         String urlRequest = "playlists/" + id + "/tracks?market=" + User.getInstance().getCountry()
                 + "&fields=items.track%28duration_ms%2C+name%2C+id%2C+explicit%29&limit=50&offset=0";
@@ -72,9 +75,10 @@ public class Playlist implements MusicSource {
                 Track track = new Track(
                         trackData.get("duration_ms").parseJson(Integer.class),
                         trackData.get("name").toString(),
-                        trackData.get("id").toString(),
+                        trackData.get("id").toString().replaceAll("\"", ""),
                         trackData.get("explicit").parseJson(Boolean.class));
                 this.tracks.add(track);
+                this.tracksIds.add(trackData.get("id").toString().replaceAll("\"", ""));
 
             }
             if (this.tracks.size() < this.numTracks) {
@@ -101,6 +105,10 @@ public class Playlist implements MusicSource {
         this.name = name;
         this.ownerId = ownerId;
         this.tracks = tracks;
+        this.tracksIds = new ArrayList<>();
+        for (Track track : tracks) {
+            tracksIds.add(track.getId());
+        }
     }
 
     public Playlist(int numTracks, String id, String name, String ownerId) {
@@ -109,6 +117,7 @@ public class Playlist implements MusicSource {
         this.name = name;
         this.ownerId = ownerId;
         this.tracks = new ArrayList<>();
+        this.tracksIds = new ArrayList<>();
     }
 
     private Playlist(PlaylistBuilder builder) throws JsonProcessingException, RequestException {
@@ -125,8 +134,8 @@ public class Playlist implements MusicSource {
         this.id = response.get("id").toString().replaceAll("\"", "");
         this.ownerId = response.get("owner.id").toString().replaceAll("\"", "");
         this.numTracks = builder.numTracks;
-        this.tracks = new ArrayList<>(builder.tracks); // a api não retorna todas as músicas de uma vez, tenho que fazer
-                                                       // ela retornar todas as músicas
+        this.tracks = new ArrayList<>(builder.tracks);
+        this.tracksIds = new ArrayList<>(builder.tracksIds);
         ArrayList<String> uris = new ArrayList<>();
         bodyMap = new HashMap<>();
         int page = 0;
@@ -227,8 +236,9 @@ public class Playlist implements MusicSource {
         private String basePlaylistId;
         private ArrayList<String> artistId;
         private ArrayList<String> albumId;
-        private ArrayList<String> trackId;
+        private ArrayList<String> addedTrackId;
         private ArrayList<Track> tracks;
+        private ArrayList<String> tracksIds;
 
         public PlaylistBuilder(int numTracks) {
             this.numTracks = numTracks;
@@ -237,8 +247,9 @@ public class Playlist implements MusicSource {
             this.basePlaylistId = null;
             this.artistId = null;
             this.albumId = null;
-            this.trackId = null;
+            this.addedTrackId = null;
             this.tracks = new ArrayList<>();
+            this.tracksIds = new ArrayList<>();
         }
 
         public PlaylistBuilder addGenre(String genreId) {
@@ -268,32 +279,14 @@ public class Playlist implements MusicSource {
 
         public PlaylistBuilder addTrack(ArrayList<String> trackId) {
             this.minTracks += trackId.size();
-            this.trackId = trackId;
+            this.addedTrackId = trackId;
             return this;
         }
 
-        public Playlist build() throws RequestException, JsonProcessingException, InvalidNumTracksException {
-            if (this.numTracks < this.minTracks) {
-                throw new InvalidNumTracksException(this.minTracks);
-            }
-            if (trackId != null) {
-                for (String track : trackId) {
-                    tracks.add(new Track(track));
-                }
-            }
-            if (basePlaylistId != null) {
-                Playlist actPlaylist = new Playlist(basePlaylistId);
-                tracks.addAll(actPlaylist.getTracks());
-            }
-            int numCategoriesLeft = minTracks - tracks.size();
-            if(numCategoriesLeft == 0){
-                return new Playlist(this);
-            }
-            int numTracksPerCategory = (numTracks - tracks.size()) / numCategoriesLeft;
-            int numTracksLeft = (numTracks - tracks.size()) % numCategoriesLeft;
+        private void resolveGenre(int numTracksPerCategory) throws RequestException {
             if (genreId != null) {
                 String idEncoded = HttpClientUtil.QueryURLEncode(genreId);
-                String urlRequest ="search?q=" + idEncoded
+                String urlRequest = "search?q=" + idEncoded
                         + "&type=track&market=" + User.getInstance().getCountry() + "&limit=50&offset=0";
                 int page = 0;
                 int addedMusics = 0;
@@ -304,16 +297,19 @@ public class Playlist implements MusicSource {
                     for (Json trackData : genreTracks.get("tracks.items").parseJsonArray()) {
                         if (trackData == null || trackData.toString().equals("null")) {
                             continue;
+                        } else if (this.tracksIds.contains(trackData.get("id").toString().replaceAll("\"", ""))) {
+                            continue;
                         }
                         Track track = new Track(
                                 trackData.get("duration_ms").parseJson(Integer.class),
                                 trackData.get("name").toString(),
-                                trackData.get("id").toString(),
+                                trackData.get("id").toString().replaceAll("\"", ""),
                                 trackData.get("explicit").parseJson(Boolean.class));
                         this.tracks.add(track);
+                        this.tracksIds.add(trackData.get("id").toString().replaceAll("\"", ""));
                         addedMusics = addedMusics + 1;
                         System.out.println(addedMusics);
-                        if(addedMusics == numTracksPerCategory){
+                        if (addedMusics == numTracksPerCategory) {
                             break;
                         }
                     }
@@ -325,6 +321,37 @@ public class Playlist implements MusicSource {
                     }
                 } while (addedMusics < numTracksPerCategory);
             }
+        }
+
+        public Playlist build() throws RequestException, JsonProcessingException, InvalidNumTracksException {
+            if (this.numTracks < this.minTracks) {
+                throw new InvalidNumTracksException(this.minTracks);
+            }
+            if (basePlaylistId != null) {
+                Playlist actPlaylist = new Playlist(basePlaylistId);
+                ArrayList<Track> playlistTracks = actPlaylist.getTracks();
+                for (Track track : playlistTracks) {
+                    if (!this.tracksIds.contains(track.getId())) {
+                        this.tracks.add(track);
+                        this.tracksIds.add(track.getId().toString().replaceAll("\"", ""));
+                    } else {
+                        System.out.println(track);
+                    }
+                }
+            }
+            if (addedTrackId != null) {
+                for (String track : addedTrackId) {
+                    tracks.add(new Track(track));
+                    tracksIds.add(track);
+                }
+            }
+            int numCategoriesLeft = minTracks - tracks.size();
+            if (numCategoriesLeft == 0) {
+                return new Playlist(this);
+            }
+            int numTracksPerCategory = (numTracks - tracks.size()) / numCategoriesLeft;
+            int numTracksLeft = (numTracks - tracks.size()) % numCategoriesLeft;
+            resolveGenre(numTracksPerCategory);
             return new Playlist(this);
         }
     }
@@ -338,11 +365,14 @@ public class Playlist implements MusicSource {
         // testando a criação de uma playlist com o builder
         ArrayList<String> tracks = new ArrayList<>();
         tracks.add("3PYdxIDuBIuJSDGwfptFx4");
+        tracks.add("0COqiPhxzoWICwFCS4eZcp");
+        tracks.add("3UygY7qW2cvG9Llkay6i1i");
+        tracks.add("4iDQezFTnOwgnrPYiqQ6TP");
         Playlist.PlaylistBuilder builder = Playlist.builder(250);
         builder = builder.addTrack(tracks);
         builder = builder.addPlaylist("29RMt61ETYJG3k6okGJdi2");
         builder = builder.addGenre("Christian Alternative Rock");
         Playlist newPlaylist = builder.build();
-        System.out.println(newPlaylist);
+        // System.out.println(newPlaylist);
     }
 }

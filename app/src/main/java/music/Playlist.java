@@ -283,6 +283,30 @@ public class Playlist implements MusicSource {
             return this;
         }
 
+        private void resolveTrack(){
+            if (addedTrackId != null) {
+                for (String track : addedTrackId) {
+                    tracks.add(new Track(track));
+                    tracksIds.add(track);
+                }
+            }
+        }
+
+        private void resolvePlaylist() throws RequestException{
+            if (basePlaylistId != null) {
+                Playlist actPlaylist = new Playlist(basePlaylistId);
+                ArrayList<Track> playlistTracks = actPlaylist.getTracks();
+                for (Track track : playlistTracks) {
+                    if (!this.tracksIds.contains(track.getId())) {
+                        this.tracks.add(track);
+                        this.tracksIds.add(track.getId().toString().replaceAll("\"", ""));
+                    } else {
+                        System.out.println(track);
+                    }
+                }
+            }
+        }
+
         private void resolveGenre(int numTracksPerCategory) throws RequestException {
             if (genreId != null) {
                 String idEncoded = HttpClientUtil.QueryURLEncode(genreId);
@@ -292,7 +316,6 @@ public class Playlist implements MusicSource {
                 int addedMusics = 0;
                 Json genreTracks = User.getInstance().getRequest()
                         .sendGetRequest(urlRequest);
-                System.out.println(genreTracks);
                 do {
                     for (Json trackData : genreTracks.get("tracks.items").parseJsonArray()) {
                         if (trackData == null || trackData.toString().equals("null")) {
@@ -308,7 +331,6 @@ public class Playlist implements MusicSource {
                         this.tracks.add(track);
                         this.tracksIds.add(trackData.get("id").toString().replaceAll("\"", ""));
                         addedMusics = addedMusics + 1;
-                        System.out.println(addedMusics);
                         if (addedMusics == numTracksPerCategory) {
                             break;
                         }
@@ -323,28 +345,34 @@ public class Playlist implements MusicSource {
             }
         }
 
+        private void resolveArtist(int numTracksPerCategory) throws RequestException {
+            ArrayList<Artist> artists = new ArrayList<>();
+            for(String id : artistId){
+                artists.add(new Artist(id));
+            }
+            ArrayList<Track> tracks;
+            int counter;
+            for(Artist artist : artists){
+                System.out.println(artist);
+                tracks = artist.getTracks();
+                System.out.println(tracks);
+                counter = 0;
+                for(Track track : tracks){
+                    if(counter < numTracksPerCategory && !this.tracksIds.contains(track.getId())){
+                        this.tracks.add(track);
+                        this.tracksIds.add(track.getId());
+                        counter++;
+                    }
+                }
+            };
+        }
+
         public Playlist build() throws RequestException, JsonProcessingException, InvalidNumTracksException {
             if (this.numTracks < this.minTracks) {
                 throw new InvalidNumTracksException(this.minTracks);
             }
-            if (basePlaylistId != null) {
-                Playlist actPlaylist = new Playlist(basePlaylistId);
-                ArrayList<Track> playlistTracks = actPlaylist.getTracks();
-                for (Track track : playlistTracks) {
-                    if (!this.tracksIds.contains(track.getId())) {
-                        this.tracks.add(track);
-                        this.tracksIds.add(track.getId().toString().replaceAll("\"", ""));
-                    } else {
-                        System.out.println(track);
-                    }
-                }
-            }
-            if (addedTrackId != null) {
-                for (String track : addedTrackId) {
-                    tracks.add(new Track(track));
-                    tracksIds.add(track);
-                }
-            }
+            resolvePlaylist();
+            resolveTrack();
             int numCategoriesLeft = minTracks - tracks.size();
             if (numCategoriesLeft == 0) {
                 return new Playlist(this);
@@ -352,6 +380,7 @@ public class Playlist implements MusicSource {
             int numTracksPerCategory = (numTracks - tracks.size()) / numCategoriesLeft;
             int numTracksLeft = (numTracks - tracks.size()) % numCategoriesLeft;
             resolveGenre(numTracksPerCategory);
+            resolveArtist(numTracksPerCategory);
             return new Playlist(this);
         }
     }
@@ -364,14 +393,18 @@ public class Playlist implements MusicSource {
 
         // testando a criação de uma playlist com o builder
         ArrayList<String> tracks = new ArrayList<>();
-        tracks.add("3PYdxIDuBIuJSDGwfptFx4");
-        tracks.add("0COqiPhxzoWICwFCS4eZcp");
-        tracks.add("3UygY7qW2cvG9Llkay6i1i");
-        tracks.add("4iDQezFTnOwgnrPYiqQ6TP");
-        Playlist.PlaylistBuilder builder = Playlist.builder(250);
+        ArrayList<String> artists = new ArrayList<>();
+        tracks.add("3PYdxIDuBIuJSDGwfptFx4"); // My Immortal - Evanescence
+        tracks.add("0COqiPhxzoWICwFCS4eZcp"); // Bring Me To Life - Evanescence
+        tracks.add("3UygY7qW2cvG9Llkay6i1i"); // Going Under - Evanescence
+        tracks.add("4iDQezFTnOwgnrPYiqQ6TP"); // All That I'm Living For - Evanescence
+        artists.add("6KO6G41BBLTDNYOLefWTMU"); // P.O.D
+        artists.add("3G7qoMSLvu9Pmb0xGtf9fl"); // Bride
+        Playlist.PlaylistBuilder builder = Playlist.builder(275);
         builder = builder.addTrack(tracks);
-        builder = builder.addPlaylist("29RMt61ETYJG3k6okGJdi2");
-        builder = builder.addGenre("Christian Alternative Rock");
+        builder = builder.addPlaylist("29RMt61ETYJG3k6okGJdi2"); // Minha playlist de rock, não vai funcionar para outros usuários
+        builder = builder.addGenre("Christian Rock");
+        builder = builder.addArtist(artists);
         Playlist newPlaylist = builder.build();
         // System.out.println(newPlaylist);
     }

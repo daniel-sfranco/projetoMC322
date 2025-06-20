@@ -122,6 +122,9 @@ public class Artist implements MusicSource {
      * @return Uma {@code ArrayList} de ids de álbuns.
      */
     public ArrayList<Album> getAlbums() {
+        if(this.albums.size() == 0){
+            this.addAlbums();
+        } 
         return albums;
     }
 
@@ -138,7 +141,7 @@ public class Artist implements MusicSource {
     @Override
     public ArrayList<Track> getTracks() {
         ArrayList<Track> tracks = new ArrayList<Track>();
-        for (Album album : albums) {
+        for (Album album : getAlbums()) {
             tracks.addAll(album.getTracks());
         }
         return tracks;

@@ -1,10 +1,13 @@
 package api;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -131,6 +134,15 @@ public class HttpClientUtil {
             throw new RequestException((int) response.statusCode(), response.body());
         }
         return response.body();
+    }
+
+    public static String QueryURLEncode(String query) {
+        try {
+            return URLEncoder.encode(query, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("Erro ao codificar URl da query: " + e.getMessage());
+        }
+        return null;
     }
 
     /**

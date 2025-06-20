@@ -428,6 +428,6 @@ public class Playlist implements MusicSource {
         builder = builder.addArtist(artists);
         builder = builder.addAlbum(albums);
         Playlist newPlaylist = builder.build();
-        // System.out.println(newPlaylist);
+        System.out.println(newPlaylist);
     }
 }

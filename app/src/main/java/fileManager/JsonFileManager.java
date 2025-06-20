@@ -65,11 +65,11 @@ public class JsonFileManager {
         Json json = null;
         try {
             json = new Json(storable);
+            writeFile(json.toString(), relativeFilePath);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
-        writeFile(json.toString(), relativeFilePath);
     }
 
     /**

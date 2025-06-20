@@ -25,7 +25,7 @@
             </image>
          </ImageView>
       </HBox>
-      </ImageView>
+
       <HBox alignment="CENTER" prefHeight="79.0" prefWidth="1060.0" spacing="8.0">
          <padding>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />

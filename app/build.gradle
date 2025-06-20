@@ -59,7 +59,7 @@ java {
 application {
 
     // Define the main class for the application.
-    mainClass = 'music.Playlist'
+    mainClass = 'projetofinal.App'
 
 }
 

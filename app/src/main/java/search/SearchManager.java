@@ -1,6 +1,7 @@
 package search;
 
 import java.util.ArrayList;
+import api.HttpClientUtil;
 
 public class SearchManager {
     public SearchManager() {}
@@ -25,6 +26,7 @@ public class SearchManager {
                 researcher = new TrackResearcher();
                 break;
         }
+        query = HttpClientUtil.QueryURLEncode(query);
         results = researcher.search(query);
         return results;
     }

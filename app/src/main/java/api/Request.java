@@ -68,12 +68,12 @@ public class Request {
      * @throws RequestException        se ocorrer um erro ao enviar a requisição.
      * @throws JsonProcessingException se ocorrer um erro ao processar o objeto
      */
-    public Json sendPostRequest(String url, Object bodyObject) throws RequestException, JsonProcessingException {
+    public Json sendPostRequest(String url, Json bodyJson) throws RequestException, JsonProcessingException {
         String accessToken = this.token.getAccess_token();
         Map<String, String> headers = Map.of(
-                "Authorization", "Bearer " + accessToken,
+                "Authorization", accessToken,
                 "Content-Type", "application/json");
-        return new Json(HttpClientUtil.sendPostRequest(baseUrl + url, headers, bodyObject));
+        return new Json(HttpClientUtil.sendPostRequest(baseUrl + url, headers, bodyJson));
     }
 
     /**

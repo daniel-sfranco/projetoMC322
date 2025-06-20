@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="600.0" prefWidth="1060.0" spacing="0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projetofinal.controllers.PlaylistController">
+    <children>
+        <HBox alignment="CENTER_RIGHT" prefHeight="42.0" prefWidth="1060.0" style="-fx-background-color: #FFCAEB;">
+            <children>
+                <Button fx:id="btn_criar" onAction="#acessarCriarPlaylists" prefHeight="42.0" prefWidth="102.0" style="-fx-background-color: #FFCAEB;" text="Criar" textFill="WHITE" />
+                <Button fx:id="btn_acessar" prefHeight="42.0" prefWidth="102.0 " style="-fx-background-color: #FF1AA8; -fx-text-fill: white;" text="Acessar" />
+            </children>
+        </HBox>
+      <HBox prefWidth="1186.0">
+         <ImageView fitHeight="160.0" fitWidth="1186.0" pickOnBounds="true" preserveRatio="false">
+            <image>
+               <Image url="@/Img/banner.png" />
+            </image>
+         </ImageView>
+      </HBox>
+
+      <HBox alignment="CENTER" prefHeight="79.0" prefWidth="1060.0" spacing="8.0">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Label prefHeight="30.0" prefWidth="708.0" text="E aí, que tal gerenciar suas playlists preferidas? :)">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+
+        <VBox alignment="CENTER" spacing="10" style="-fx-background-color: #f0f0f0; -fx-padding: 20;">
+
+            <VBox maxWidth="800" prefHeight="49.0" prefWidth="800.0" spacing="8.0" style="-fx-background-color: #DDDDDD; -fx-padding: 10; -fx-background-radius: 10;">
+                <HBox alignment="CENTER_LEFT" spacing="20.0">
+                    <Label fx:id="nome_playlist" prefHeight="20.0" prefWidth="302.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Playlist #1" />
+               <Region prefHeight="40.0" prefWidth="28.0" />
+                    <Label fx:id="duracaoplaylist" style="-fx-text-fill: #555555;" text="120min" />
+               <Region prefHeight="200.0" prefWidth="200.0" />
+               <ImageView fx:id="btn_editar" fitHeight="60.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../Img/edit.png" />
+                  </image>
+               </ImageView>
+               <ImageView fx:id="btn_lixo" fitHeight="52.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../Img/trash.png" />
+                  </image>
+               </ImageView>
+
+                </HBox>
+            </VBox>
+
+        </VBox>
+    </children>
+</VBox>

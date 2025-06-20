@@ -31,9 +31,7 @@ public class ArtistResearcher implements Researcher {
     }
 
     public static void main(String[] args) {
-        ArtistResearcher artistResearcher = new ArtistResearcher();
-        SearchManager searchManagerArtist = new SearchManager();
-        ArrayList<SearchResult> artistResults = searchManagerArtist.search("Os Arrais", "artist");
+        ArrayList<SearchResult> artistResults = SearchManager.search("Os Arrais", "artist");
 
         for (SearchResult result : artistResults) {
             System.out.println(result);

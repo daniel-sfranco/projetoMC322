@@ -9,13 +9,14 @@
 
 package music;
 
-import java.lang.reflect.Array;
+import java.awt.Desktop;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.net.URI;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import api.HttpClientUtil;
 import api.Json;
 import exceptions.InvalidNumTracksException;
 import exceptions.RequestException;
@@ -77,8 +78,8 @@ public class Playlist implements MusicSource {
 
             }
             if (this.tracks.size() < this.numTracks) {
-                page++;
-                urlRequest = urlRequest.replace("offset=" + (page - 1), "offset=" + page);
+                page = page + 50;
+                urlRequest = urlRequest.replace("offset=" + (page - 50), "offset=" + page);
                 playlistData = User.getInstance().getRequest()
                         .sendGetRequest(urlRequest);
             }
@@ -134,7 +135,6 @@ public class Playlist implements MusicSource {
                 bodyMap.put("position", page * 100);
                 bodyMap.put("uris", uris);
                 bodyJson = new Json(bodyMap);
-                System.out.println(track.getId());
                 user.getRequest().sendPostRequest("playlists/" + this.id + "/tracks", bodyJson);
                 uris = new ArrayList<>();
                 page++;
@@ -206,6 +206,20 @@ public class Playlist implements MusicSource {
                 + ", tracks=" + tracks + "]";
     }
 
+    public static void editPlaylist(String playlistId) {
+        String uri = "https://open.spotify.com/playlist/" + playlistId;
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(new URI(uri));
+            } else {
+                System.out.println(
+                        "Não foi possível abrir o navegador. Por favor, acesse a URL manualmente: \n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static class PlaylistBuilder {
         private int numTracks;
         private int minTracks;
@@ -271,8 +285,46 @@ public class Playlist implements MusicSource {
                 Playlist actPlaylist = new Playlist(basePlaylistId);
                 tracks.addAll(actPlaylist.getTracks());
             }
-            int actTracksSize = tracks.size();
-            int numCategoriesLeft = minTracks - actTracksSize;
+            int numCategoriesLeft = minTracks - tracks.size();
+            if(numCategoriesLeft == 0){
+                return new Playlist(this);
+            }
+            int numTracksPerCategory = (numTracks - tracks.size()) / numCategoriesLeft;
+            int numTracksLeft = (numTracks - tracks.size()) % numCategoriesLeft;
+            if (genreId != null) {
+                String idEncoded = HttpClientUtil.QueryURLEncode(genreId);
+                String urlRequest ="search?q=" + idEncoded
+                        + "&type=track&market=" + User.getInstance().getCountry() + "&limit=50&offset=0";
+                int page = 0;
+                int addedMusics = 0;
+                Json genreTracks = User.getInstance().getRequest()
+                        .sendGetRequest(urlRequest);
+                System.out.println(genreTracks);
+                do {
+                    for (Json trackData : genreTracks.get("tracks.items").parseJsonArray()) {
+                        if (trackData == null || trackData.toString().equals("null")) {
+                            continue;
+                        }
+                        Track track = new Track(
+                                trackData.get("duration_ms").parseJson(Integer.class),
+                                trackData.get("name").toString(),
+                                trackData.get("id").toString(),
+                                trackData.get("explicit").parseJson(Boolean.class));
+                        this.tracks.add(track);
+                        addedMusics = addedMusics + 1;
+                        System.out.println(addedMusics);
+                        if(addedMusics == numTracksPerCategory){
+                            break;
+                        }
+                    }
+                    if (addedMusics < numTracksPerCategory) {
+                        page += 50;
+                        urlRequest = urlRequest.replace("offset=" + (page - 50), "offset=" + page);
+                        genreTracks = User.getInstance().getRequest()
+                                .sendGetRequest(urlRequest);
+                    }
+                } while (addedMusics < numTracksPerCategory);
+            }
             return new Playlist(this);
         }
     }
@@ -286,7 +338,11 @@ public class Playlist implements MusicSource {
         // testando a criação de uma playlist com o builder
         ArrayList<String> tracks = new ArrayList<>();
         tracks.add("3PYdxIDuBIuJSDGwfptFx4");
-        Playlist newPlaylist = Playlist.builder(225).addTrack(tracks).addPlaylist("29RMt61ETYJG3k6okGJdi2").build();
+        Playlist.PlaylistBuilder builder = Playlist.builder(250);
+        builder = builder.addTrack(tracks);
+        builder = builder.addPlaylist("29RMt61ETYJG3k6okGJdi2");
+        builder = builder.addGenre("Christian Alternative Rock");
+        Playlist newPlaylist = builder.build();
         System.out.println(newPlaylist);
     }
 }

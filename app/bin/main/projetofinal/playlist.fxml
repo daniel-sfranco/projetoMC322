@@ -54,7 +54,7 @@
                   <Font name="System Bold" size="16.0" />
                </font>
             </Label>
-            <TextField prefHeight="24.0" prefWidth="80.0" promptText="40" style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-width: 0;" />
+            <TextField fx:id="numeroMusicasTextField" prefHeight="24.0" prefWidth="80.0" promptText="40" style="-fx-background-color: #EAEAEA; -fx-background-radius: 4; -fx-border-width: 0;" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="299.0" prefWidth="1060.0" spacing="20.0">
@@ -212,13 +212,20 @@
             
          </children>
       </HBox>
-      <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="125.0" prefWidth="1185.0">
-         <children>
-            <Button mnemonicParsing="false" onAction="#GerarPlaylist" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #FF1AA8; -fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold; -fx-background-radius: 10;" text="Gerar Playlist!" />
-         </children>
+      <VBox alignment="CENTER" prefHeight="125.0" prefWidth="1185.0" spacing="10.0">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
-      </HBox>
+         <children>
+            <Button fx:id="gerarPlaylistButton" mnemonicParsing="false" onAction="#GerarPlaylist"
+                  prefHeight="45.0" prefWidth="200.0"
+                  style="-fx-background-color: #FF1AA8; -fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold; -fx-background-radius: 10;"
+                  text="Gerar Playlist!" />
+                  
+            <Label fx:id="mensagemErroLabel" text="Erro ao gerar playlist"
+                  textFill="red" visible="false"
+                  style="-fx-font-size: 14; -fx-font-weight: bold;" />
+         </children>
+      </VBox>
    </children>
 </VBox>

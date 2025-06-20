@@ -45,7 +45,7 @@ public class Track {
             System.out.println("Erro ao obter dados da faixa: " + e.getMessage());
             return;
         }
-        this.id = id;
+        this.id = id.replaceAll("\"", "");
         this.name = trackData.get("name").toString();
         this.explicit = trackData.get("explicit").parseJson(Boolean.class);
     }

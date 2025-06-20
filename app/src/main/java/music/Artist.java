@@ -28,6 +28,7 @@ public class Artist implements MusicSource {
     private String name;
     private String id;
     private ArrayList<Album> albums;
+    private ArrayList<Track> tracks;
     private Request request;
 
     /**
@@ -43,14 +44,15 @@ public class Artist implements MusicSource {
         Json artistData = this.request.sendGetRequest("artists/" + id);
         this.id = id;
         this.name = artistData.get("name").toString();
-        this.albums = new ArrayList<Album>();
+        this.albums = new ArrayList<>();
+        this.tracks = new ArrayList<>();
     }
 
     /**
      * Construtor para criar uma nova instância de Artist.
      *
      * @param name   O nome do artista.
-     * @param Id     O ID único do artista no Spotify.
+     * @param id     O ID único do artista no Spotify.
      * @param albums Uma lista de álbuns associados a este artista.
      */
     public Artist(String name, String id, ArrayList<Album> albums) {
@@ -58,6 +60,7 @@ public class Artist implements MusicSource {
         this.name = name;
         this.id = id;
         this.albums = albums;
+        this.tracks = new ArrayList<>();
     }
 
     public Artist(String name, String id) {
@@ -66,6 +69,7 @@ public class Artist implements MusicSource {
         this.name = name;
         this.id = id;
         this.albums = new ArrayList<>();
+        this.tracks = new ArrayList<>();
 
     }
 
@@ -122,9 +126,9 @@ public class Artist implements MusicSource {
      * @return Uma {@code ArrayList} de ids de álbuns.
      */
     public ArrayList<Album> getAlbums() {
-        if(this.albums.size() == 0){
+        if (this.albums.size() == 0) {
             this.addAlbums();
-        } 
+        }
         return albums;
     }
 
@@ -140,9 +144,10 @@ public class Artist implements MusicSource {
      */
     @Override
     public ArrayList<Track> getTracks() {
-        ArrayList<Track> tracks = new ArrayList<Track>();
-        for (Album album : getAlbums()) {
-            tracks.addAll(album.getTracks());
+        if (tracks.size() == 0) {
+            for (Album album : getAlbums()) {
+                tracks.addAll(album.getTracks());
+            }
         }
         return tracks;
     }

@@ -266,7 +266,7 @@ public class Playlist implements MusicSource {
 
         public PlaylistBuilder addArtist(ArrayList<String> artistId) throws RequestException {
             this.minTracks += artistId.size();
-            for(String id : artistId){
+            for (String id : artistId) {
                 this.artists.add(new Artist(id));
             }
             return this;
@@ -274,7 +274,7 @@ public class Playlist implements MusicSource {
 
         public PlaylistBuilder addAlbum(ArrayList<String> albumId) throws RequestException {
             this.minTracks += albumId.size();
-            for(String id : albumId){
+            for (String id : albumId) {
                 this.albums.add(new Album(id));
             }
             return this;
@@ -282,23 +282,14 @@ public class Playlist implements MusicSource {
 
         public PlaylistBuilder addTrack(ArrayList<String> trackId) {
             this.minTracks += trackId.size();
-            for(String id: trackId){
+            for (String id : trackId) {
                 this.addedTracks.add(new Track(id));
                 this.tracksIds.add(id);
             }
             return this;
         }
 
-        private void resolveTrack(){
-            if (addedTracks != null) {
-                for (Track track : addedTracks) {
-                    tracks.add(track);
-                    tracksIds.add(track.getId());
-                }
-            }
-        }
-
-        private void resolvePlaylist() throws RequestException{
+        private void resolvePlaylist() throws RequestException {
             if (basePlaylist != null) {
                 for (Track track : basePlaylist.getTracks()) {
                     if (!this.tracksIds.contains(track.getId())) {
@@ -311,13 +302,53 @@ public class Playlist implements MusicSource {
             }
         }
 
-        private void resolveGenre(int numTracksPerCategory) throws RequestException {
+        private void resolveTrack() {
+            if (addedTracks != null) {
+                for (Track track : addedTracks) {
+                    tracks.add(track);
+                    tracksIds.add(track.getId());
+                }
+            }
+        }
+
+        private void resolveAlbum(int numTracksPerCategory) throws RequestException {
+            ArrayList<Track> tracks;
+            int counter;
+            for (Album album : albums) {
+                tracks = album.getTracks();
+                counter = 0;
+                for (Track track : tracks) {
+                    if (counter < numTracksPerCategory && !this.tracksIds.contains(track.getId())) {
+                        this.tracks.add(track);
+                        this.tracksIds.add(track.getId());
+                        counter++;
+                    }
+                }
+            }
+        }
+
+        private void resolveArtist(int numTracksPerCategory) throws RequestException {
+            ArrayList<Track> tracks;
+            for (Artist artist : artists) {
+                tracks = artist.getTracks();
+                int counter = 0;
+                for (Track track : tracks) {
+                    if (counter < numTracksPerCategory && !this.tracksIds.contains(track.getId())) {
+                        this.tracks.add(track);
+                        this.tracksIds.add(track.getId());
+                        counter++;
+                    }
+                }
+            }
+            ;
+        }
+
+        private void resolveGenre() throws RequestException {
             if (genreId != null) {
                 String idEncoded = HttpClientUtil.QueryURLEncode(genreId);
                 String urlRequest = "search?q=" + idEncoded
                         + "&type=track&market=" + User.getInstance().getCountry() + "&limit=50&offset=0";
                 int page = 0;
-                int addedMusics = 0;
                 Json genreTracks = User.getInstance().getRequest()
                         .sendGetRequest(urlRequest);
                 do {
@@ -334,50 +365,17 @@ public class Playlist implements MusicSource {
                                 trackData.get("explicit").parseJson(Boolean.class));
                         this.tracks.add(track);
                         this.tracksIds.add(trackData.get("id").toString().replaceAll("\"", ""));
-                        addedMusics = addedMusics + 1;
-                        if (addedMusics == numTracksPerCategory) {
+                        if (tracks.size() == numTracks) {
                             break;
                         }
                     }
-                    if (addedMusics < numTracksPerCategory) {
+                    if (tracks.size() < numTracks) {
                         page += 50;
                         urlRequest = urlRequest.replace("offset=" + (page - 50), "offset=" + page);
                         genreTracks = User.getInstance().getRequest()
                                 .sendGetRequest(urlRequest);
                     }
-                } while (addedMusics < numTracksPerCategory);
-            }
-        }
-
-        private void resolveArtist(int numTracksPerCategory) throws RequestException {
-            ArrayList<Track> tracks;
-            int counter;
-            for(Artist artist : artists){
-                tracks = artist.getTracks();
-                counter = 0;
-                for(Track track : tracks){
-                    if(counter < numTracksPerCategory && !this.tracksIds.contains(track.getId())){
-                        this.tracks.add(track);
-                        this.tracksIds.add(track.getId());
-                        counter++;
-                    }
-                }
-            };
-        }
-
-        private void resolveAlbum(int numTracksPerCategory) throws RequestException {
-            ArrayList<Track> tracks;
-            int counter;
-            for(Album album : albums){
-                tracks = album.getTracks();
-                counter = 0;
-                for(Track track : tracks){
-                    if(counter < numTracksPerCategory && !this.tracksIds.contains(track.getId())){
-                        this.tracks.add(track);
-                        this.tracksIds.add(track.getId());
-                        counter++;
-                    }
-                }
+                } while (tracks.size() < numTracks);
             }
         }
 
@@ -387,15 +385,21 @@ public class Playlist implements MusicSource {
             }
             resolvePlaylist();
             resolveTrack();
-            int numCategoriesLeft = minTracks - tracks.size();
+            int numCategoriesLeft = albums.size() + artists.size();
+            if (genreId != null) {
+                numCategoriesLeft = numCategoriesLeft + 1;
+            }
             if (numCategoriesLeft == 0) {
                 return new Playlist(this);
             }
-            int numTracksPerCategory = (numTracks - tracks.size()) / numCategoriesLeft;
-            int numTracksLeft = (numTracks - tracks.size()) % numCategoriesLeft;
-            resolveGenre(numTracksPerCategory);
-            resolveArtist(numTracksPerCategory);
+            int leftTracks = numTracks - tracks.size();
+            int numTracksPerCategory = leftTracks / numCategoriesLeft;
             resolveAlbum(numTracksPerCategory);
+            numCategoriesLeft = numCategoriesLeft - albums.size();
+            leftTracks = numTracks - tracks.size();
+            numTracksPerCategory = leftTracks / numCategoriesLeft;
+            resolveArtist(numTracksPerCategory);
+            resolveGenre();
             return new Playlist(this);
         }
     }
@@ -417,11 +421,13 @@ public class Playlist implements MusicSource {
         albums.add("2wHwSfo4COWRXocywNnlWN"); // Estima - Stenio Marcius
         Playlist.PlaylistBuilder builder = Playlist.builder(100);
         builder = builder.addTrack(tracks);
-        builder = builder.addPlaylist("7H4HBQGgj3ZvvdITHJHbhi"); // Minha playlist de rock, não vai funcionar para outros usuários
+        builder = builder.addPlaylist("7H4HBQGgj3ZvvdITHJHbhi"); // Minha playlist de música gospel, não vai funcionar
+                                                                 // para
+                                                                 // outros usuários
         builder = builder.addGenre("Worship");
         builder = builder.addArtist(artists);
         builder = builder.addAlbum(albums);
         Playlist newPlaylist = builder.build();
-        System.out.println(newPlaylist);
+        // System.out.println(newPlaylist);
     }
 }

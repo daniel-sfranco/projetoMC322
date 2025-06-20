@@ -353,9 +353,7 @@ public class Playlist implements MusicSource {
             ArrayList<Track> tracks;
             int counter;
             for(Artist artist : artists){
-                System.out.println(artist);
                 tracks = artist.getTracks();
-                System.out.println(tracks);
                 counter = 0;
                 for(Track track : tracks){
                     if(counter < numTracksPerCategory && !this.tracksIds.contains(track.getId())){
@@ -365,6 +363,26 @@ public class Playlist implements MusicSource {
                     }
                 }
             };
+        }
+
+        private void resolveAlbum(int numTracksPerCategory) throws RequestException {
+            ArrayList<Album> albums = new ArrayList<>();
+            for(String id : albumId){
+                albums.add(new Album(id));
+            }
+            ArrayList<Track> tracks;
+            int counter;
+            for(Album album : albums){
+                tracks = album.getTracks();
+                counter = 0;
+                for(Track track : tracks){
+                    if(counter < numTracksPerCategory && !this.tracksIds.contains(track.getId())){
+                        this.tracks.add(track);
+                        this.tracksIds.add(track.getId());
+                        counter++;
+                    }
+                }
+            }
         }
 
         public Playlist build() throws RequestException, JsonProcessingException, InvalidNumTracksException {
@@ -381,6 +399,7 @@ public class Playlist implements MusicSource {
             int numTracksLeft = (numTracks - tracks.size()) % numCategoriesLeft;
             resolveGenre(numTracksPerCategory);
             resolveArtist(numTracksPerCategory);
+            resolveAlbum(numTracksPerCategory);
             return new Playlist(this);
         }
     }
@@ -394,17 +413,20 @@ public class Playlist implements MusicSource {
         // testando a criação de uma playlist com o builder
         ArrayList<String> tracks = new ArrayList<>();
         ArrayList<String> artists = new ArrayList<>();
+        ArrayList<String> albums = new ArrayList<>();
         tracks.add("3PYdxIDuBIuJSDGwfptFx4"); // My Immortal - Evanescence
         tracks.add("0COqiPhxzoWICwFCS4eZcp"); // Bring Me To Life - Evanescence
         tracks.add("3UygY7qW2cvG9Llkay6i1i"); // Going Under - Evanescence
         tracks.add("4iDQezFTnOwgnrPYiqQ6TP"); // All That I'm Living For - Evanescence
         artists.add("6KO6G41BBLTDNYOLefWTMU"); // P.O.D
         artists.add("3G7qoMSLvu9Pmb0xGtf9fl"); // Bride
-        Playlist.PlaylistBuilder builder = Playlist.builder(275);
+        albums.add("0yppsQTW8pACnrnH75Rvhv"); // Dominion: Day of Destiny - Skillet
+        Playlist.PlaylistBuilder builder = Playlist.builder(300);
         builder = builder.addTrack(tracks);
         builder = builder.addPlaylist("29RMt61ETYJG3k6okGJdi2"); // Minha playlist de rock, não vai funcionar para outros usuários
         builder = builder.addGenre("Christian Rock");
         builder = builder.addArtist(artists);
+        builder = builder.addAlbum(albums);
         Playlist newPlaylist = builder.build();
         // System.out.println(newPlaylist);
     }

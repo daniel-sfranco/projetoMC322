@@ -54,7 +54,7 @@ public class User implements Storable {
     private User() throws RequestException{
         this.request = new Request();
         Json userData = this.request.sendGetRequest("me");
-        this.id = userData.get("id").toString();
+        this.id = userData.get("id").toString().replaceAll("\"", "");
         this.country = userData.get("country").toString().replaceAll("\"", "");
         this.name = userData.get("display_name").toString();
         this.email = userData.get("email").toString();

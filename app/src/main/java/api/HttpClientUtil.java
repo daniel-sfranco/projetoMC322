@@ -78,9 +78,8 @@ public class HttpClientUtil {
      *                                 400
      * @throws JsonProcessingException se ocorrer um erro ao processar o objeto
      */
-    public static String sendPostRequest(String url, Map<String, String> headers, Object bodyObject)
+    public static String sendPostRequest(String url, Map<String, String> headers, Json requestBodyJson)
             throws RequestException, JsonProcessingException {
-        Json requestBodyJson = new Json(bodyObject);
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(url));
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBodyJson.toString()));
         if (headers != null) {
@@ -145,7 +144,7 @@ public class HttpClientUtil {
         try {
             HttpClientUtil.sendGetRequest("https://jsonplaceholder.typicode.com/posts", headers);
             System.out.println("Requisição get enviada com sucesso");
-            HttpClientUtil.sendPostRequest("https://jsonplaceholder.typicode.com/posts", headers, headers);
+            HttpClientUtil.sendPostRequest("https://jsonplaceholder.typicode.com/posts", headers, new Json(headers));
             System.out.println("Requisição post enviada com sucesso");
         } catch (Exception e) {
             e.printStackTrace();

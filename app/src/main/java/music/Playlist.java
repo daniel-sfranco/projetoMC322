@@ -10,6 +10,9 @@
 package music;
 
 import java.util.ArrayList;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import api.Json;
 import exceptions.RequestException;
@@ -82,11 +85,28 @@ public class Playlist implements MusicSource {
         this.tracks = tracks;
     }
 
-    public Playlist(int numTracks, String id, String name, String ownerId){
+    public Playlist(int numTracks, String id, String name, String ownerId) {
         this.numTracks = numTracks;
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
+        this.tracks = new ArrayList<>();
+    }
+
+    private Playlist() throws JsonProcessingException, RequestException {
+        User user = User.getInstance();
+        this.name = "Sua nova melhor playlist";
+        Map<String, Object> bodyMap = Map.of(
+                "name", this.name,
+                "description", "Essa playlist foi gerada com o nosso gerador de playlists",
+                "public", true,
+                "collaborative", false);
+        Json bodyJson = new Json(bodyMap);
+        String url = String.format("users/%s/playlists", user.getId());
+        Json response = user.getRequest().sendPostRequest(url, bodyJson);
+        this.id = response.get("id").toString().replaceAll("\"", "");
+        this.ownerId = response.get("owner.id").toString().replaceAll("\"", "");
+        this.numTracks = 0;
         this.tracks = new ArrayList<>();
     }
 
@@ -145,9 +165,16 @@ public class Playlist implements MusicSource {
                 + ", tracks=" + tracks + "]";
     }
 
-    public static void main(String[] args) throws RequestException {
+    public static class PlaylistBuilder {
+        private int numTracks;
+        private ArrayList<Track> tracks;
+    }
+
+    public static void main(String[] args) throws RequestException, JsonProcessingException {
+        // testando a busca de uma playlist diretamente com a id dela
         String playlistId = "29RMt61ETYJG3k6okGJdi2";
         Playlist rock = new Playlist(playlistId);
         System.out.println(rock);
+
     }
 }

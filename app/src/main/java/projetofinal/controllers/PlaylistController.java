@@ -107,6 +107,7 @@ public class PlaylistController {
         } catch (Exception e) {
             mensagemErroLabel.setText("Erro ao gerar playlist: " + e.getMessage());
             mensagemErroLabel.setVisible(true);
+            e.printStackTrace();
         }
     }
  

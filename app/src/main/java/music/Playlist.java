@@ -20,6 +20,7 @@ import api.HttpClientUtil;
 import api.Json;
 import exceptions.InvalidNumTracksException;
 import exceptions.RequestException;
+import fileManager.PlaylistFileManager;
 import user.User;
 
 /**
@@ -144,6 +145,7 @@ public class Playlist implements MusicSource {
         bodyMap.put("uris", uris);
         bodyJson = new Json(bodyMap);
         user.getRequest().sendPostRequest("playlists/" + this.id + "/tracks", bodyJson);
+        PlaylistFileManager.addPlaylistId(this.id);
     }
 
     public static PlaylistBuilder builder(int numTracks) {

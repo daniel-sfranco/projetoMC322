@@ -1,3 +1,12 @@
+/*
+ * AlbumResearcher.java
+ * 
+ * Material usado na disciplina MC322 - Programação orientada a objetos.
+ * 
+ * A documentação para javadoc deste arquivo foi feita com o uso de IA
+ * e posteriormente revisada e/ou corrigida.
+ */
+
 package search;
 
 import java.util.ArrayList;
@@ -7,7 +16,23 @@ import api.Request;
 import user.User;
 import exceptions.RequestException;
 
+/**
+ * Realiza buscas por álbuns utilizando a API do Spotify.
+ * Implementa a interface {@code Researcher}, permitindo que este pesquisador
+ * seja usado de forma polimórfica no sistema de busca.
+ * 
+ * A busca retorna uma lista de {@code SearchResult} com nome e ID de cada álbum.
+ * 
+ * @author -
+ */
 public class AlbumResearcher implements Researcher {
+
+    /**
+     * Executa uma busca por álbuns com base na string de consulta fornecida.
+     * 
+     * @param query A string de pesquisa a ser enviada à API do Spotify.
+     * @return Uma lista de resultados de pesquisa contendo os nomes e IDs dos álbuns.
+     */
     public ArrayList<SearchResult> search(String query) {
         Request request = User.getInstance().getRequest();
         ArrayList<SearchResult> results = new ArrayList<>();
@@ -30,6 +55,12 @@ public class AlbumResearcher implements Researcher {
         return results;
     }
 
+    /**
+     * Método de teste para a funcionalidade de busca de álbuns.
+     * Realiza uma busca pela string "guerra e paz" e imprime os resultados no console.
+     *
+     * @param args Argumentos da linha de comando (não utilizados).
+     */
     public static void main(String[] args) {
         ArrayList<SearchResult> albumResults = SearchManager.search("guerra e paz", "album");
 

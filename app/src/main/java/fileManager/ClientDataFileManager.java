@@ -9,15 +9,9 @@
 
 package fileManager;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 import exceptions.IncorrectClientFileDataException;
 
@@ -35,9 +29,7 @@ public class ClientDataFileManager {
      * O caminho para o arquivo onde os dados do cliente são armazenados.
      * O arquivo está localizado em `src/main/resources/savedFiles/ClientData.che`.
      */
-    private static String CLIENTDATA_FILE_LOCATION = "src" + File.separator +
-            "main" + File.separator + "resources" + File.separator +
-            "savedFiles" + File.separator + "ClientData.che";
+    private static String CLIENTDATA_FILE_LOCATION = "ClientData.che";
 
     /**
      * Escreve o Client ID e o Client Secret no arquivo de dados do cliente.
@@ -46,19 +38,12 @@ public class ClientDataFileManager {
      * @param clientId     O ID do cliente a ser salvo.
      * @param clientSecret O segredo do cliente a ser salvo.
      */
-    public void writeFile() {
-        try {
-            String clientId = "9afeb5fec9854592994aa191f842b529";
-            String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";
-            PrintWriter writer = new PrintWriter(
-                    ClientDataFileManager.CLIENTDATA_FILE_LOCATION, "UTF-8");
-            writer.write("clientId:" + clientId);
-            writer.write("\nclientSecret:" + clientSecret);
-            writer.close();
-        } catch (IOException e) {
-            System.out.println("mensagem: " + e.getMessage());
-            e.printStackTrace();
-        }
+    public void writeFile(String clientId, String clientSecret) {
+        ArrayList<String> lines = new ArrayList<String>();
+        lines.add("clientId:" + clientId);
+        lines.add("clientSecret:" + clientSecret);
+
+        FileCheManager.writeCheFile(lines, CLIENTDATA_FILE_LOCATION);
     }
 
     /**
@@ -72,44 +57,27 @@ public class ClientDataFileManager {
      *                                          encontrado no arquivo ou se houver
      *                                          um problema de formatação.
      */
-    public void writeClientID(String newClientId)
+    public void writeClientId(String newClientId)
             throws IncorrectClientFileDataException {
 
-        List<String> lines = new ArrayList<String>();
         Boolean updatedClientId = false;
+        ArrayList<String> newLines = new ArrayList<String>();
+        ArrayList<String> readLines =
+            FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
 
-        try {
-            File file = new File(ClientDataFileManager.CLIENTDATA_FILE_LOCATION);
-            Scanner reader = new Scanner(file);
-            do {
-                String line = reader.nextLine();
-                if (line.contains("clientId:")) {
-                    lines.add("clientId:" + newClientId);
-                    updatedClientId = true;
-                } else {
-                    lines.add(line);
-                }
-            } while (reader.hasNextLine());
-            reader.close();
-
-            if (!updatedClientId)
-                throw new IncorrectClientFileDataException("Não foi possível alterar o clientId");
-
-            PrintWriter writer = new PrintWriter(
-                    ClientDataFileManager.CLIENTDATA_FILE_LOCATION, "UTF-8");
-            for (int i = 0; i < lines.size(); i++) {
-                if (i != 0)
-                    writer.write("\n");
-                writer.write(lines.get(i));
+        for (String line : readLines) {
+            if (line.contains("clientId:")) {
+                newLines.add("clientId:" + newClientId);
+                updatedClientId = true;
+            } else {
+                newLines.add(line);
             }
-            writer.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("Arquivo não encontrado.");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("mensagem: " + e.getMessage());
-            e.printStackTrace();
         }
+
+        FileCheManager.writeCheFile(newLines, CLIENTDATA_FILE_LOCATION);
+        
+        if (!updatedClientId)
+            throw new IncorrectClientFileDataException("Não foi possível alterar o clientId");
     }
 
     /**
@@ -126,41 +94,24 @@ public class ClientDataFileManager {
     public void writeClientSecret(String newClientSecret)
             throws IncorrectClientFileDataException {
 
-        List<String> lines = new ArrayList<String>();
         Boolean updatedClientSecret = false;
+        ArrayList<String> newLines = new ArrayList<String>();
+        ArrayList<String> readLines =
+            FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
 
-        try {
-            File file = new File(ClientDataFileManager.CLIENTDATA_FILE_LOCATION);
-            Scanner reader = new Scanner(file);
-            do {
-                String line = reader.nextLine();
-                if (line.contains("clientSecret:")) {
-                    lines.add("clientSecret:" + newClientSecret);
-                    updatedClientSecret = true;
-                } else {
-                    lines.add(line);
-                }
-            } while (reader.hasNextLine());
-            reader.close();
-
-            if (!updatedClientSecret)
-                throw new IncorrectClientFileDataException("Não foi possível alterar o clientSecret");
-
-            PrintWriter writer = new PrintWriter(
-                    ClientDataFileManager.CLIENTDATA_FILE_LOCATION, "UTF-8");
-            for (int i = 0; i < lines.size(); i++) {
-                if (i != 0)
-                    writer.write("\n");
-                writer.write(lines.get(i));
+        for (String line : readLines) {
+            if (line.contains("clientSecret:")) {
+                newLines.add("clientSecret:" + newClientSecret);
+                updatedClientSecret = true;
+            } else {
+                newLines.add(line);
             }
-            writer.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("Arquivo não encontrado.");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("mensagem: " + e.getMessage());
-            e.printStackTrace();
         }
+
+        FileCheManager.writeCheFile(newLines, CLIENTDATA_FILE_LOCATION);
+        
+        if (!updatedClientSecret)
+            throw new IncorrectClientFileDataException("Não foi possível alterar o clientSecret");
     }
 
     /**
@@ -168,36 +119,28 @@ public class ClientDataFileManager {
      *
      * @return Um {@code Map} contendo o "clientId" e o "clientSecret" lidos do
      *         arquivo.
-     * @throws IncorrectClientFileDataException Se o arquivo estiver incompleto ou
-     *                                          com formatação incorreta.
-     */
+     *      */
     public Map<String, String> readFile() {
-
         Map<String, String> clientData = new HashMap<String, String>();
         clientData.put("clientId", null);
         clientData.put("clientSecret", null);
 
-        try {
-            File file = new File(ClientDataFileManager.CLIENTDATA_FILE_LOCATION);
-            Scanner reader = new Scanner(file);
-            do {
-                String line = reader.nextLine();
-                if (line.contains("clientId:")) {
-                    int startIndex = line.indexOf(":") + 1;
-                    String value = line.substring(startIndex);
-                    clientData.put("clientId", value);
-                } else if (line.contains("clientSecret:")) {
-                    int startIndex = line.indexOf(":") + 1;
-                    String value = line.substring(startIndex);
-                    clientData.put("clientSecret", value);
-                }
-            } while (reader.hasNextLine());
-            reader.close();
-            return clientData;
-        } catch (FileNotFoundException e) {
-            writeFile();
-            return readFile();
+        ArrayList<String> readLines =
+            FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
+
+        for (String line : readLines) {
+            if (line.contains("clientId:")) {
+                int startIndex = line.indexOf(":") + 1;
+                String value = line.substring(startIndex);
+                clientData.put("clientId", value);
+            } else if (line.contains("clientSecret:")) {
+                int startIndex = line.indexOf(":") + 1;
+                String value = line.substring(startIndex);
+                clientData.put("clientSecret", value);
+            }
         }
+        
+        return clientData;
     }
 
     /**
@@ -210,12 +153,21 @@ public class ClientDataFileManager {
      * @param args Argumentos da linha de comando (não utilizados).
      */
     public static void main(String[] args) {
+        String clientId = "9afeb5fec9854592994aa191f842b529";
+        String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";
+
         ClientDataFileManager fileManager = new ClientDataFileManager();
-        fileManager.writeFile();
+        fileManager.writeFile(clientId, clientSecret);
+        
+        /*try {        
+            fileManager.writeClientId("Idnovo");
+            fileManager.writeClientSecret("segredonovo");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }*/
 
         Map<String, String> clientData = fileManager.readFile();
         System.out.println("id: " + clientData.get("clientId"));
         System.out.println("segredo: " + clientData.get("clientSecret"));
-
     }
 }

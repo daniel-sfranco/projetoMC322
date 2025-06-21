@@ -32,6 +32,15 @@ public class ClientDataFileManager {
     private static String CLIENTDATA_FILE_LOCATION = "ClientData.che";
 
     /**
+     * Cria o arquivo para ClientId e ClientSecret, caso não exista ainda
+     */
+    public ClientDataFileManager() {
+        String clientId = "9afeb5fec9854592994aa191f842b529";
+        String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";
+        this.writeFile(clientId, clientSecret);
+    }
+
+    /**
      * Escreve o Client ID e o Client Secret no arquivo de dados do cliente.
      * Este método sobrescreve o conteúdo existente do arquivo.
      *
@@ -62,8 +71,7 @@ public class ClientDataFileManager {
 
         Boolean updatedClientId = false;
         ArrayList<String> newLines = new ArrayList<String>();
-        ArrayList<String> readLines =
-            FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
+        ArrayList<String> readLines = FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
 
         for (String line : readLines) {
             if (line.contains("clientId:")) {
@@ -75,7 +83,7 @@ public class ClientDataFileManager {
         }
 
         FileCheManager.writeCheFile(newLines, CLIENTDATA_FILE_LOCATION);
-        
+
         if (!updatedClientId)
             throw new IncorrectClientFileDataException("Não foi possível alterar o clientId");
     }
@@ -96,8 +104,7 @@ public class ClientDataFileManager {
 
         Boolean updatedClientSecret = false;
         ArrayList<String> newLines = new ArrayList<String>();
-        ArrayList<String> readLines =
-            FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
+        ArrayList<String> readLines = FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
 
         for (String line : readLines) {
             if (line.contains("clientSecret:")) {
@@ -109,7 +116,7 @@ public class ClientDataFileManager {
         }
 
         FileCheManager.writeCheFile(newLines, CLIENTDATA_FILE_LOCATION);
-        
+
         if (!updatedClientSecret)
             throw new IncorrectClientFileDataException("Não foi possível alterar o clientSecret");
     }
@@ -119,14 +126,13 @@ public class ClientDataFileManager {
      *
      * @return Um {@code Map} contendo o "clientId" e o "clientSecret" lidos do
      *         arquivo.
-     *      */
+     */
     public Map<String, String> readFile() {
         Map<String, String> clientData = new HashMap<String, String>();
         clientData.put("clientId", null);
         clientData.put("clientSecret", null);
 
-        ArrayList<String> readLines =
-            FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
+        ArrayList<String> readLines = FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
 
         for (String line : readLines) {
             if (line.contains("clientId:")) {
@@ -139,7 +145,7 @@ public class ClientDataFileManager {
                 clientData.put("clientSecret", value);
             }
         }
-        
+
         return clientData;
     }
 
@@ -158,13 +164,15 @@ public class ClientDataFileManager {
 
         ClientDataFileManager fileManager = new ClientDataFileManager();
         fileManager.writeFile(clientId, clientSecret);
-        
-        /*try {        
-            fileManager.writeClientId("Idnovo");
-            fileManager.writeClientSecret("segredonovo");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }*/
+
+        /*
+         * try {
+         * fileManager.writeClientId("Idnovo");
+         * fileManager.writeClientSecret("segredonovo");
+         * } catch (Exception e) {
+         * System.out.println(e.getMessage());
+         * }
+         */
 
         Map<String, String> clientData = fileManager.readFile();
         System.out.println("id: " + clientData.get("clientId"));

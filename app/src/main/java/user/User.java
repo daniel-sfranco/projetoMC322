@@ -62,7 +62,7 @@ public class User implements Storable {
                 : false;
         this.followers = userData.get("followers.total").toString() == "null" ? 0
                 : Integer.parseInt(userData.get("followers.total").toString());
-        this.setRefreshToken(request.getToken().getRefresh_token());
+        this.setRefreshToken(request.getToken().getRefreshToken());
     }
 
     /**

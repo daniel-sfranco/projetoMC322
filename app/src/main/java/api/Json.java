@@ -163,23 +163,26 @@ public class Json {
     }
 
     /**
-     * Retorna a representação em string do objeto JSON.
-     * 
-     * @return a string JSON
+     * Imprime o json de forma legível diretamente no terminal
      */
-    public void print(){
+    public void print() {
         JsonNode node;
         String returnString = value;
         try {
-			node = mapper.readTree(value);
-			returnString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+            node = mapper.readTree(value);
+            returnString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         System.out.println(returnString);
     }
 
-    public String toString(){
+    /**
+     * Retorna a representação em string do objeto JSON.
+     *
+     * @return o valor armazenado
+     */
+    public String toString() {
         return value;
     }
 

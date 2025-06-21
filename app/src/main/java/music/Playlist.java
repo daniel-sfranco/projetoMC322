@@ -110,15 +110,6 @@ public class Playlist implements MusicSource {
         }
     }
 
-    public Playlist(int numTracks, String id, String name, String ownerId) {
-        this.numTracks = numTracks;
-        this.id = id;
-        this.name = name;
-        this.ownerId = ownerId;
-        this.tracks = new ArrayList<>();
-        this.tracksIds = new ArrayList<>();
-    }
-
     private Playlist(PlaylistBuilder builder) throws JsonProcessingException, RequestException {
         User user = User.getInstance();
         this.name = "Sua nova melhor playlist";
@@ -258,7 +249,6 @@ public class Playlist implements MusicSource {
         }
 
         public PlaylistBuilder addPlaylist(String basePlaylistId) throws RequestException {
-            System.out.println(basePlaylistId);
             Playlist actPlaylist = new Playlist(basePlaylistId.replaceAll("\"", ""));
             this.minTracks += actPlaylist.getNumTracks();
             this.basePlaylist = new Playlist(basePlaylistId);
@@ -346,7 +336,7 @@ public class Playlist implements MusicSource {
 
         private void resolveGenre() throws RequestException {
             if (genreId != null) {
-                String idEncoded = HttpClientUtil.QueryURLEncode(genreId);
+                String idEncoded = HttpClientUtil.QueryURLEncode("genre:" + genreId);
                 String urlRequest = "search?q=" + idEncoded
                         + "&type=track&market=" + User.getInstance().getCountry() + "&limit=50&offset=0";
                 int page = 0;

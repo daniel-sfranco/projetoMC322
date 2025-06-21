@@ -11,6 +11,7 @@ package music;
 
 import java.util.ArrayList;
 
+import api.HttpClientUtil;
 import api.Json;
 import api.Request;
 import exceptions.RequestException;
@@ -29,6 +30,7 @@ public class Artist implements MusicSource {
     private String id;
     private ArrayList<Album> albums;
     private ArrayList<Track> tracks;
+    private ArrayList<String> tracksIds;
     private Request request;
 
     /**
@@ -46,6 +48,7 @@ public class Artist implements MusicSource {
         this.name = artistData.get("name").toString();
         this.albums = new ArrayList<>();
         this.tracks = new ArrayList<>();
+        this.tracksIds = new ArrayList<>();
     }
 
     /**
@@ -61,6 +64,7 @@ public class Artist implements MusicSource {
         this.id = id;
         this.albums = albums;
         this.tracks = new ArrayList<>();
+        this.tracksIds = new ArrayList<>();
     }
 
     public Artist(String name, String id) {
@@ -70,7 +74,7 @@ public class Artist implements MusicSource {
         this.id = id;
         this.albums = new ArrayList<>();
         this.tracks = new ArrayList<>();
-
+        this.tracksIds = new ArrayList<>();
     }
 
     public void addAlbums() {
@@ -145,8 +149,39 @@ public class Artist implements MusicSource {
     @Override
     public ArrayList<Track> getTracks() {
         if (tracks.size() == 0) {
-            for (Album album : getAlbums()) {
-                tracks.addAll(album.getTracks());
+            String query = HttpClientUtil.QueryURLEncode("artist:" + this.name);
+            String urlRequest = ("search?q=" + query + "&type=track&offset=0&limit=50&market="
+                    + User.getInstance().getCountry());
+            int page = 0;
+            try {
+                Json artistTracks = User.getInstance().getRequest().sendGetRequest(urlRequest);
+                ArrayList<Json> tracksObjects = artistTracks.get("tracks.items").parseJsonArray();
+                do {
+                    for (Json trackData : tracksObjects) {
+                        if (trackData == null || trackData.toString().equals("null")) {
+                            continue;
+                        } else if (this.tracksIds.contains(trackData.get("id").toString().replaceAll("\"", ""))) {
+                            continue;
+                        }
+                        Track track = new Track(
+                                trackData.get("duration_ms").parseJson(Integer.class),
+                                trackData.get("name").toString(),
+                                trackData.get("id").toString().replaceAll("\"", ""),
+                                trackData.get("explicit").parseJson(Boolean.class));
+                        this.tracks.add(track);
+                        this.tracksIds.add(trackData.get("id").toString().replaceAll("\"", ""));
+                    }
+                    if (tracksObjects.size() == 50) {
+                        page += 50;
+                        urlRequest = urlRequest.replace("offset=" + (page - 50), "offset=" + page);
+                        artistTracks = User.getInstance().getRequest()
+                                .sendGetRequest(urlRequest);
+                        tracksObjects = artistTracks.get("tracks.items").parseJsonArray();
+                    }
+                } while (tracksObjects.size() == 50);
+
+            } catch (RequestException e) {
+                e.printStackTrace();
             }
         }
         return tracks;

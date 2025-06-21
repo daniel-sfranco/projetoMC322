@@ -47,6 +47,7 @@ public class Album implements MusicSource {
         this.id = id;
         this.numTracks = albumData.get("total_tracks").parseJson(Integer.class);
         this.name = albumData.get("name").toString();
+        this.tracks = new ArrayList<>();
         ArrayList<Json> tracksData = albumData.get("tracks.items").parseJsonArray();
         ArrayList<Track> tracks = new ArrayList<Track>();
 
@@ -78,6 +79,14 @@ public class Album implements MusicSource {
         this.id = id;
         this.name = name;
         this.tracks = tracks;
+    }
+
+    public Album(int numTracks, String id, String name){
+        this.request = User.getInstance().getRequest();
+        this.numTracks = numTracks;
+        this.id = id;
+        this.name = name;
+        this.tracks = new ArrayList<>();
     }
 
     /**

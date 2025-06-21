@@ -50,9 +50,9 @@ public class Playlist implements MusicSource {
      * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
      */
     public Playlist(String id) throws RequestException {
-        this.id = id;
+        this.id = id.replaceAll("\"", "");
         Json playlistData = User.getInstance().getRequest()
-                .sendGetRequest("playlists/" + id + "?market=" + User.getInstance().getCountry()
+                .sendGetRequest("playlists/" + this.id + "?market=" + User.getInstance().getCountry()
                         + "&fields=name%2C+owner.id%2C+tracks.total%2C");
         this.name = playlistData.get("name").toString();
         this.ownerId = playlistData.get("owner.id").toString();
@@ -100,7 +100,7 @@ public class Playlist implements MusicSource {
      */
     public Playlist(int numTracks, String id, String name, String ownerId, ArrayList<Track> tracks) {
         this.numTracks = numTracks;
-        this.id = id;
+        this.id = id.replaceAll("\"", "");
         this.name = name;
         this.ownerId = ownerId;
         this.tracks = tracks;
@@ -108,15 +108,6 @@ public class Playlist implements MusicSource {
         for (Track track : tracks) {
             tracksIds.add(track.getId());
         }
-    }
-
-    public Playlist(int numTracks, String id, String name, String ownerId) {
-        this.numTracks = numTracks;
-        this.id = id;
-        this.name = name;
-        this.ownerId = ownerId;
-        this.tracks = new ArrayList<>();
-        this.tracksIds = new ArrayList<>();
     }
 
     private Playlist(PlaylistBuilder builder) throws JsonProcessingException, RequestException {
@@ -258,7 +249,8 @@ public class Playlist implements MusicSource {
         }
 
         public PlaylistBuilder addPlaylist(String basePlaylistId) throws RequestException {
-            Playlist actPlaylist = new Playlist(basePlaylistId);
+            System.out.println(basePlaylistId);
+            Playlist actPlaylist = new Playlist(basePlaylistId.replaceAll("\"", ""));
             this.minTracks += actPlaylist.getNumTracks();
             this.basePlaylist = new Playlist(basePlaylistId);
             return this;
@@ -345,7 +337,7 @@ public class Playlist implements MusicSource {
 
         private void resolveGenre() throws RequestException {
             if (genreId != null) {
-                String idEncoded = HttpClientUtil.QueryURLEncode(genreId);
+                String idEncoded = HttpClientUtil.QueryURLEncode("genre:" + genreId);
                 String urlRequest = "search?q=" + idEncoded
                         + "&type=track&market=" + User.getInstance().getCountry() + "&limit=50&offset=0";
                 int page = 0;

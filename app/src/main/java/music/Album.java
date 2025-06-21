@@ -43,10 +43,11 @@ public class Album implements MusicSource {
      */
     public Album(String id) throws RequestException {
         this.request = User.getInstance().getRequest();
-        Json albumData = this.request.sendGetRequest("albums/" + id);
-        this.id = id;
+        this.id = id.replaceAll("\"", "");
+        Json albumData = this.request.sendGetRequest("albums/" + this.id);
         this.numTracks = albumData.get("total_tracks").parseJson(Integer.class);
         this.name = albumData.get("name").toString();
+        this.tracks = new ArrayList<>();
         ArrayList<Json> tracksData = albumData.get("tracks.items").parseJsonArray();
         ArrayList<Track> tracks = new ArrayList<Track>();
 
@@ -75,9 +76,17 @@ public class Album implements MusicSource {
     public Album(int numTracks, String id, String name, ArrayList<Track> tracks) {
         this.request = User.getInstance().getRequest();
         this.numTracks = numTracks;
-        this.id = id;
+        this.id = id.replaceAll("\"", "");
         this.name = name;
         this.tracks = tracks;
+    }
+
+    public Album(int numTracks, String id, String name){
+        this.request = User.getInstance().getRequest();
+        this.numTracks = numTracks;
+        this.id = id.replaceAll("\"", "");
+        this.name = name;
+        this.tracks = new ArrayList<>();
     }
 
     /**

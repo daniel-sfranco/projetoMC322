@@ -1,13 +1,8 @@
 package fileManager;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Classe responsável por gerenciar o arquivo de refresh token do usuário.
@@ -18,9 +13,7 @@ import java.util.Scanner;
  * @author Vinícius de Oliveira - 251527
  */
 public class RefreshTokenFileManager {
-    private static String FILES_lOCATION = "src" + File.separator +
-            "main" + File.separator + "resources" + File.separator +
-            "savedFiles" + File.separator + "User" + File.separator;
+    private static String REFRESHTOKEN_LOCATION = "User" + File.separator + "RefreshToken.che";
 
     /**
      * Método para escrever o refresh token em um arquivo.
@@ -30,22 +23,10 @@ public class RefreshTokenFileManager {
      * @param refreshToken O refresh token a ser salvo no arquivo.
      */
     public static void writeRefreshtoken(String refreshToken) {
-        try {
-            Path fullPath = Paths.get(FILES_lOCATION, "RefreshToken.che");
-            Path parentDir = fullPath.getParent();
+        ArrayList<String> lines = new ArrayList<String>(
+            Arrays.asList(refreshToken));
 
-            // Se os diretórios não existir, cria todos os diretórios necessários.
-            if (parentDir != null) {
-                Files.createDirectories(parentDir);
-            }
-
-            Files.write(fullPath, refreshToken.getBytes(StandardCharsets.UTF_8));
-
-        } catch (IOException e) {
-            System.out.println("Ocorreu um erro ao salvar o arquivo.");
-            System.out.println("Mensagem: " + e.getMessage());
-            e.printStackTrace();
-        }
+        FileCheManager.writeCheFile(lines, REFRESHTOKEN_LOCATION);
     }
 
     /**
@@ -56,21 +37,14 @@ public class RefreshTokenFileManager {
      * @return O refresh token lido do arquivo, ou null se ocorrer um erro.
      */
     public static String readRefreshToken() {
-        File file = new File(FILES_lOCATION + "RefreshToken.che");
-        String refreshToken = null;
-
-        try {
-            Scanner reader = new Scanner(file);
-            refreshToken = reader.nextLine();
-            reader.close();
-            return refreshToken;
-        } catch (FileNotFoundException e) {
-            ClientDataFileManager fileManager = new ClientDataFileManager();
-            fileManager.writeFile();
+        ArrayList<String> readLines = 
+            FileCheManager.readCheFile(REFRESHTOKEN_LOCATION);
+        
+        if (readLines.isEmpty()) {
+            return null;
+        } else {
+            return readLines.get(0);
         }
-
-        // Caso tenha ocorrido uma exceção, retorna null
-        return null;
     }
 
     /**
@@ -81,8 +55,6 @@ public class RefreshTokenFileManager {
      * @return true se o arquivo foi deletado com sucesso, false caso contrário.
      */
     public static Boolean deleteRefreshToken() {
-        File file = new File(FILES_lOCATION + "RefreshToken.che");
-        // Retorna True se o arquivo foi deletado e false caso contrário.
-        return file.delete();
+        return FileCheManager.deleteCheFile(REFRESHTOKEN_LOCATION);
     }
 }

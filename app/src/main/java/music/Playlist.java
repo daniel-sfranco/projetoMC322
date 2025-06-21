@@ -397,6 +397,7 @@ public class Playlist implements MusicSource {
     }
 
     public static void main(String[] args) throws RequestException, JsonProcessingException, InvalidNumTracksException {
+        /*
         // testando a busca de uma playlist diretamente com a id dela
         // String playlistId = "29RMt61ETYJG3k6okGJdi2";
         // Playlist rock = new Playlist(playlistId);
@@ -420,6 +421,8 @@ public class Playlist implements MusicSource {
         builder = builder.addArtist(artists);
         builder = builder.addAlbum(albums);
         Playlist newPlaylist = builder.build();
-        System.out.println(newPlaylist);
+        System.out.println(newPlaylist);*/
+
+        // Playlist.editPlaylist("7H4HBQGgj3ZvvdITHJHbhi");
     }
 }

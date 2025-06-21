@@ -136,6 +136,14 @@ public class HttpClientUtil {
         return response.body();
     }
 
+    /**
+     * Transforma uma query passada como parâmetro em uma query que possa ser usada
+     * diretamente
+     * na URL de uma requisição
+     * 
+     * @param query a query a ser transformada
+     * @return a mesma query, pronta pra ser usada em uma URL
+     */
     public static String QueryURLEncode(String query) {
         try {
             return URLEncoder.encode(query, StandardCharsets.UTF_8.name());

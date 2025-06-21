@@ -39,13 +39,13 @@ public class Track {
     public Track(String id){
         this.request = User.getInstance().getRequest();
         Json trackData;
+        this.id = id.replaceAll("\"", "");
         try {
-            trackData = this.request.sendGetRequest("tracks/" + id);
+            trackData = this.request.sendGetRequest("tracks/" + this.id);
         } catch (RequestException e) {
             System.out.println("Erro ao obter dados da faixa: " + e.getMessage());
             return;
         }
-        this.id = id.replaceAll("\"", "");
         this.name = trackData.get("name").toString();
         this.explicit = trackData.get("explicit").parseJson(Boolean.class);
     }
@@ -64,7 +64,7 @@ public class Track {
         this.request = User.getInstance().getRequest();
         this.duration = duration;
         this.name = name;
-        this.id = id;
+        this.id = id.replaceAll("\"", "");
         this.explicit = explicit;
     }
 

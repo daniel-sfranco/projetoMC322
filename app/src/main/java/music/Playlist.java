@@ -50,7 +50,7 @@ public class Playlist implements MusicSource {
      * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
      */
     public Playlist(String id) throws RequestException {
-        this.id = id.toString().replaceAll("\"", "");
+        this.id = id.replaceAll("\"", "");
         Json playlistData = User.getInstance().getRequest()
                 .sendGetRequest("playlists/" + id + "?market=" + User.getInstance().getCountry()
                         + "&fields=name%2C+owner.id%2C+tracks.total%2C");
@@ -100,7 +100,7 @@ public class Playlist implements MusicSource {
      */
     public Playlist(int numTracks, String id, String name, String ownerId, ArrayList<Track> tracks) {
         this.numTracks = numTracks;
-        this.id = id;
+        this.id = id.replaceAll("\"", "");
         this.name = name;
         this.ownerId = ownerId;
         this.tracks = tracks;
@@ -249,6 +249,7 @@ public class Playlist implements MusicSource {
         }
 
         public PlaylistBuilder addPlaylist(String basePlaylistId) throws RequestException {
+            System.out.println(basePlaylistId);
             Playlist actPlaylist = new Playlist(basePlaylistId.replaceAll("\"", ""));
             this.minTracks += actPlaylist.getNumTracks();
             this.basePlaylist = new Playlist(basePlaylistId);

@@ -213,8 +213,7 @@ public class Playlist implements MusicSource {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(new URI(uri));
             } else {
-                System.out.println(
-                        "Não foi possível abrir o navegador. Por favor, acesse a URL manualmente: \n");
+                System.out.println("Não foi possível abrir o navegador. Por favor, acesse a URL manualmente: \n");
             }
         } catch (Exception e) {
             e.printStackTrace();

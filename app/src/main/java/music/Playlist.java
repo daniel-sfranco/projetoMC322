@@ -52,7 +52,7 @@ public class Playlist implements MusicSource {
     public Playlist(String id) throws RequestException {
         this.id = id.replaceAll("\"", "");
         Json playlistData = User.getInstance().getRequest()
-                .sendGetRequest("playlists/" + id + "?market=" + User.getInstance().getCountry()
+                .sendGetRequest("playlists/" + this.id + "?market=" + User.getInstance().getCountry()
                         + "&fields=name%2C+owner.id%2C+tracks.total%2C");
         this.name = playlistData.get("name").toString();
         this.ownerId = playlistData.get("owner.id").toString();

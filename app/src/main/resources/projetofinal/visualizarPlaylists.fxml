@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="1060.0" spacing="0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projetofinal.controllers.PlaylistController">
+<VBox prefHeight="600.0" prefWidth="1060.0" spacing="0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projetofinal.controllers.visualizarPlaylistsController">
     <children>
         <HBox alignment="CENTER_RIGHT" prefHeight="42.0" prefWidth="1060.0" style="-fx-background-color: #FFCAEB;">
             <children>

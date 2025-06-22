@@ -198,17 +198,4 @@ public class User {
     public Request getRequest() {
         return request;
     }
-
-    /**
-     * Método principal para demonstração do salvamento e leitura de dados do
-     * usuário.
-     * Cria uma nova instância de {@code User}, salva-a em um arquivo e, em seguida,
-     * lê os dados de volta do arquivo, imprimindo o resultado no console.
-     *
-     * @param args Argumentos da linha de comando (não utilizados neste método).
-     * @throws RequestException Se ocorrer um erro ao fazer a requisição para a API.
-     */
-    public static void main(String[] args) throws RequestException {
-        System.out.println(User.getInstance());
-    }
 }

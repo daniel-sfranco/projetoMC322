@@ -59,17 +59,4 @@ public class SearchManager {
         results = researcher.search(query);
         return results;
     }
-
-    /**
-     * Método de teste para a funcionalidade de busca.
-     * Realiza uma busca por playlists com a palavra "músicas" e imprime os resultados no console.
-     * 
-     * @param args Argumentos da linha de comando (não utilizados).
-     */
-    public static void main(String[] args) {
-        ArrayList<SearchResult> results = SearchManager.search("músicas", "playlist");
-        for (SearchResult result : results) {
-            System.out.println(result);
-        }
-    }
 }

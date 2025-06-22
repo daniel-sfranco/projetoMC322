@@ -23,7 +23,6 @@ import java.util.ArrayList;
  * @author -
  */
 public interface Researcher {
-
     /**
      * Realiza uma busca com base na string fornecida.
      *

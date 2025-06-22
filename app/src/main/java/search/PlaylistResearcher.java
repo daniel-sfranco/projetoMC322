@@ -56,18 +56,4 @@ public class PlaylistResearcher implements Researcher {
 
         return results;
     }
-
-    /**
-     * Método de teste para a funcionalidade de busca de playlists.
-     * Realiza uma busca com string vazia (lista todas as playlists) e imprime os resultados no console.
-     * 
-     * @param args Argumentos da linha de comando (não utilizados).
-     */
-    public static void main(String[] args) {
-        ArrayList<SearchResult> playlistResults = SearchManager.search("", "playlist");
-
-        for (SearchResult result : playlistResults) {
-            System.out.println(result);
-        }
-    }
 }

@@ -61,18 +61,4 @@ public class GenreResearcher implements Researcher {
         }
         return results;
     }
-
-    /**
-     * Método de teste para a funcionalidade de busca de gêneros.
-     * Realiza uma busca pela palavra "pop" e imprime os resultados no console.
-     *
-     * @param args Argumentos da linha de comando (não utilizados).
-     */
-    public static void main(String[] args) {
-        ArrayList<SearchResult> genreResults = SearchManager.search("pop", "genre");
-
-        for (SearchResult result : genreResults) {
-            System.out.println(result);
-        }
-    }
 }

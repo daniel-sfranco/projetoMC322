@@ -55,18 +55,4 @@ public class TrackResearcher implements Researcher {
 
         return results;
     }
-
-    /**
-     * Método de teste para a funcionalidade de busca de faixas.
-     * Realiza uma busca pela faixa "Lá(r)" e imprime os resultados no console.
-     * 
-     * @param args Argumentos da linha de comando (não utilizados).
-     */
-    public static void main(String[] args) {
-        ArrayList<SearchResult> trackResults = SearchManager.search("Lá(r)", "track");
-
-        for (SearchResult result : trackResults) {
-            System.out.println(result);
-        }
-    }
 }

@@ -53,13 +53,4 @@ public class PlaylistFileManager extends FileManager {
         setLocation();
         FileManager.deleteLine(playlistId);
     }
-
-    public static void main(String[] args) {
-        // PlaylistFileManager.addPlaylistId("playlist1");
-        // PlaylistFileManager.addPlaylistId("playlist2");
-        // PlaylistFileManager.addPlaylistId("playlist3");
-
-        PlaylistFileManager.deletePlaylistId("playlist3");
-        System.out.println(PlaylistFileManager.getUserPlaylists());
-    }
 }

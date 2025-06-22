@@ -56,19 +56,4 @@ public class AlbumResearcher implements Researcher {
 
         return results;
     }
-
-    /**
-     * Método de teste para a funcionalidade de busca de álbuns.
-     * Realiza uma busca pela string "guerra e paz" e imprime os resultados no
-     * console.
-     *
-     * @param args Argumentos da linha de comando (não utilizados).
-     */
-    public static void main(String[] args) {
-        ArrayList<SearchResult> albumResults = SearchManager.search("guerra e paz", "album");
-
-        for (SearchResult result : albumResults) {
-            System.out.println(result);
-        }
-    }
 }

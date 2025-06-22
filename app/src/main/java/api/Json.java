@@ -10,8 +10,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import exceptions.RequestException;
-
 /**
  * Json
  * Classe para objetos do tipo Json, para conversão entre tipos
@@ -164,27 +162,5 @@ public class Json {
      */
     public String toString() {
         return value;
-    }
-
-    /**
-     * Método principal para testar a conversão de objeto para JSON e vice-versa.
-     * 
-     * @param args argumentos da linha de comando (não utilizados)
-     * @throws RequestException        caso ocorra um erro de requisição
-     * @throws JsonProcessingException caso ocorra um erro ao processar JSON
-     */
-    public static void main(String[] args) throws RequestException, JsonProcessingException {
-        Map<String, String> info = Map.of(
-                "name", "John Doe",
-                "email", "123@gmail.com");
-        Json json;
-        try {
-            json = new Json(info);
-            json.print();
-            Map<String, Json> parsedMap = json.parseJson();
-            System.out.println(parsedMap.toString());
-        } catch (JsonProcessingException e) {
-            System.out.println(e.getMessage());
-        }
     }
 }

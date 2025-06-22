@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class FileManager {
@@ -119,15 +118,5 @@ public abstract class FileManager {
             System.err.println("Mensagem: " + e.getMessage());
             return false;
         }
-    }
-
-    public static void main(String[] args) {
-        ArrayList<String> lines = new ArrayList<String>(
-                Arrays.asList("hello", "there", "world"));
-
-        String relativePath = "test" + File.separator +
-                "text.che";
-        FileManager.writeFile(lines);
-        System.out.println(FileManager.readFile());
     }
 }

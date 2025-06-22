@@ -116,9 +116,4 @@ public class Album extends MusicSource {
     public String toString() {
         return "\n    Album [id=" + id + ", name=" + name + ", tracks=" + tracks + "]";
     }
-
-    public static void main(String[] args) throws RequestException {
-        Album album = new Album("5qRQ53QZuqnpjDedQmfsLJ");
-        System.out.println(album);
-    }
 }

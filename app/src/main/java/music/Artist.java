@@ -119,26 +119,4 @@ public class Artist extends MusicSource {
     public String toString() {
         return "\nArtist [name=" + name + ", Id=" + id + ", Tracks=" + this.getTracks() + "]";
     }
-
-    /**
-     * Método principal para testar a classe Artist.
-     * Tenta criar um artista com um ID específico e imprime suas informações.
-     *
-     * @param args Argumentos de linha de comando (não utilizados).
-     */
-    public static void main(String[] args) throws RequestException {
-        Json followed = User.getInstance().getRequest().sendGetRequest("me/following?type=artist");
-        ArrayList<Json> artistList = followed.get("artists.items").parseJsonArray();
-        ArrayList<Artist> artists = new ArrayList<>();
-        for (Json artist : artistList) {
-            Artist newArtist = new Artist(
-                    artist.get("name").toString().replaceAll("\"", ""),
-                    artist.get("id").toString().replaceAll("\"", ""));
-            artists.add(newArtist);
-            System.out.print(newArtist);
-        }
-        Artist example = artists.get(0);
-        example.getTracks();
-        System.out.println(example);
-    }
 }

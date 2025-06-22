@@ -83,17 +83,4 @@ public class Request {
                 "Content-Type", "application/json");
         return new Json(HttpClientUtil.sendGetRequest(baseUrl + url, headers));
     }
-
-    /**
-     * Método principal para testar a obtenção do token de autenticação.
-     * 
-     * @param args Argumentos da linha de comando (não utilizados).
-     * @throws RequestException se ocorrer um erro ao enviar a
-     *                          requisição.
-     */
-    public static void main(String[] args) throws RequestException {
-        Request request = new Request();
-        Json response = request.sendGetRequest("me");
-        System.out.println(response);
-    }
 }

@@ -144,33 +144,4 @@ public class ClientDataFileManager extends FileManager {
         if (!updatedClientSecret)
             throw new IncorrectClientFileDataException("Não foi possível alterar o clientSecret");
     }
-
-    /**
-     * Método principal para testar a funcionalidade de leitura e escrita de dados
-     * do cliente.
-     * Este método cria uma instância de {@code ClientDataFileManager}, escreve um
-     * Client ID e um Client Secret,
-     * e depois lê os dados do arquivo, exibindo-os no console.
-     *
-     * @param args Argumentos da linha de comando (não utilizados).
-     */
-    public static void main(String[] args) {
-        String clientId = "9afeb5fec9854592994aa191f842b529";
-        String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";
-
-        ClientDataFileManager.writeClientData(clientId, clientSecret);
-
-        /*
-         * try {
-         * fileManager.writeClientId("Idnovo");
-         * fileManager.writeClientSecret("segredonovo");
-         * } catch (Exception e) {
-         * System.out.println(e.getMessage());
-         * }
-         */
-
-        Map<String, String> clientData = ClientDataFileManager.readClientData();
-        System.out.println("id: " + clientData.get("clientId"));
-        System.out.println("segredo: " + clientData.get("clientSecret"));
-    }
 }

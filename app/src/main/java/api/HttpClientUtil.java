@@ -8,7 +8,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -150,23 +149,5 @@ public class HttpClientUtil {
             System.err.println("Erro ao codificar URl da query: " + e.getMessage());
         }
         return null;
-    }
-
-    /**
-     * Método principal para testar o envio de requisições GET e POST.
-     *
-     * @param args argumentos da linha de comando (não utilizados)
-     */
-    public static void main(String[] args) {
-        Map<String, String> headers = new HashMap<String, String>();
-        headers.put("Content-type", "application/json; charset=UTF-8");
-        try {
-            HttpClientUtil.sendGetRequest("https://jsonplaceholder.typicode.com/posts", headers);
-            System.out.println("Requisição get enviada com sucesso");
-            HttpClientUtil.sendPostRequest("https://jsonplaceholder.typicode.com/posts", headers, new Json(headers));
-            System.out.println("Requisição post enviada com sucesso");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

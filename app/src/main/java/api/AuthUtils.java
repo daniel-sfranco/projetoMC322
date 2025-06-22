@@ -139,7 +139,7 @@ public class AuthUtils {
      * @param res     A resposta HTTP para definir o status e o corpo.
      * @return Uma string HTML com a mensagem de erro.
      */
-    public String printError(String message, spark.Response res) {
+    private String printError(String message, spark.Response res) {
         System.err.println(message);
         authCodeFuture.completeExceptionally(new RequestException(message));
         res.status(400);

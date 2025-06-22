@@ -55,19 +55,4 @@ public class ArtistResearcher implements Researcher {
 
         return results;
     }
-
-    /**
-     * Método de teste para a funcionalidade de busca de artistas.
-     * Realiza uma busca pelo artista "Os Arrais" e imprime os resultados no
-     * console.
-     * 
-     * @param args Argumentos da linha de comando (não utilizados).
-     */
-    public static void main(String[] args) {
-        ArrayList<SearchResult> artistResults = SearchManager.search("Os Arrais", "artist");
-
-        for (SearchResult result : artistResults) {
-            System.out.println(result);
-        }
-    }
 }

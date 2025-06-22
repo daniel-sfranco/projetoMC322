@@ -34,13 +34,8 @@ import user.User;
  * @author Vinícius de Oliveira - 251527
  * @author Daniel Soares Franco - 259083
  */
-public class Playlist implements MusicSource {
-    private int numTracks;
-    private String id;
-    private String name;
+public class Playlist extends MusicSource {
     private String ownerId;
-    private ArrayList<Track> tracks;
-    private ArrayList<String> tracksIds;
 
     /**
      * Construtor para criar uma nova instância de Playlist a partir de um ID.
@@ -51,15 +46,12 @@ public class Playlist implements MusicSource {
      * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
      */
     public Playlist(String id) throws RequestException {
-        this.id = id.replaceAll("\"", "");
-        Json playlistData = User.getInstance().getRequest()
-                .sendGetRequest("playlists/" + this.id + "?market=" + User.getInstance().getCountry()
+        super(id);
+        Json playlistData = this.request.sendGetRequest("playlists/" + this.id + "?market=" + User.getInstance().getCountry()
                         + "&fields=name%2C+owner.id%2C+tracks.total%2C");
         this.name = playlistData.get("name").toString();
         this.ownerId = playlistData.get("owner.id").toString();
-        this.numTracks = Integer.parseInt(playlistData.get("tracks.total").toString());
-        this.tracks = new ArrayList<>();
-        this.tracksIds = new ArrayList<>();
+        int numTracks = Integer.parseInt(playlistData.get("tracks.total").toString());
 
         String urlRequest = "playlists/" + id + "/tracks?market=" + User.getInstance().getCountry()
                 + "&fields=items.track%28duration_ms%2C+name%2C+id%2C+explicit%29&limit=50&offset=0";
@@ -81,13 +73,13 @@ public class Playlist implements MusicSource {
                 this.tracksIds.add(trackData.get("id").toString().replaceAll("\"", ""));
 
             }
-            if (this.tracks.size() < this.numTracks) {
+            if (this.tracks.size() < numTracks) {
                 page = page + 50;
                 urlRequest = urlRequest.replace("offset=" + (page - 50), "offset=" + page);
                 playlistData = User.getInstance().getRequest()
                         .sendGetRequest(urlRequest);
             }
-        } while (this.tracks.size() < this.numTracks);
+        } while (this.tracks.size() < numTracks);
     }
 
     /**
@@ -99,20 +91,12 @@ public class Playlist implements MusicSource {
      * @param ownerId   O id do usuário proprietário da playlist.
      * @param tracksIds Uma lista de ids de faixas contidas na playlist.
      */
-    public Playlist(int numTracks, String id, String name, String ownerId, ArrayList<Track> tracks) {
-        this.numTracks = numTracks;
-        this.id = id.replaceAll("\"", "");
-        this.name = name;
+    public Playlist(String id, String name, String ownerId, ArrayList<Track> tracks) {
+        super(id, name, tracks);
         this.ownerId = ownerId;
-        this.tracks = tracks;
-        this.tracksIds = new ArrayList<>();
-        for (Track track : tracks) {
-            tracksIds.add(track.getId());
-        }
     }
 
     private Playlist(PlaylistBuilder builder) throws JsonProcessingException, RequestException {
-        User user = User.getInstance();
         this.name = "Sua nova melhor playlist";
         HashMap<String, Object> bodyMap = new HashMap<>();
         bodyMap.put("name", this.name);
@@ -120,11 +104,10 @@ public class Playlist implements MusicSource {
         bodyMap.put("public", true);
         bodyMap.put("collaborative", false);
         Json bodyJson = new Json(bodyMap);
-        String url = String.format("users/%s/playlists", user.getId());
-        Json response = user.getRequest().sendPostRequest(url, bodyJson);
+        String url = String.format("users/%s/playlists", User.getInstance().getId());
+        Json response = this.request.sendPostRequest(url, bodyJson);
         this.id = response.get("id").toString().replaceAll("\"", "");
         this.ownerId = response.get("owner.id").toString().replaceAll("\"", "");
-        this.numTracks = builder.numTracks;
         this.tracks = new ArrayList<>(builder.tracks);
         this.tracksIds = new ArrayList<>(builder.tracksIds);
         ArrayList<String> uris = new ArrayList<>();
@@ -135,7 +118,7 @@ public class Playlist implements MusicSource {
                 bodyMap.put("position", page * 100);
                 bodyMap.put("uris", uris);
                 bodyJson = new Json(bodyMap);
-                user.getRequest().sendPostRequest("playlists/" + this.id + "/tracks", bodyJson);
+                this.request.sendPostRequest("playlists/" + this.id + "/tracks", bodyJson);
                 uris = new ArrayList<>();
                 page++;
             }
@@ -144,43 +127,12 @@ public class Playlist implements MusicSource {
         bodyMap.put("position", page * 100);
         bodyMap.put("uris", uris);
         bodyJson = new Json(bodyMap);
-        user.getRequest().sendPostRequest("playlists/" + this.id + "/tracks", bodyJson);
+        this.request.sendPostRequest("playlists/" + this.id + "/tracks", bodyJson);
         PlaylistFileManager.addPlaylistId(this.id);
     }
 
     public static PlaylistBuilder builder(int numTracks) {
         return new PlaylistBuilder(numTracks);
-    }
-
-    /**
-     * Retorna o número total de faixas na playlist.
-     *
-     * @return O número de faixas.
-     */
-    public int getNumTracks() {
-        return numTracks;
-    }
-
-    /**
-     * Retorna o ID único da playlist no Spotify.
-     * Implementação do método {@code getId()} da interface {@link MusicSource}.
-     *
-     * @return O ID da playlist.
-     */
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Retorna o nome da playlist.
-     * Implementação do método {@code getName()} da interface {@link MusicSource}.
-     *
-     * @return O nome da playlist.
-     */
-    @Override
-    public String getName() {
-        return name;
     }
 
     /**
@@ -203,7 +155,7 @@ public class Playlist implements MusicSource {
 
     @Override
     public String toString() {
-        return "\n    Playlist [numTracks=" + numTracks + ", id=" + id + ", name=" + name + ", ownerId=" + ownerId
+        return "\n    Playlist [id=" + id + ", name=" + name + ", ownerId=" + ownerId
                 + ", tracks=" + tracks + "]";
     }
 
@@ -253,7 +205,7 @@ public class Playlist implements MusicSource {
         public PlaylistBuilder addPlaylist(String basePlaylistId) throws RequestException {
             System.out.println(basePlaylistId);
             Playlist actPlaylist = new Playlist(basePlaylistId.replaceAll("\"", ""));
-            this.minTracks += actPlaylist.getNumTracks();
+            this.minTracks += actPlaylist.getTracks().size();
             this.basePlaylist = new Playlist(basePlaylistId);
             return this;
         }

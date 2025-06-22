@@ -12,9 +12,7 @@ package music;
 import java.util.ArrayList;
 
 import api.Json;
-import api.Request;
 import exceptions.RequestException;
-import user.User;
 
 /**
  * Representa um álbum de música no Spotify.
@@ -26,13 +24,7 @@ import user.User;
  * @author Vinícius de Oliveira - 251527
  * @author Daniel Soares Franco - 259083
  */
-public class Album implements MusicSource {
-    private int numTracks;
-    private String id;
-    private String name;
-    private ArrayList<Track> tracks;
-    private Request request;
-
+public class Album extends MusicSource {
     /**
      * Construtor para criar uma nova instância de Album a partir de um ID.
      * Este construtor faz uma requisição à API do Spotify para obter os dados do
@@ -42,26 +34,19 @@ public class Album implements MusicSource {
      * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
      */
     public Album(String id) throws RequestException {
-        this.request = User.getInstance().getRequest();
-        this.id = id.replaceAll("\"", "");
+        super(id);
         Json albumData = this.request.sendGetRequest("albums/" + this.id);
-        this.numTracks = albumData.get("total_tracks").parseJson(Integer.class);
         this.name = albumData.get("name").toString();
-        this.tracks = new ArrayList<>();
-        ArrayList<Json> tracksData = albumData.get("tracks.items").parseJsonArray();
-        ArrayList<Track> tracks = new ArrayList<Track>();
 
-        for (Json trackData : tracksData) {
+        for (Json trackData : albumData.get("tracks.items").parseJsonArray()) {
             Track track = new Track(
                 trackData.get("duration_ms").parseJson(Integer.class),
                 trackData.get("name").toString(),
                 trackData.get("id").toString(),
                 trackData.get("explicit").parseJson(Boolean.class)
             );
-            tracks.add(track);
+            this.tracks.add(track);
         }
-
-        this.tracks = tracks;
     }
 
     /**
@@ -73,51 +58,12 @@ public class Album implements MusicSource {
      * @param tracks  Uma {@code ArrayList} de ids de músicas que fazem parte
      *                   deste álbum.
      */
-    public Album(int numTracks, String id, String name, ArrayList<Track> tracks) {
-        this.request = User.getInstance().getRequest();
-        this.numTracks = numTracks;
-        this.id = id.replaceAll("\"", "");
-        this.name = name;
-        this.tracks = tracks;
+    public Album(String id, String name, ArrayList<Track> tracks) {
+        super(id, name, tracks);
     }
 
-    public Album(int numTracks, String id, String name){
-        this.request = User.getInstance().getRequest();
-        this.numTracks = numTracks;
-        this.id = id.replaceAll("\"", "");
-        this.name = name;
-        this.tracks = new ArrayList<>();
-    }
-
-    /**
-     * Retorna o número total de faixas no álbum.
-     *
-     * @return O número de faixas.
-     */
-    public int getNumTracks() {
-        return numTracks;
-    }
-
-    /**
-     * Retorna o ID único do álbum no Spotify.
-     * Implementação do método {@code getId()} da interface {@link MusicSource}.
-     *
-     * @return O ID do álbum.
-     */
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Retorna o nome do álbum.
-     * Implementação do método {@code getName()} da interface {@link MusicSource}.
-     *
-     * @return O nome do álbum.
-     */
-    @Override
-    public String getName() {
-        return name;
+    public Album(String id, String name){
+        super(id, name);
     }
 
     /**
@@ -125,7 +71,6 @@ public class Album implements MusicSource {
      *
      * @return Uma {@code ArrayList} de objetos {@link Track}.
      */
-    @Override
     public ArrayList<Track> getTracks() {
         return tracks;
     }
@@ -136,7 +81,7 @@ public class Album implements MusicSource {
      * @return Uma string representando o álbum.
      */
     public String toString() {
-        return "\n    Album [numTracks=" + numTracks + ", id=" + id + ", name=" + name + ", tracks=" + tracks + "]";
+        return "\n    Album [id=" + id + ", name=" + name + ", tracks=" + tracks + "]";
     }
 
     public static void main(String[] args) throws RequestException {

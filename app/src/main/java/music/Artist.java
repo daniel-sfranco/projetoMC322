@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import api.HttpClientUtil;
 import api.Json;
-import api.Request;
 import exceptions.RequestException;
 import user.User;
 
@@ -25,14 +24,7 @@ import user.User;
  * 
  * @author Vinícius de Oliveira - 251527
  */
-public class Artist implements MusicSource {
-    private String name;
-    private String id;
-    private ArrayList<Album> albums;
-    private ArrayList<Track> tracks;
-    private ArrayList<String> tracksIds;
-    private Request request;
-
+public class Artist extends MusicSource {
     /**
      * Construtor para criar uma nova instância de Artist a partir de um ID.
      * Este construtor faz uma requisição à API do Spotify para obter os dados do
@@ -42,13 +34,9 @@ public class Artist implements MusicSource {
      * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
      */
     public Artist(String id) throws RequestException {
-        this.request = User.getInstance().getRequest();
-        this.id = id.replaceAll("\"", "");
+        super(id);
         Json artistData = this.request.sendGetRequest("artists/" + this.id);
         this.name = artistData.get("name").toString();
-        this.albums = new ArrayList<>();
-        this.tracks = new ArrayList<>();
-        this.tracksIds = new ArrayList<>();
     }
 
     /**
@@ -58,82 +46,8 @@ public class Artist implements MusicSource {
      * @param id     O ID único do artista no Spotify.
      * @param albums Uma lista de álbuns associados a este artista.
      */
-    public Artist(String name, String id, ArrayList<Album> albums) {
-        this.request = User.getInstance().getRequest();
-        this.name = name;
-        this.id = id.replaceAll("\"", "");
-        this.albums = albums;
-        this.tracks = new ArrayList<>();
-        this.tracksIds = new ArrayList<>();
-    }
-
     public Artist(String name, String id) {
-        User user = User.getInstance();
-        this.request = user.getRequest();
-        this.name = name;
-        this.id = id.replaceAll("\"", "");
-        this.albums = new ArrayList<>();
-        this.tracks = new ArrayList<>();
-        this.tracksIds = new ArrayList<>();
-    }
-
-    public void addAlbums() {
-        try {
-            ArrayList<Json> albumsJson = this.request
-                    .sendGetRequest("artists/" + this.id + "/albums?market=" + User.getInstance().getCountry())
-                    .get("items").parseJsonArray();
-            for (Json albumJson : albumsJson) {
-                this.albums.add(new Album(
-                        albumJson.get("id").toString().replaceAll("\"", "")));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Método para converter o objeto Artist em uma representação de string.
-     * 
-     * @return Uma string representando o artista, incluindo seu nome, ID e os IDs
-     *         dos álbuns associados.
-     */
-    @Override
-    public String toString() {
-        return "\nArtist [name=" + name + ", Id=" + id + ", albuns=" + albums + "]";
-    }
-
-    /**
-     * Retorna o nome do artista.
-     * Implementação do método {@code getName()} da interface {@link MusicSource}.
-     *
-     * @return O nome do artista.
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Retorna o ID único do artista no Spotify.
-     * Implementação do método {@code getId()} da interface {@link MusicSource}.
-     *
-     * @return O ID do artista.
-     */
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Retorna a lista de ids de álbuns associados a este artista.
-     *
-     * @return Uma {@code ArrayList} de ids de álbuns.
-     */
-    public ArrayList<Album> getAlbums() {
-        if (this.albums.size() == 0) {
-            this.addAlbums();
-        }
-        return albums;
+        super(id, name);
     }
 
     /**
@@ -146,7 +60,6 @@ public class Artist implements MusicSource {
      *
      * @return Uma {@code ArrayList} de ids de faixas.
      */
-    @Override
     public ArrayList<Track> getTracks() {
         if (tracks.size() == 0) {
             String query = HttpClientUtil.QueryURLEncode("artist:" + this.name);
@@ -179,12 +92,21 @@ public class Artist implements MusicSource {
                         tracksObjects = artistTracks.get("tracks.items").parseJsonArray();
                     }
                 } while (tracksObjects.size() == 50);
-
             } catch (RequestException e) {
                 e.printStackTrace();
             }
         }
         return tracks;
+    }
+
+    /**
+     * Método para converter o objeto Artist em uma representação de string.
+     * 
+     * @return Uma string representando o artista, incluindo seu nome, ID e os IDs
+     *         dos álbuns associados.
+     */
+    public String toString() {
+        return "\nArtist [name=" + name + ", Id=" + id + ", Tracks=" + this.getTracks() + "]";
     }
 
     /**
@@ -205,7 +127,7 @@ public class Artist implements MusicSource {
             System.out.print(newArtist);
         }
         Artist example = artists.get(0);
-        example.addAlbums();
+        example.getTracks();
         System.out.println(example);
     }
 }

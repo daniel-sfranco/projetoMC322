@@ -11,6 +11,9 @@ package music;
 
 import java.util.ArrayList;
 
+import api.Request;
+import user.User;
+
 /**
  * A interface {@code MusicSource} define um contrato para qualquer entidade que
  * possa ser considerada uma fonte de música no sistema.
@@ -20,16 +23,45 @@ import java.util.ArrayList;
  * 
  * @author Vinícius de Oliveira - 251527
  */
-public interface MusicSource {
-    /**
-     * Retorna uma lista de ids de faixas associadas a esta fonte de música.
-     * Dependendo da implementação, pode ser as faixas de uma playlist, de um álbum,
-     * ou as faixas mais populares de um artista/categoria.
-     *
-     * @return Uma {@code ArrayList} de {@code Track} contidos na fonte de música.
-     *         Pode retornar uma lista vazia se não houver faixas.
-     */
-    public ArrayList<Track> getTracks();
+public abstract class MusicSource {
+    protected String id;
+    protected String name;
+    protected ArrayList<Track> tracks;
+    protected ArrayList<String> tracksIds;
+    protected Request request;
+
+    public MusicSource(){
+        this.request = User.getInstance().getRequest();
+        this.tracks = new ArrayList<>();
+        this.tracksIds = new ArrayList<>();
+    }
+
+    public MusicSource(String id){
+        this.id = id.replaceAll("\"", "");
+        this.tracks = new ArrayList<>();
+        this.tracksIds = new ArrayList<>();
+        this.request = User.getInstance().getRequest();
+    }
+
+    public MusicSource(String id, String name){
+        this.id = id.replaceAll("\"", "");
+        this.name = name;
+        this.tracks = new ArrayList<>();
+        this.tracksIds = new ArrayList<>();
+        this.request = User.getInstance().getRequest();
+    }
+
+    public MusicSource(String id, String name, ArrayList<Track> tracks){
+        this.id = id.replaceAll("\"", "");
+        this.name = name;
+        this.tracks = tracks;
+        this.tracksIds = new ArrayList<>();
+        for(Track track : tracks){
+            this.tracksIds.add(track.getId());
+        }
+    }
+
+    public abstract ArrayList<Track> getTracks();
 
     /**
      * Retorna o ID único da fonte de música.
@@ -38,7 +70,9 @@ public interface MusicSource {
      *
      * @return Uma {@code String} contendo o ID da fonte de música.
      */
-    public String getId();
+    public String getId(){
+        return this.id;
+    }
 
     /**
      * Retorna o nome legível da fonte de música.
@@ -47,5 +81,9 @@ public interface MusicSource {
      *
      * @return Uma {@code String} contendo o nome da fonte de música.
      */
-    public String getName();
+    public String getName(){
+        return this.name;
+    }
+
+    public abstract String toString();
 }

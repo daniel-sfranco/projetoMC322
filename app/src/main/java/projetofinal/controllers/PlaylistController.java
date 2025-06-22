@@ -16,25 +16,34 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import fileManager.PlaylistFileManager;
-
 public class PlaylistController {
-    @FXML private TextField numeroMusicasTextField;
+    @FXML
+    private TextField numeroMusicasTextField;
 
-    @FXML private TextField generoTextField;
-    @FXML private FlowPane generosAdicionadosFlow;
+    @FXML
+    private TextField generoTextField;
+    @FXML
+    private FlowPane generosAdicionadosFlow;
 
-    @FXML private TextField playlistTextField;
-    @FXML private FlowPane playlistAdicionadosFlow;
+    @FXML
+    private TextField playlistTextField;
+    @FXML
+    private FlowPane playlistAdicionadosFlow;
 
-    @FXML private TextField artistasTextField; 
-    @FXML private FlowPane artistasAdicionadosFlow;
+    @FXML
+    private TextField artistasTextField;
+    @FXML
+    private FlowPane artistasAdicionadosFlow;
 
-    @FXML private TextField albumTextField;
-    @FXML private FlowPane albumAdicionadosFlow; 
+    @FXML
+    private TextField albumTextField;
+    @FXML
+    private FlowPane albumAdicionadosFlow;
 
-    @FXML private TextField musicaTextField;
-    @FXML private FlowPane musicaAdicionadosFlow; 
+    @FXML
+    private TextField musicaTextField;
+    @FXML
+    private FlowPane musicaAdicionadosFlow;
 
     private final List<SearchResult> artistasSelecionados = new ArrayList<>();
     private final List<SearchResult> albunsSelecionados = new ArrayList<>();
@@ -42,8 +51,6 @@ public class PlaylistController {
     private final StringBuilder generosSelecionados = new StringBuilder();
     private final StringBuilder playlistSelecionadas = new StringBuilder();
     private String playlistSelecionadaId = null;
-
-    
 
     // Ações de navegação
     @FXML
@@ -66,7 +73,7 @@ public class PlaylistController {
 
     @FXML
     private Label mensagemErroLabel;
-    
+
     @FXML
     private void GerarPlaylist() {
         try {
@@ -74,7 +81,7 @@ public class PlaylistController {
             // 1. Pega número de músicas (com validação simples)
             int numeroDeMusicas = 0;
             String texto = numeroMusicasTextField.getText().trim();
-            
+
             if (!texto.isEmpty()) {
                 numeroDeMusicas = Integer.parseInt(texto);
             }
@@ -84,11 +91,13 @@ public class PlaylistController {
 
             // 3. Adiciona valores se existirem
             if (generosSelecionados.length() > 0) {
-               builder = builder.addGenre(generosSelecionados.toString());
+                builder = builder.addGenre(generosSelecionados.toString());
             }
 
-            if (playlistSelecionadaId.length() > 0) {
-                builder = builder.addPlaylist(playlistSelecionadaId.toString());
+            if (playlistSelecionadaId != null) {
+                if (playlistSelecionadaId.length() > 0) {
+                    builder = builder.addPlaylist(playlistSelecionadaId.toString());
+                }
             }
 
             for (SearchResult artista : artistasSelecionados) {
@@ -98,11 +107,10 @@ public class PlaylistController {
             for (SearchResult album : albunsSelecionados) {
                 builder = builder.addAlbum(new ArrayList<>(List.of(album.getId())));
             }
-            
+
             for (SearchResult musica : musicasSelecionadas) {
                 builder = builder.addTrack(new ArrayList<>(List.of(musica.getId())));
             }
-            
 
             // 4. Finaliza a construção
             Playlist novaPlaylist = builder.build();
@@ -114,7 +122,7 @@ public class PlaylistController {
             e.printStackTrace();
         }
     }
- 
+
     // Métodos de adição
     @FXML
     private void adicionarGenero() {
@@ -124,9 +132,8 @@ public class PlaylistController {
     @FXML
     private void adicionarPlaylist() {
         adicionarItem(playlistTextField, "playlist", playlistSelecionadas, playlistAdicionadosFlow);
-        
-    }
 
+    }
 
     @FXML
     private void adicionarArtista() {
@@ -146,63 +153,65 @@ public class PlaylistController {
     // Método utilitário genérico para adicionar elementos
     private void adicionarItem(TextField inputField, String tipoBusca, Object destino, FlowPane painelDestino) {
         String query = inputField.getText().trim();
-        if (query.isEmpty()) return;
-    
+        if (query.isEmpty())
+            return;
+
         List<SearchResult> resultados = SearchManager.search(query, tipoBusca);
-    
+
         if (!resultados.isEmpty()) {
             SearchResult item = resultados.get(0);
-    
+
             if (destino instanceof List) {
                 @SuppressWarnings("unchecked")
                 List<SearchResult> lista = (List<SearchResult>) destino;
-    
+
                 if (!lista.contains(item)) {
                     lista.add(item);
-    
+
                     Label itemLabel = new Label(item.getName());
-                    itemLabel.setStyle("-fx-background-color: #FF1AA8; -fx-text-fill: white; -fx-padding: 4 8; -fx-background-radius: 12;");
+                    itemLabel.setStyle(
+                            "-fx-background-color: #FF1AA8; -fx-text-fill: white; -fx-padding: 4 8; -fx-background-radius: 12;");
                     painelDestino.getChildren().add(itemLabel);
                 }
             } else if (destino instanceof StringBuilder) {
                 // Só aceita um único valor por vez
                 painelDestino.getChildren().clear(); // limpa o antigo visualmente
-    
+
                 ((StringBuilder) destino).setLength(0); // limpa o valor antigo
                 ((StringBuilder) destino).append(item.getName());
 
-                if (tipoBusca == "playlist"){
+                if (tipoBusca == "playlist") {
                     playlistSelecionadaId = item.getId(); // salva só o ID aqui
 
                 }
-    
+
                 adicionarItemComRemocao(destino, painelDestino, item);
             }
-    
+
             inputField.clear();
         } else {
             System.out.println("Nenhum resultado encontrado para: " + query);
         }
     }
-    
+
     private void adicionarItemComRemocao(Object destino, FlowPane flowPane, SearchResult item) {
         // Cria label com nome + botão "x"
         Label label = new Label(item.getName());
         Button botaoRemover = new Button("x");
-        
-        botaoRemover.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 0 4;");
+
+        botaoRemover.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 0 4;");
         label.setStyle("-fx-text-fill: white;"); // Removemos o fundo da label
-        
+
         HBox container = new HBox(label, botaoRemover);
         container.setSpacing(5);
         container.setStyle("""
-            -fx-background-color: #FF1AA8;
-            -fx-text-fill: white;
-            -fx-padding: 4 8;
-            -fx-background-radius: 12;
-            -fx-alignment: center;
-        """);
-        
+                    -fx-background-color: #FF1AA8;
+                    -fx-text-fill: white;
+                    -fx-padding: 4 8;
+                    -fx-background-radius: 12;
+                    -fx-alignment: center;
+                """);
 
         // Adiciona ao FlowPane
         flowPane.getChildren().add(container);
@@ -217,8 +226,6 @@ public class PlaylistController {
                 ((StringBuilder) destino).setLength(0); // limpa se for único
             }
         });
-}
-
-    
+    }
 
 }

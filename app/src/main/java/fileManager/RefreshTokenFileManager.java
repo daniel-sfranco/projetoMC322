@@ -19,7 +19,7 @@ public class RefreshTokenFileManager extends FileManager {
      * Define qual é o local específico da classe onde está o arquivo para
      * Armazenamento do refresh token
      */
-    static {
+    public static void setLocation(){
         FileManager.SPECIFIC_LOCATION = FileManager.FILES_LOCATION + "User" + File.separator + "RefreshToken.che";
     }
 
@@ -31,6 +31,7 @@ public class RefreshTokenFileManager extends FileManager {
      * @param refreshToken O refresh token a ser salvo no arquivo.
      */
     public static void writeRefreshToken(String refreshToken) {
+        setLocation();
         ArrayList<String> lines = new ArrayList<String>(
                 Arrays.asList(refreshToken));
 
@@ -45,6 +46,7 @@ public class RefreshTokenFileManager extends FileManager {
      * @return O refresh token lido do arquivo, ou null se ocorrer um erro.
      */
     public static String readRefreshToken() {
+        setLocation();
         ArrayList<String> readLines = readFile();
 
         if (readLines.isEmpty()) {

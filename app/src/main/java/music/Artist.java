@@ -23,6 +23,7 @@ import user.User;
  * fonte de música.
  * 
  * @author Vinícius de Oliveira - 251527
+ * @author Daniel Soares Franco - 259083
  */
 public class Artist extends MusicSource {
     /**
@@ -42,23 +43,33 @@ public class Artist extends MusicSource {
     /**
      * Construtor para criar uma nova instância de Artist.
      *
-     * @param name   O nome do artista.
-     * @param id     O ID único do artista no Spotify.
-     * @param albums Uma lista de álbuns associados a este artista.
+     * @param name O nome do artista.
+     * @param id   O ID único do artista no Spotify.
      */
     public Artist(String name, String id) {
         super(id, name);
     }
 
     /**
+     * Construtor para criar uma nova instância de Artist, já adicionando as músicas
+     * 
+     * @param name   O nome do artista
+     * @param id     O ID único do artista no Spotify
+     * @param tracks A lista de músicas associadas a esse artista
+     */
+    public Artist(String name, String id, ArrayList<Track> tracks) {
+        super(id, name, tracks);
+    }
+
+    /**
      * Retorna uma lista de ids de faixas associadas a este artista.
-     * Implementação do método {@code getTracksIds()} da interface
+     * Implementação do método {@code getTracks()} da classe abstrata
      * {@link MusicSource}.
      * 
-     * Este método itera sobre os álbuns do artista e coleta os ids das faixas de
-     * cada álbum.
+     * Esse método faz uma pesquisa no endpoint do spotify para buscas, filtrando
+     * músicas pelo artista selecionado
      *
-     * @return Uma {@code ArrayList} de ids de faixas.
+     * @return Uma {@code ArrayList} de {@code Track}
      */
     public ArrayList<Track> getTracks() {
         if (tracks.size() == 0) {

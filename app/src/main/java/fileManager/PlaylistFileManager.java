@@ -15,7 +15,7 @@ public class PlaylistFileManager extends FileManager {
      * Função que será executada na primeira chamada a um método estático da classe
      * Define qual é o local específico da classe onde está o arquivo
      */
-    static {
+    public static void setLocation() {
         FileManager.SPECIFIC_LOCATION = FileManager.FILES_LOCATION + "User" + File.separator + "PlaylistsIds.che";
     }
 
@@ -25,6 +25,7 @@ public class PlaylistFileManager extends FileManager {
      * @param playlistId o id da playlist a ser adicionado no arquivo
      */
     public static void addPlaylistId(String playlistId) {
+        setLocation();
         ArrayList<String> lines = new ArrayList<String>(
                 Arrays.asList(playlistId));
 
@@ -38,6 +39,7 @@ public class PlaylistFileManager extends FileManager {
      * @return os ids das playlists armazenadas
      */
     public static ArrayList<String> getUserPlaylists() {
+        setLocation();
         return FileManager.readFile();
     }
 
@@ -48,6 +50,7 @@ public class PlaylistFileManager extends FileManager {
      * @param playlistId o id da playlist a ser deletada
      */
     public static void deletePlaylistId(String playlistId) {
+        setLocation();
         FileManager.deleteLine(playlistId);
     }
 

@@ -18,7 +18,8 @@ import exceptions.RequestException;
  * Representa um álbum de música no Spotify.
  * Um álbum contém um número de faixas, um ID único, um nome,
  * os artistas associados e a lista de faixas que compõem o álbum.
- * Implementa a interface {@link MusicSource} por ser uma fonte de conteúdo
+ * Implementa a classe abstrata {@link MusicSource} por ser uma fonte de
+ * conteúdo
  * musical.
  * 
  * @author Vinícius de Oliveira - 251527
@@ -40,11 +41,10 @@ public class Album extends MusicSource {
 
         for (Json trackData : albumData.get("tracks.items").parseJsonArray()) {
             Track track = new Track(
-                trackData.get("duration_ms").parseJson(Integer.class),
-                trackData.get("name").toString(),
-                trackData.get("id").toString(),
-                trackData.get("explicit").parseJson(Boolean.class)
-            );
+                    trackData.get("duration_ms").parseJson(Integer.class),
+                    trackData.get("name").toString(),
+                    trackData.get("id").toString(),
+                    trackData.get("explicit").parseJson(Boolean.class));
             this.tracks.add(track);
         }
     }
@@ -52,22 +52,55 @@ public class Album extends MusicSource {
     /**
      * Construtor para criar uma nova instância de Album.
      *
-     * @param numTracks  O número total de faixas presentes no álbum.
-     * @param id         O ID único do álbum no Spotify.
-     * @param name       O nome do álbum.
-     * @param tracks  Uma {@code ArrayList} de ids de músicas que fazem parte
-     *                   deste álbum.
+     * @param id     O ID único do álbum no Spotify.
+     * @param name   O nome do álbum.
+     * @param tracks Uma {@code ArrayList} de {@code Track} que fazem parte
+     *               deste álbum.
      */
     public Album(String id, String name, ArrayList<Track> tracks) {
         super(id, name, tracks);
     }
 
-    public Album(String id, String name){
+    /**
+     * Cria um álbum, obtendo as músicas da API
+     * As músicas serão obtidas da API no método addTracks
+     * 
+     * @param id   o id do álbum a ser adicionado
+     * @param name o nome da playlist a ser adicionada
+     */
+    public Album(String id, String name) {
         super(id, name);
+        try {
+            this.addTracks();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Método para buscar músicas da API para um álbum já existente
+     * Esse método faz uma pesquisa no endpoint do spotify para um álbum específico,
+     * obtendo as músicas do endpoint do álbum.
+     * 
+     * @throws RequestException caso haja algum erro na requisição
+     */
+    public void addTracks() throws RequestException {
+        Json albumData = this.request.sendGetRequest("albums/" + this.id);
+        for (Json trackData : albumData.get("tracks.items").parseJsonArray()) {
+            Track track = new Track(
+                    trackData.get("duration_ms").parseJson(Integer.class),
+                    trackData.get("name").toString(),
+                    trackData.get("id").toString(),
+                    trackData.get("explicit").parseJson(Boolean.class));
+            this.tracks.add(track);
+            this.tracksIds.add(trackData.get("id").toString().replaceAll("\"", ""));
+        }
     }
 
     /**
      * Retorna a lista de faixas contidas neste álbum.
+     * Implementação do método {@code getTracks()} da classe abstrata
+     * {@link MusicSource}.
      *
      * @return Uma {@code ArrayList} de objetos {@link Track}.
      */

@@ -36,16 +36,11 @@ public class Track {
      * @param id O ID único da faixa no Spotify.
      * @throws RequestException Se ocorrer um erro ao fazer a requisição à API.
      */
-    public Track(String id){
+    public Track(String id) throws RequestException {
         this.request = User.getInstance().getRequest();
         Json trackData;
         this.id = id.replaceAll("\"", "");
-        try {
-            trackData = this.request.sendGetRequest("tracks/" + this.id);
-        } catch (RequestException e) {
-            System.out.println("Erro ao obter dados da faixa: " + e.getMessage());
-            return;
-        }
+        trackData = this.request.sendGetRequest("tracks/" + this.id);
         this.name = trackData.get("name").toString();
         this.explicit = trackData.get("explicit").parseJson(Boolean.class);
     }
@@ -111,10 +106,5 @@ public class Track {
      */
     public String toString() {
         return "\n      Track [id=" + id + ", duration=" + duration + ", name=" + name + ", explicit=" + explicit + "]";
-    }
-
-    public static void main(String[] args) {
-        Track dominion = new Track("08y95NOBjAM41gJfSqTogE");
-        System.out.println(dominion);
     }
 }

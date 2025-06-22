@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import exceptions.IncorrectClientFileDataException;
 
 /**
@@ -31,10 +32,13 @@ public class ClientDataFileManager extends FileManager {
      * Define qual é o local específico da classe onde está o arquivo
      */
     static {
-        FileManager.SPECIFIC_LOCATION = FileManager.FILES_LOCATION + "ClientData.che";
         String clientId = "9afeb5fec9854592994aa191f842b529";
         String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";
         writeClientData(clientId, clientSecret);
+    }
+    
+    public static void setLocation(){
+        FileManager.SPECIFIC_LOCATION = FileManager.FILES_LOCATION + "ClientData.che";
     }
 
     /**
@@ -45,6 +49,7 @@ public class ClientDataFileManager extends FileManager {
      * @param clientSecret O segredo do cliente a ser salvo.
      */
     public static void writeClientData(String clientId, String clientSecret) {
+        setLocation();
         ArrayList<String> lines = new ArrayList<String>();
         lines.add("clientId:" + clientId);
         lines.add("clientSecret:" + clientSecret);
@@ -59,6 +64,7 @@ public class ClientDataFileManager extends FileManager {
      *         arquivo.
      */
     public static Map<String, String> readClientData() {
+        setLocation();
         Map<String, String> clientData = new HashMap<String, String>();
         clientData.put("clientId", null);
         clientData.put("clientSecret", null);
@@ -86,7 +92,7 @@ public class ClientDataFileManager extends FileManager {
      */
     public static void writeClientId(String newClientId)
             throws IncorrectClientFileDataException {
-
+        setLocation();
         Boolean updatedClientId = false;
         ArrayList<String> newLines = new ArrayList<String>();
         ArrayList<String> readLines = FileManager.readFile();
@@ -119,7 +125,7 @@ public class ClientDataFileManager extends FileManager {
      */
     public static void writeClientSecret(String newClientSecret)
             throws IncorrectClientFileDataException {
-
+        setLocation();
         Boolean updatedClientSecret = false;
         ArrayList<String> newLines = new ArrayList<String>();
         ArrayList<String> readLines = FileManager.readFile();

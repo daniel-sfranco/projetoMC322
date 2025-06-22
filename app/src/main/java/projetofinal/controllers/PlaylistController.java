@@ -106,7 +106,6 @@ public class PlaylistController {
 
             // 4. Finaliza a construção
             Playlist novaPlaylist = builder.build();
-            PlaylistFileManager.addPlaylistId(novaPlaylist.getId());
             System.out.println("Playlist criada com sucesso: " + novaPlaylist);
 
         } catch (Exception e) {

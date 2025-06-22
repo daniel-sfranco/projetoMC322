@@ -34,8 +34,6 @@ public class SpotifyToken {
     private String refreshToken;
     private int expiresIn;
     private LocalDateTime updatedAt;
-    private String clientId;
-    private String clientSecret;
     private authUtils utils = new authUtils();
 
     /**
@@ -49,10 +47,6 @@ public class SpotifyToken {
      */
     public SpotifyToken(Request request) throws RequestException {
         this.request = request;
-        ClientDataFileManager credentialManager = new ClientDataFileManager();
-        Map<String, String> credentials = credentialManager.readFile();
-        this.clientId = credentials.get("clientId");
-        this.clientSecret = credentials.get("clientSecret");
         this.refreshToken = RefreshTokenFileManager.readRefreshToken();
         this.refreshToken();
     }
@@ -65,34 +59,6 @@ public class SpotifyToken {
      */
     public Request getRequest() {
         return request;
-    }
-
-    /**
-     * Retorna o ID do cliente.
-     * 
-     * @param state o estado esperado para validação
-     * @return O ID do cliente se o estado for válido, ou null caso contrário.
-     */
-    public String getClientId(String state) {
-        String expectedState = utils.getExpectedState();
-        if (state == expectedState) {
-            return this.clientId;
-        }
-        return null;
-    }
-
-    /**
-     * Retorna o segredo do cliente.
-     * 
-     * @param state O estado esperado para validação.
-     * @return O segredo do cliente se o estado for válido, ou null caso contrário.
-     */
-    public String getClientSecret(String state) {
-        String expectedState = utils.getExpectedState();
-        if (state == expectedState) {
-            return this.clientSecret;
-        }
-        return null;
     }
 
     /**
@@ -180,15 +146,17 @@ public class SpotifyToken {
             return this.accessToken;
         } else {
             String tokenUrl = "https://accounts.spotify.com/api/token";
-            String credentials = Base64.getEncoder()
-                    .encodeToString((this.clientId + ":" + this.clientSecret).getBytes());
+            String state = this.utils.getExpectedState();
+            String clientId = this.utils.getClientId(state);
             Map<String, String> body = new HashMap<>();
             body.put("grant_type", "refresh_token");
             body.put("refresh_token", this.refreshToken);
-            body.put("client_id", this.clientId);
+            body.put("client_id", clientId);
             String bodyForm = body.entrySet().stream()
                     .map(entry -> entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
                     .collect(Collectors.joining("&"));
+            String credentials = Base64.getEncoder()
+                    .encodeToString((clientId + ":" + this.utils.getClientSecret(state)).getBytes());
             try {
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(tokenUrl))
@@ -199,6 +167,8 @@ public class SpotifyToken {
                 HttpResponse<String> response = HttpClientUtil.getClient().send(request,
                         HttpResponse.BodyHandlers.ofString());
                 if (response.statusCode() != 200) {
+                    System.out.println(this.utils.getClientId(this.utils.getExpectedState()));
+                    System.out.println(bodyForm);
                     throw new RequestException("Erro ao obter o token: " + response.statusCode() + " - "
                             + response.body());
                 }
@@ -225,6 +195,8 @@ public class SpotifyToken {
  * @author Daniel Soares Franco - 259083
  */
 class authUtils {
+    private String clientId;
+    private String clientSecret;
     private String expectedState = null;
     private CompletableFuture<String> authCodeFuture = new CompletableFuture<>();
     private int port;
@@ -234,9 +206,40 @@ class authUtils {
      * Gera um estado esperado aleatório para validação
      */
     public authUtils() {
+        Map<String, String> credentials = ClientDataFileManager.readClientData();
+        this.clientId = credentials.get("clientId");
+        this.clientSecret = credentials.get("clientSecret");
         this.expectedState = UUID.randomUUID().toString();
     }
 
+    /**
+     * Retorna o ID do cliente.
+     * 
+     * @param state o estado esperado para validação
+     * @return O ID do cliente se o estado for válido, ou null caso contrário.
+     */
+    public String getClientId(String state) {
+        String expectedState = this.expectedState;
+        if (state == expectedState) {
+            return this.clientId;
+        }
+        return null;
+    }
+     
+    /**
+     * Retorna o segredo do cliente.
+     * 
+     * @param state O estado esperado para validação.
+     * @return O segredo do cliente se o estado for válido, ou null caso contrário.
+     */
+    public String getClientSecret(String state) {
+        String expectedState = this.expectedState;
+        if (state == expectedState) {
+            return this.clientSecret;
+        }
+        return null;
+    }
+     
     /**
      * Retorna o estado esperado para validação.
      * 
@@ -256,7 +259,6 @@ class authUtils {
      */
     public void firstLogin(SpotifyToken token)
             throws UnsupportedEncodingException, ExecutionException {
-        String clientId = token.getClientId(expectedState);
         String redirectUri = "http://localhost:8000/callback";
         this.port = 8000;
         String scopes = "playlist-modify-public playlist-modify-private user-read-private user-read-email user-follow-read";
@@ -369,8 +371,6 @@ class authUtils {
      * @param code  O código de autorização recebido.
      */
     private void exchangeCodeForToken(SpotifyToken token, String code) {
-        String clientId = token.getClientId(this.expectedState);
-        String clientSecret = token.getClientSecret(this.expectedState);
         String redirectUri = "http://localhost:8000/callback";
         String tokenUrl = "https://accounts.spotify.com/api/token";
 
@@ -408,7 +408,7 @@ class authUtils {
             token.setRefreshToken(tempRefreshToken.replaceAll("\"", ""));
             token.setExpiresIn(Integer.parseInt(responseBody.get("expires_in").toString()));
             token.setUpdatedAt(LocalDateTime.now());
-            RefreshTokenFileManager.writeRefreshtoken(token.getRefreshToken());
+            RefreshTokenFileManager.writeRefreshToken(token.getRefreshToken());
         } catch (Exception e) {
             System.err.println("Erro ao trocar código por token: " + e.getMessage());
             return;

@@ -4,22 +4,24 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class PlaylistFileManager {
-    private static String PLAYLIST_FILE_LOCATION = "User" + File.separator + "PlaylistsIds.che";
+public class PlaylistFileManager extends FileManager {
+    static {
+        FileManager.SPECIFIC_LOCATION = FileManager.FILES_LOCATION + "User" + File.separator + "PlaylistsIds.che";
+    }
 
     public static void addPlaylistId(String playlistId) {
         ArrayList<String> lines = new ArrayList<String>(
             Arrays.asList(playlistId));
 
-        FileCheManager.addData(lines, PLAYLIST_FILE_LOCATION);
+        FileManager.addData(lines);
     }
 
     public static ArrayList<String> getUserPlaylists() {
-        return FileCheManager.readCheFile(PLAYLIST_FILE_LOCATION);
+        return FileManager.readFile();
     }
 
     public static void deletePlaylistId(String playlistId) {
-        FileCheManager.deleteLines(playlistId, PLAYLIST_FILE_LOCATION);
+        FileManager.deleteLines(playlistId);
     }
 
     public static void main(String[] args) {

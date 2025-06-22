@@ -13,6 +13,6 @@ public class InvalidNumTracksException extends Exception {
      * @param minTracks o número mínimo de músicas necessário
      */
     public InvalidNumTracksException(int minTracks) {
-        super("O número de músicas deve ser no mínimo %s" + minTracks);
+        super("O número de músicas deve ser no mínimo " + minTracks);
     }
 }

@@ -24,20 +24,16 @@ import exceptions.IncorrectClientFileDataException;
  * 
  * @author Vinícius de Oliveira - 251527
  */
-public class ClientDataFileManager {
+public class ClientDataFileManager extends FileManager {
     /**
      * O caminho para o arquivo onde os dados do cliente são armazenados.
      * O arquivo está localizado em `src/main/resources/savedFiles/ClientData.che`.
      */
-    private static String CLIENTDATA_FILE_LOCATION = "ClientData.che";
-
-    /**
-     * Cria o arquivo para ClientId e ClientSecret, caso não exista ainda
-     */
-    public ClientDataFileManager() {
+    static {
+        FileManager.SPECIFIC_LOCATION = FileManager.FILES_LOCATION + "ClientData.che";
         String clientId = "9afeb5fec9854592994aa191f842b529";
         String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";
-        this.writeFile(clientId, clientSecret);
+        writeClientData(clientId, clientSecret);
     }
 
     /**
@@ -47,78 +43,12 @@ public class ClientDataFileManager {
      * @param clientId     O ID do cliente a ser salvo.
      * @param clientSecret O segredo do cliente a ser salvo.
      */
-    public void writeFile(String clientId, String clientSecret) {
+    public static void writeClientData(String clientId, String clientSecret) {
         ArrayList<String> lines = new ArrayList<String>();
         lines.add("clientId:" + clientId);
         lines.add("clientSecret:" + clientSecret);
 
-        FileCheManager.writeCheFile(lines, CLIENTDATA_FILE_LOCATION);
-    }
-
-    /**
-     * Atualiza o Client ID no arquivo de dados do cliente.
-     * Este método lê o arquivo, encontra a linha correspondente ao Client ID e a
-     * atualiza,
-     * mantendo as outras linhas intactas.
-     *
-     * @param newClientId O novo Client ID a ser salvo.
-     * @throws IncorrectClientFileDataException Se o Client ID não puder ser
-     *                                          encontrado no arquivo ou se houver
-     *                                          um problema de formatação.
-     */
-    public void writeClientId(String newClientId)
-            throws IncorrectClientFileDataException {
-
-        Boolean updatedClientId = false;
-        ArrayList<String> newLines = new ArrayList<String>();
-        ArrayList<String> readLines = FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
-
-        for (String line : readLines) {
-            if (line.contains("clientId:")) {
-                newLines.add("clientId:" + newClientId);
-                updatedClientId = true;
-            } else {
-                newLines.add(line);
-            }
-        }
-
-        FileCheManager.writeCheFile(newLines, CLIENTDATA_FILE_LOCATION);
-
-        if (!updatedClientId)
-            throw new IncorrectClientFileDataException("Não foi possível alterar o clientId");
-    }
-
-    /**
-     * Atualiza o Client Secret no arquivo de dados do cliente.
-     * Este método lê o arquivo, encontra a linha correspondente ao Client Secret e
-     * a atualiza,
-     * mantendo as outras linhas intactas.
-     *
-     * @param newClientSecret O novo Client Secret a ser salvo.
-     * @throws IncorrectClientFileDataException Se o Client Secret não puder ser
-     *                                          encontrado no arquivo ou se houver
-     *                                          um problema de formatação.
-     */
-    public void writeClientSecret(String newClientSecret)
-            throws IncorrectClientFileDataException {
-
-        Boolean updatedClientSecret = false;
-        ArrayList<String> newLines = new ArrayList<String>();
-        ArrayList<String> readLines = FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
-
-        for (String line : readLines) {
-            if (line.contains("clientSecret:")) {
-                newLines.add("clientSecret:" + newClientSecret);
-                updatedClientSecret = true;
-            } else {
-                newLines.add(line);
-            }
-        }
-
-        FileCheManager.writeCheFile(newLines, CLIENTDATA_FILE_LOCATION);
-
-        if (!updatedClientSecret)
-            throw new IncorrectClientFileDataException("Não foi possível alterar o clientSecret");
+        FileManager.writeFile(lines);
     }
 
     /**
@@ -127,12 +57,12 @@ public class ClientDataFileManager {
      * @return Um {@code Map} contendo o "clientId" e o "clientSecret" lidos do
      *         arquivo.
      */
-    public Map<String, String> readFile() {
+    public static Map<String, String> readClientData() {
         Map<String, String> clientData = new HashMap<String, String>();
         clientData.put("clientId", null);
         clientData.put("clientSecret", null);
 
-        ArrayList<String> readLines = FileCheManager.readCheFile(CLIENTDATA_FILE_LOCATION);
+        ArrayList<String> readLines = FileManager.readFile();
 
         for (String line : readLines) {
             if (line.contains("clientId:")) {
@@ -150,6 +80,72 @@ public class ClientDataFileManager {
     }
 
     /**
+     * Atualiza o Client ID no arquivo de dados do cliente.
+     * Este método lê o arquivo, encontra a linha correspondente ao Client ID e a
+     * atualiza,
+     * mantendo as outras linhas intactas.
+     *
+     * @param newClientId O novo Client ID a ser salvo.
+     * @throws IncorrectClientFileDataException Se o Client ID não puder ser
+     *                                          encontrado no arquivo ou se houver
+     *                                          um problema de formatação.
+     */
+    public static void writeClientId(String newClientId)
+            throws IncorrectClientFileDataException {
+
+        Boolean updatedClientId = false;
+        ArrayList<String> newLines = new ArrayList<String>();
+        ArrayList<String> readLines = FileManager.readFile();
+
+        for (String line : readLines) {
+            if (line.contains("clientId:")) {
+                newLines.add("clientId:" + newClientId);
+                updatedClientId = true;
+            } else {
+                newLines.add(line);
+            }
+        }
+
+        FileManager.writeFile(newLines);
+
+        if (!updatedClientId)
+            throw new IncorrectClientFileDataException("Não foi possível alterar o clientId");
+    }
+
+    /**
+     * Atualiza o Client Secret no arquivo de dados do cliente.
+     * Este método lê o arquivo, encontra a linha correspondente ao Client Secret e
+     * a atualiza,
+     * mantendo as outras linhas intactas.
+     *
+     * @param newClientSecret O novo Client Secret a ser salvo.
+     * @throws IncorrectClientFileDataException Se o Client Secret não puder ser
+     *                                          encontrado no arquivo ou se houver
+     *                                          um problema de formatação.
+     */
+    public static void writeClientSecret(String newClientSecret)
+            throws IncorrectClientFileDataException {
+
+        Boolean updatedClientSecret = false;
+        ArrayList<String> newLines = new ArrayList<String>();
+        ArrayList<String> readLines = FileManager.readFile();
+
+        for (String line : readLines) {
+            if (line.contains("clientSecret:")) {
+                newLines.add("clientSecret:" + newClientSecret);
+                updatedClientSecret = true;
+            } else {
+                newLines.add(line);
+            }
+        }
+
+        FileManager.writeFile(newLines);
+
+        if (!updatedClientSecret)
+            throw new IncorrectClientFileDataException("Não foi possível alterar o clientSecret");
+    }
+
+    /**
      * Método principal para testar a funcionalidade de leitura e escrita de dados
      * do cliente.
      * Este método cria uma instância de {@code ClientDataFileManager}, escreve um
@@ -162,8 +158,7 @@ public class ClientDataFileManager {
         String clientId = "9afeb5fec9854592994aa191f842b529";
         String clientSecret = "0e4def4ee8924cb68daba80833c8a5c2";
 
-        ClientDataFileManager fileManager = new ClientDataFileManager();
-        fileManager.writeFile(clientId, clientSecret);
+        ClientDataFileManager.writeClientData(clientId, clientSecret);
 
         /*
          * try {
@@ -174,7 +169,7 @@ public class ClientDataFileManager {
          * }
          */
 
-        Map<String, String> clientData = fileManager.readFile();
+        Map<String, String> clientData = ClientDataFileManager.readClientData();
         System.out.println("id: " + clientData.get("clientId"));
         System.out.println("segredo: " + clientData.get("clientSecret"));
     }

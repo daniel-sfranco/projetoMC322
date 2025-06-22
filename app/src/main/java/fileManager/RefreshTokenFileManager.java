@@ -12,8 +12,10 @@ import java.util.Arrays;
  * 
  * @author Vinícius de Oliveira - 251527
  */
-public class RefreshTokenFileManager {
-    private static String REFRESHTOKEN_LOCATION = "User" + File.separator + "RefreshToken.che";
+public class RefreshTokenFileManager extends FileManager {
+    static {
+        FileManager.SPECIFIC_LOCATION = FileManager.FILES_LOCATION + "User" + File.separator + "RefreshToken.che";
+    }
 
     /**
      * Método para escrever o refresh token em um arquivo.
@@ -22,11 +24,11 @@ public class RefreshTokenFileManager {
      * 
      * @param refreshToken O refresh token a ser salvo no arquivo.
      */
-    public static void writeRefreshtoken(String refreshToken) {
+    public static void writeRefreshToken(String refreshToken) {
         ArrayList<String> lines = new ArrayList<String>(
             Arrays.asList(refreshToken));
 
-        FileCheManager.writeCheFile(lines, REFRESHTOKEN_LOCATION);
+        writeFile(lines);
     }
 
     /**
@@ -37,24 +39,12 @@ public class RefreshTokenFileManager {
      * @return O refresh token lido do arquivo, ou null se ocorrer um erro.
      */
     public static String readRefreshToken() {
-        ArrayList<String> readLines = 
-            FileCheManager.readCheFile(REFRESHTOKEN_LOCATION);
+        ArrayList<String> readLines = readFile();
         
         if (readLines.isEmpty()) {
             return null;
         } else {
             return readLines.get(0);
         }
-    }
-
-    /**
-     * Método para deletar o arquivo de refresh token.
-     * Este método tenta excluir o arquivo e retorna um booleano indicando se a
-     * operação foi bem-sucedida.
-     * 
-     * @return true se o arquivo foi deletado com sucesso, false caso contrário.
-     */
-    public static Boolean deleteRefreshToken() {
-        return FileCheManager.deleteCheFile(REFRESHTOKEN_LOCATION);
     }
 }

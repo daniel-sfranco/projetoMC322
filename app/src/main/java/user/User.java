@@ -17,7 +17,6 @@ import exceptions.IncorrectClientFileDataException;
 import exceptions.RequestException;
 import fileManager.JsonFileManager;
 import fileManager.RefreshTokenFileManager;
-import fileManager.Storable;
 
 /**
  * Representa um usuário dentro do contexto da aplicação, contendo informações
@@ -29,7 +28,7 @@ import fileManager.Storable;
  * 
  * @author Vinícius de Oliveira - 251527
  */
-public class User implements Storable {
+public class User {
     private static User INSTANCE = null;
     private Request request;
     private String country;
@@ -91,20 +90,7 @@ public class User implements Storable {
      * Este método é uma implementação da interface {@link Storable}.
      */
     public static User readDataFile(String userId) {
-        return JsonFileManager.readJsonFile("User" + File.separator + "User.json", User.class);
-    }
-
-    /**
-     * Salva os dados do usuário no arquivo "User.json" dentro da pasta específica
-     * do usuário.
-     * Este método é chamado para persistir as informações do usuário, como país,
-     * nome, email,
-     * ID, filtro de conteúdo explícito e número de seguidores.
-     */
-    @Override
-    public void saveData() {
-        String userSpecificFolder = "User" + File.separator;
-        JsonFileManager.saveJsonFile(this, userSpecificFolder + "User.json");
+        return JsonFileManager.readFile("User" + File.separator + "User.json", User.class);
     }
 
     /**
@@ -115,7 +101,7 @@ public class User implements Storable {
      * @param refreshToken O token de atualização a ser armazenado.
      */
     public void setRefreshToken(String refreshToken) {
-        RefreshTokenFileManager.writeRefreshtoken(refreshToken);
+        RefreshTokenFileManager.writeRefreshToken(refreshToken);
     }
 
     /**
@@ -140,7 +126,7 @@ public class User implements Storable {
      *         contrário.
      */
     public Boolean deleteRefreshToken() {
-        return RefreshTokenFileManager.deleteRefreshToken();
+        return RefreshTokenFileManager.deleteFile();
     }
 
     /**
@@ -152,7 +138,7 @@ public class User implements Storable {
      *         {@code null} se o arquivo não puder ser lido ou estiver corrompido.
      */
     public static User readDataFile() {
-        return JsonFileManager.readJsonFile("User" + File.separator + "User.json", User.class);
+        return JsonFileManager.readFile("User" + File.separator + "User.json", User.class);
     }
 
     /**

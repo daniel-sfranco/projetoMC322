@@ -11,14 +11,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FileCheManager {
-    private static String FILES_LOCATION = "src" + File.separator +
+public abstract class FileManager {
+    protected static String FILES_LOCATION = "src" + File.separator +
             "main" + File.separator + "resources" + File.separator +
             "savedFiles" + File.separator;
+    protected static String SPECIFIC_LOCATION = FILES_LOCATION;
 
-    public static void writeCheFile(ArrayList<String> lines, String relativeFilePath) {
+    public static void writeFile(ArrayList<String> lines) {
         try {
-            Path fullPath = Paths.get(FILES_LOCATION, relativeFilePath);
+            Path fullPath = Paths.get(SPECIFIC_LOCATION);
             Path parentDir = fullPath.getParent();
 
             // Se os diretórios não existir, cria todos os diretórios necessários.
@@ -34,8 +35,8 @@ public class FileCheManager {
         }
     }
 
-    public static ArrayList<String> readCheFile(String relativeFilePath) {
-        Path fullPath = Paths.get(FILES_LOCATION, relativeFilePath);
+    public static ArrayList<String> readFile() {
+        Path fullPath = Paths.get(SPECIFIC_LOCATION);
 
         if (!Files.exists(fullPath)) {
             System.err.println("Erro: Arquivo não encontrado em " + fullPath);
@@ -52,8 +53,8 @@ public class FileCheManager {
         }
     }
 
-    public static void deleteLines(String line, String relativeFilePath) {
-        ArrayList<String> allLines = readCheFile(relativeFilePath);
+    public static void deleteLines(String line) {
+        ArrayList<String> allLines = readFile();
         ArrayList<String> newLines = new ArrayList<String>();
 
         for (String currentLine : allLines) {
@@ -61,11 +62,11 @@ public class FileCheManager {
                 newLines.add(currentLine);
         }
 
-        writeCheFile(newLines, relativeFilePath);
+        writeFile(newLines);
     }
 
-    public static void addData(ArrayList<String> newLines, String relativeFilePath) {
-        Path fullPath = Paths.get(FILES_LOCATION, relativeFilePath);
+    public static void addData(ArrayList<String> newLines) {
+        Path fullPath = Paths.get(SPECIFIC_LOCATION);
 
         try {
             Files.write(fullPath, newLines, StandardCharsets.UTF_8, 
@@ -76,9 +77,9 @@ public class FileCheManager {
         }
     }
 
-    public static boolean deleteCheFile(String relativeFilePath) {
+    public static boolean deleteFile() {
         try {
-            Path fullPath = Paths.get(FILES_LOCATION, relativeFilePath);
+            Path fullPath = Paths.get(SPECIFIC_LOCATION);
             return Files.deleteIfExists(fullPath);
         } catch (IOException e) {
             System.err.println("Ocorreu um erro ao tentar deletar o arquivo.");
@@ -93,7 +94,7 @@ public class FileCheManager {
 
         String relativePath = "test" + File.separator +
             "text.che";
-        FileCheManager.writeCheFile(lines, relativePath);
-        System.out.println(FileCheManager.readCheFile(relativePath));
+        FileManager.writeFile(lines);
+        System.out.println(FileManager.readFile());
     }
 }

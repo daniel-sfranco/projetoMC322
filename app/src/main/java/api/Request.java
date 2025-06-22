@@ -2,8 +2,6 @@ package api;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import exceptions.RequestException;
 
 /**
@@ -41,7 +39,7 @@ public class Request {
     /**
      * Retorna o token de autenticação utilizado para as requisições.
      * 
-     * @return o token.
+     * @return o token de autenticação.
      */
     public SpotifyToken getToken() {
         return token;
@@ -57,34 +55,31 @@ public class Request {
     }
 
     /**
-     * Envia uma requisição POST para a URL especificada com um objeto Json como
-     * corpo
+     * Envia uma requisição POST para a URL relativa especificada com um objeto Json
+     * como corpo
      * 
      * @param url      A URL relativa para a qual a requisição será enviada.
      * @param bodyJson O JSON que será enviado como corpo da requisição.
      * @return A resposta da requisição como uma string.
-     * @throws RequestException        se ocorrer um erro ao enviar a requisição.
-     * @throws JsonProcessingException se ocorrer um erro ao processar o objeto
+     * @throws RequestException se ocorrer um erro ao enviar a requisição.
      */
-    public Json sendPostRequest(String url, Json bodyJson) throws RequestException, JsonProcessingException {
-        String accessToken = this.token.getAccessToken();
+    public Json sendPostRequest(String url, Json bodyJson) throws RequestException {
         Map<String, String> headers = Map.of(
-                "Authorization", accessToken,
+                "Authorization", this.token.getAccessToken(),
                 "Content-Type", "application/json");
         return new Json(HttpClientUtil.sendPostRequest(baseUrl + url, headers, bodyJson));
     }
 
     /**
-     * Envia uma requisição GET para a URL especificada.
+     * Envia uma requisição GET para a URL relativa especificada.
      * 
      * @param url A URL relativa para a qual a requisição será enviada.
      * @return A resposta da requisição como uma string.
      * @throws RequestException se ocorrer um erro ao enviar a requisição.
      */
     public Json sendGetRequest(String url) throws RequestException {
-        String accessToken = this.token.getAccessToken();
         Map<String, String> headers = Map.of(
-                "Authorization", accessToken,
+                "Authorization", this.token.getAccessToken(),
                 "Content-Type", "application/json");
         return new Json(HttpClientUtil.sendGetRequest(baseUrl + url, headers));
     }
@@ -93,10 +88,10 @@ public class Request {
      * Método principal para testar a obtenção do token de autenticação.
      * 
      * @param args Argumentos da linha de comando (não utilizados).
-     * @throws RequestException                 se ocorrer um erro ao enviar a
-     *                                          requisição.
+     * @throws RequestException se ocorrer um erro ao enviar a
+     *                          requisição.
      */
-    public static void main(String[] args) throws RequestException{
+    public static void main(String[] args) throws RequestException {
         Request request = new Request();
         Json response = request.sendGetRequest("me");
         System.out.println(response);

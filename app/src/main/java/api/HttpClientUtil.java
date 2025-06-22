@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.stream.Collectors;
 
 import exceptions.RequestException;
 
@@ -20,8 +19,7 @@ import exceptions.RequestException;
  * Classe utilitária para enviar requisições HTTP GET e POST usando HttpClient
  * do Java.
  * Fornece métodos para enviar requisições com cabeçalhos personalizados e
- * tratar
- * respostas, incluindo tratamento de erros.
+ * tratar respostas, incluindo tratamento de erros.
  *
  * @author Daniel Soares Franco - 259083
  */
@@ -72,17 +70,16 @@ public class HttpClientUtil {
      * Envia uma requisição HTTP POST para a URL especificada com o corpo do objeto
      * fornecido.
      *
-     * @param url        a URL para a qual a requisição será enviada
-     * @param headers    um mapa de cabeçalhos a serem incluídos na requisição
-     * @param bodyObject o objeto que será convertido em JSON e enviado como corpo
-     *                   da requisição
+     * @param url             a URL para a qual a requisição será enviada
+     * @param headers         um mapa de cabeçalhos a serem incluídos na requisição
+     * @param requestBodyJson o objeto em JSON que será enviado como corpo da
+     *                        requisição
      * @return o corpo da resposta como uma string
-     * @throws RequestException        se a resposta tiver um código de status >=
-     *                                 400
-     * @throws JsonProcessingException se ocorrer um erro ao processar o objeto
+     * @throws RequestException se a resposta tiver um código de status >=
+     *                          400
      */
     public static String sendPostRequest(String url, Map<String, String> headers, Json requestBodyJson)
-            throws RequestException, JsonProcessingException {
+            throws RequestException {
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(url));
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBodyJson.toString()));
         if (headers != null) {
@@ -105,8 +102,7 @@ public class HttpClientUtil {
 
     /**
      * Envia uma requisição HTTP POST para a URL especificada com o corpo do
-     * formulário
-     * fornecido.
+     * formulário fornecido.
      *
      * @param url      a URL para a qual a requisição será enviada
      * @param headers  um mapa de cabeçalhos a serem incluídos na requisição
@@ -114,14 +110,18 @@ public class HttpClientUtil {
      * @return o corpo da resposta como uma string
      * @throws RequestException se a resposta tiver um código de status >= 400
      */
-    public static String sendPostFormRequest(String url, Map<String, String> headers, String formBody)
+    public static String sendPostFormRequest(String url, Map<String, String> headers, Map<String, String> body)
             throws RequestException {
-        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(url));
+        String formBody = body.entrySet().stream()
+                    .map(entry -> entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
+                    .collect(Collectors.joining("&"));
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(url));
         if (headers != null) {
-            headers.forEach(requestBuilder::header);
+            for(Map.Entry<String, String> entry : headers.entrySet()){
+                requestBuilder = requestBuilder.header(entry.getKey(), entry.getValue());
+            }
         }
-        requestBuilder.POST(HttpRequest.BodyPublishers.ofString(formBody));
-        HttpRequest request = requestBuilder.build();
+        HttpRequest request = requestBuilder.POST(HttpRequest.BodyPublishers.ofString(formBody)).build();
         HttpResponse<String> response;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -138,8 +138,7 @@ public class HttpClientUtil {
 
     /**
      * Transforma uma query passada como parâmetro em uma query que possa ser usada
-     * diretamente
-     * na URL de uma requisição
+     * diretamente na URL de uma requisição
      * 
      * @param query a query a ser transformada
      * @return a mesma query, pronta pra ser usada em uma URL

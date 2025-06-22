@@ -45,6 +45,9 @@ public class Json {
 
     /**
      * Converte o valor armazenado para um objeto do tipo especificado.
+     * Obs: não funciona para tipos compostos, como Map ou ArrayList.
+     * Para array use primeiro parseJsonArray e depois itere sobre os
+     * elementos do ArrayList<Json> recebido
      * 
      * @param valueType a classe do objeto a ser lido
      * @param <T>       a classe do objeto a ser retornado
@@ -64,30 +67,7 @@ public class Json {
     }
 
     /**
-     * Converte o valor armazenado para um objeto do tipo especificado usando
-     * TypeReference.
-     * TypeReference é útil quando se trabalha com tipos genéricos ou coleções, como
-     * Map de String e Object ou List de Object.
-     * 
-     * @param valueTypeReference o TypeReference do objeto a ser lido
-     * @param <T>                a classe do objeto a ser retornado
-     * @return o objeto convertido, ou null em caso de erro
-     */
-    public <T> T parseJson(TypeReference<T> valueTypeReference) {
-        try {
-            return mapper.readValue(this.value, valueTypeReference);
-        } catch (JsonMappingException e) {
-            System.out.println("Erro de mapeamento JSON: " + e.getMessage());
-        } catch (JsonProcessingException e) {
-            System.out.println("Erro ao processar JSON: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Erro desconhecido: " + e.getMessage());
-        }
-        return null;
-    }
-
-    /**
-     * Converte o valor armazenado para um Map de String e Object.
+     * Converte o valor armazenado para um Map de String e Json.
      * 
      * @return o Map resultante, ou null em caso de erro
      */
@@ -153,11 +133,11 @@ public class Json {
             }
             return new Json(currentNode.toString());
         } catch (JsonMappingException e) {
-            System.out.println("Erro de mapeamento JSON: " + e.getMessage());
+            System.err.println("Erro de mapeamento JSON: " + e.getMessage());
         } catch (JsonProcessingException e) {
-            System.out.println("Erro ao processar JSON: " + e.getMessage());
+            System.err.println("Erro ao processar JSON: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Erro desconhecido: " + e.getMessage());
+            System.err.println("Erro desconhecido: " + e.getMessage());
         }
         return null;
     }

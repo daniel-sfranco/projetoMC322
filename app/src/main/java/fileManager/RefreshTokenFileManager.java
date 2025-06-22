@@ -11,8 +11,14 @@ import java.util.Arrays;
  * projeto.
  * 
  * @author Vinícius de Oliveira - 251527
+ * @author Daniel Soares Franco - 259083
  */
 public class RefreshTokenFileManager extends FileManager {
+    /**
+     * Função que será executada na primeira chamada a um método estático da classe
+     * Define qual é o local específico da classe onde está o arquivo para
+     * Armazenamento do refresh token
+     */
     static {
         FileManager.SPECIFIC_LOCATION = FileManager.FILES_LOCATION + "User" + File.separator + "RefreshToken.che";
     }
@@ -26,7 +32,7 @@ public class RefreshTokenFileManager extends FileManager {
      */
     public static void writeRefreshToken(String refreshToken) {
         ArrayList<String> lines = new ArrayList<String>(
-            Arrays.asList(refreshToken));
+                Arrays.asList(refreshToken));
 
         writeFile(lines);
     }
@@ -40,7 +46,7 @@ public class RefreshTokenFileManager extends FileManager {
      */
     public static String readRefreshToken() {
         ArrayList<String> readLines = readFile();
-        
+
         if (readLines.isEmpty()) {
             return null;
         } else {

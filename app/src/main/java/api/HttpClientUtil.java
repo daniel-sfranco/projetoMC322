@@ -113,11 +113,11 @@ public class HttpClientUtil {
     public static String sendPostFormRequest(String url, Map<String, String> headers, Map<String, String> body)
             throws RequestException {
         String formBody = body.entrySet().stream()
-                    .map(entry -> entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
-                    .collect(Collectors.joining("&"));
+                .map(entry -> entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
+                .collect(Collectors.joining("&"));
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(url));
         if (headers != null) {
-            for(Map.Entry<String, String> entry : headers.entrySet()){
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder = requestBuilder.header(entry.getKey(), entry.getValue());
             }
         }

@@ -21,7 +21,8 @@ import exceptions.RequestException;
  * Implementa a interface {@code Researcher}, permitindo que este pesquisador
  * seja usado de forma polimórfica no sistema de busca.
  * 
- * A busca retorna uma lista de {@code SearchResult} com nome e ID de cada álbum.
+ * A busca retorna uma lista de {@code SearchResult} com nome e ID de cada
+ * álbum.
  * 
  * @author -
  */
@@ -31,7 +32,8 @@ public class AlbumResearcher implements Researcher {
      * Executa uma busca por álbuns com base na string de consulta fornecida.
      * 
      * @param query A string de pesquisa a ser enviada à API do Spotify.
-     * @return Uma lista de resultados de pesquisa contendo os nomes e IDs dos álbuns.
+     * @return Uma lista de resultados de pesquisa contendo os nomes e IDs dos
+     *         álbuns.
      */
     public ArrayList<SearchResult> search(String query) {
         Request request = User.getInstance().getRequest();
@@ -43,8 +45,8 @@ public class AlbumResearcher implements Researcher {
 
             for (Json albumData : albumsData) {
                 SearchResult currentResult = new SearchResult(
-                        albumData.get("name").toString(),
-                        albumData.get("id").toString());
+                        albumData.get("name").toString().replaceAll("\"", ""),
+                        albumData.get("id").toString().replaceAll("\"", ""));
 
                 results.add(currentResult);
             }
@@ -57,7 +59,8 @@ public class AlbumResearcher implements Researcher {
 
     /**
      * Método de teste para a funcionalidade de busca de álbuns.
-     * Realiza uma busca pela string "guerra e paz" e imprime os resultados no console.
+     * Realiza uma busca pela string "guerra e paz" e imprime os resultados no
+     * console.
      *
      * @param args Argumentos da linha de comando (não utilizados).
      */

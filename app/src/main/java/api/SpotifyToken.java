@@ -139,8 +139,7 @@ public class SpotifyToken {
             Map<String, String> body = Map.of(
                     "grant_type", "refresh_token",
                     "refresh_token", this.refreshToken,
-                    "client_id", clientId
-            );
+                    "client_id", clientId);
             Map<String, String> headers = Map.of(
                     "Authorization", "Basic " + Base64.getEncoder()
                             .encodeToString((clientId + ":" + this.utils.getClientSecret(state)).getBytes()),

@@ -18,7 +18,8 @@ import user.User;
 
 /**
  * Realiza buscas por artistas utilizando a API do Spotify.
- * Implementa a interface {@code Researcher}, permitindo integração com o sistema
+ * Implementa a interface {@code Researcher}, permitindo integração com o
+ * sistema
  * de buscas do projeto.
  * 
  * Cada resultado contém o nome e o ID do artista.
@@ -43,8 +44,8 @@ public class ArtistResearcher implements Researcher {
 
             for (Json artistData : artistsData) {
                 SearchResult currenResult = new SearchResult(
-                        artistData.get("name").toString(),
-                        artistData.get("id").toString());
+                        artistData.get("name").toString().replaceAll("\"", ""),
+                        artistData.get("id").toString().replaceAll("\"", ""));
 
                 results.add(currenResult);
             }
@@ -57,7 +58,8 @@ public class ArtistResearcher implements Researcher {
 
     /**
      * Método de teste para a funcionalidade de busca de artistas.
-     * Realiza uma busca pelo artista "Os Arrais" e imprime os resultados no console.
+     * Realiza uma busca pelo artista "Os Arrais" e imprime os resultados no
+     * console.
      * 
      * @param args Argumentos da linha de comando (não utilizados).
      */

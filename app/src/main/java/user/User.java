@@ -9,13 +9,10 @@
 
 package user;
 
-import java.io.File;
-
 import api.Json;
 import api.Request;
 import exceptions.IncorrectClientFileDataException;
 import exceptions.RequestException;
-import fileManager.JsonFileManager;
 import fileManager.RefreshTokenFileManager;
 
 /**
@@ -48,9 +45,9 @@ public class User {
      * @param explicitContentFilter Um booleano indicando se o filtro de conteúdo
      *                              explícito está ativo para o usuário.
      * @param followers             O número de seguidores do usuário.
-     * @throws IncorrectClientFileDataException 
+     * @throws IncorrectClientFileDataException
      */
-    private User() throws RequestException{
+    private User() throws RequestException {
         this.request = new Request();
         Json userData = this.request.sendGetRequest("me");
         this.id = userData.get("id").toString().replaceAll("\"", "");
@@ -81,16 +78,6 @@ public class User {
             }
         }
         return INSTANCE;
-    }
-
-    /**
-     * Salva os dados desta instância de usuário em um arquivo JSON.
-     * O arquivo será nomeado como "User.json" e gerenciado pelo
-     * {@link JsonFileManager}.
-     * Este método é uma implementação da interface {@link Storable}.
-     */
-    public static User readDataFile(String userId) {
-        return JsonFileManager.readFile("User" + File.separator + "User.json", User.class);
     }
 
     /**
@@ -127,18 +114,6 @@ public class User {
      */
     public Boolean deleteRefreshToken() {
         return RefreshTokenFileManager.deleteFile();
-    }
-
-    /**
-     * Lê os dados de um usuário a partir do arquivo "User.json".
-     * Este é um método estático que permite carregar os dados do usuário
-     * persistidos sem a necessidade de uma instância de {@code User} preexistente.
-     *
-     * @return Um objeto {@code User} populado com os dados lidos do arquivo, ou
-     *         {@code null} se o arquivo não puder ser lido ou estiver corrompido.
-     */
-    public static User readDataFile() {
-        return JsonFileManager.readFile("User" + File.separator + "User.json", User.class);
     }
 
     /**

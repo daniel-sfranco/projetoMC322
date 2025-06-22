@@ -23,11 +23,12 @@ import exceptions.IncorrectClientFileDataException;
  * com a API do Spotify.
  * 
  * @author Vinícius de Oliveira - 251527
+ * @author Daniel Soares Franco - 259083
  */
 public class ClientDataFileManager extends FileManager {
     /**
-     * O caminho para o arquivo onde os dados do cliente são armazenados.
-     * O arquivo está localizado em `src/main/resources/savedFiles/ClientData.che`.
+     * Função que será executada na primeira chamada a um método estático da classe
+     * Define qual é o local específico da classe onde está o arquivo
      */
     static {
         FileManager.SPECIFIC_LOCATION = FileManager.FILES_LOCATION + "ClientData.che";
@@ -65,15 +66,8 @@ public class ClientDataFileManager extends FileManager {
         ArrayList<String> readLines = FileManager.readFile();
 
         for (String line : readLines) {
-            if (line.contains("clientId:")) {
-                int startIndex = line.indexOf(":") + 1;
-                String value = line.substring(startIndex);
-                clientData.put("clientId", value);
-            } else if (line.contains("clientSecret:")) {
-                int startIndex = line.indexOf(":") + 1;
-                String value = line.substring(startIndex);
-                clientData.put("clientSecret", value);
-            }
+            String[] dividedLine = line.split(":");
+            clientData.put(dividedLine[0], dividedLine[1]);
         }
 
         return clientData;

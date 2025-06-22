@@ -28,7 +28,8 @@ import user.User;
 public class TrackResearcher implements Researcher {
 
     /**
-     * Executa uma busca por faixas (músicas) com base na string de consulta fornecida.
+     * Executa uma busca por faixas (músicas) com base na string de consulta
+     * fornecida.
      * 
      * @param query A string de pesquisa a ser enviada à API do Spotify.
      * @return Uma lista de {@code SearchResult} contendo os resultados encontrados.
@@ -43,8 +44,8 @@ public class TrackResearcher implements Researcher {
 
             for (Json trackData : tracksData) {
                 SearchResult currenResult = new SearchResult(
-                        trackData.get("name").toString(),
-                        trackData.get("id").toString());
+                        trackData.get("name").toString().replaceAll("\"", ""),
+                        trackData.get("id").toString().replaceAll("\"", ""));
 
                 results.add(currenResult);
             }

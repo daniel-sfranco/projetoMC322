@@ -60,7 +60,7 @@ public class AuthUtils {
         }
         return null;
     }
-     
+
     /**
      * Retorna o segredo do cliente.
      * 
@@ -74,7 +74,7 @@ public class AuthUtils {
         }
         return null;
     }
-     
+
     /**
      * Retorna o estado esperado para validação.
      * 

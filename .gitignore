@@ -31,3 +31,5 @@ build
 
 app/src/main/resources/savedFiles/User/*
 app/src/main/resources/savedFiles/ClientData.che
+app/bin/main/savedFiles/User/*
+app/bin/main/savedFiles/ClientData.che

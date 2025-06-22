@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import fileManager.PlaylistFileManager;
-
 public class PlaylistController {
     @FXML private TextField numeroMusicasTextField;
 

@@ -41,6 +41,8 @@ public class PlaylistController {
     private final List<SearchResult> musicasSelecionadas = new ArrayList<>();
     private final StringBuilder generosSelecionados = new StringBuilder();
     private final StringBuilder playlistSelecionadas = new StringBuilder();
+    private String playlistSelecionadaId = null;
+
     
 
     // Ações de navegação
@@ -85,8 +87,8 @@ public class PlaylistController {
                builder = builder.addGenre(generosSelecionados.toString());
             }
 
-            if (playlistSelecionadas.length() > 0) {
-                builder = builder.addPlaylist(playlistSelecionadas.toString());
+            if (playlistSelecionadaId.length() > 0) {
+                builder = builder.addPlaylist(playlistSelecionadaId.toString());
             }
 
             for (SearchResult artista : artistasSelecionados) {
@@ -123,6 +125,7 @@ public class PlaylistController {
     @FXML
     private void adicionarPlaylist() {
         adicionarItem(playlistTextField, "playlist", playlistSelecionadas, playlistAdicionadosFlow);
+        
     }
 
 
@@ -168,6 +171,11 @@ public class PlaylistController {
     
                 ((StringBuilder) destino).setLength(0); // limpa o valor antigo
                 ((StringBuilder) destino).append(item.getName());
+
+                if (tipoBusca == "playlist"){
+                    playlistSelecionadaId = item.getId(); // salva só o ID aqui
+
+                }
     
                 adicionarItemComRemocao(destino, painelDestino, item);
             }

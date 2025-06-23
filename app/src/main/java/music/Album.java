@@ -104,6 +104,7 @@ public class Album extends MusicSource {
      *
      * @return Uma {@code ArrayList} de objetos {@link Track}.
      */
+    @Override
     public ArrayList<Track> getTracks() {
         return tracks;
     }

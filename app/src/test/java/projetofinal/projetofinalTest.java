@@ -18,8 +18,12 @@ import org.junit.jupiter.api.Test;
 
 import fileManager.ClientDataFileManager;
 import fileManager.RefreshTokenFileManager;
+import search.AlbumResearcher;
+import search.ArtistResearcher;
+import search.GenreResearcher;
 import search.SearchManager;
 import search.SearchResult;
+import search.TrackResearcher;
 import user.User;
 
 /**
@@ -74,7 +78,7 @@ public class projetofinalTest {
      */
     @Test
     public void VerifyArtistSearch() {
-        ArrayList<SearchResult> artistResults = SearchManager.search("Elvis Pre","artist");
+        ArrayList<SearchResult> artistResults = SearchManager.search("Elvis Pre", new ArtistResearcher());
 
         String firstArtistName = artistResults.get(0).getName();
 
@@ -88,7 +92,7 @@ public class projetofinalTest {
      */
     @Test
     public void VerifyTrackSearch() {
-        ArrayList<SearchResult> trackResults = SearchManager.search("Lá(r)", "track");
+        ArrayList<SearchResult> trackResults = SearchManager.search("Lá(r)", new TrackResearcher());
 
         String firstTrackName = trackResults.get(0).getName();
 
@@ -102,7 +106,7 @@ public class projetofinalTest {
      */
     @Test
     public void VerifyAlbumSearch() {
-        ArrayList<SearchResult> albumResults = SearchManager.search("guerra e paz", "album");
+        ArrayList<SearchResult> albumResults = SearchManager.search("guerra e paz", new AlbumResearcher());
 
         String firsAlbumName = albumResults.get(0).getName();
 
@@ -116,7 +120,7 @@ public class projetofinalTest {
      */
     @Test
     public void VerifyGenreSearch() {
-        ArrayList<SearchResult> genreResults = SearchManager.search("pop", "genre");
+        ArrayList<SearchResult> genreResults = SearchManager.search("pop", new GenreResearcher());
 
         String firstGenreName = genreResults.get(0).getName();
 

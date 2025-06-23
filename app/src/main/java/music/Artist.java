@@ -71,6 +71,7 @@ public class Artist extends MusicSource {
      *
      * @return Uma {@code ArrayList} de {@code Track}
      */
+    @Override
     public ArrayList<Track> getTracks() {
         if (tracks.size() == 0) {
             String query = HttpClientUtil.QueryURLEncode("artist:" + this.name);

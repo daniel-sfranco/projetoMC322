@@ -9,8 +9,14 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import music.Playlist;
 import projetofinal.App;
+import search.AlbumResearcher;
+import search.ArtistResearcher;
+import search.GenreResearcher;
+import search.PlaylistResearcher;
+import search.Researcher;
 import search.SearchManager;
 import search.SearchResult;
+import search.TrackResearcher;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -126,32 +132,32 @@ public class PlaylistController {
     // Métodos de adição
     @FXML
     private void adicionarGenero() {
-        adicionarItem(generoTextField, "genre", generosSelecionados, generosAdicionadosFlow);
+        adicionarItem(generoTextField, new GenreResearcher(), generosSelecionados, generosAdicionadosFlow);
     }
 
     @FXML
     private void adicionarPlaylist() {
-        adicionarItem(playlistTextField, "playlist", playlistSelecionadas, playlistAdicionadosFlow);
+        adicionarItem(playlistTextField, new PlaylistResearcher(), playlistSelecionadas, playlistAdicionadosFlow);
 
     }
 
     @FXML
     private void adicionarArtista() {
-        adicionarItem(artistasTextField, "artist", artistasSelecionados, artistasAdicionadosFlow);
+        adicionarItem(artistasTextField, new ArtistResearcher(), artistasSelecionados, artistasAdicionadosFlow);
     }
 
     @FXML
     private void adicionarAlbum() {
-        adicionarItem(albumTextField, "album", albunsSelecionados, albumAdicionadosFlow);
+        adicionarItem(albumTextField, new AlbumResearcher(), albunsSelecionados, albumAdicionadosFlow);
     }
 
     @FXML
     private void adicionarMusica() {
-        adicionarItem(musicaTextField, "track", musicasSelecionadas, musicaAdicionadosFlow);
+        adicionarItem(musicaTextField, new TrackResearcher(), musicasSelecionadas, musicaAdicionadosFlow);
     }
 
     // Método utilitário genérico para adicionar elementos
-    private void adicionarItem(TextField inputField, String tipoBusca, Object destino, FlowPane painelDestino) {
+    private void adicionarItem(TextField inputField, Researcher tipoBusca, Object destino, FlowPane painelDestino) {
         String query = inputField.getText().trim();
         if (query.isEmpty())
             return;
@@ -175,7 +181,7 @@ public class PlaylistController {
                 ((StringBuilder) destino).setLength(0); // limpa o valor antigo
                 ((StringBuilder) destino).append(item.getName());
 
-                if (tipoBusca == "playlist") {
+                if (tipoBusca instanceof PlaylistResearcher) {
                     playlistSelecionadaId = item.getId(); // salva só o ID aqui
 
                 }

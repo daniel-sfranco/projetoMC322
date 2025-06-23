@@ -167,6 +167,7 @@ public class Playlist extends MusicSource {
      *
      * @return Uma ArrayList de objetos Track.
      */
+    @Override
     public ArrayList<Track> getTracks() {
         return tracks;
     }

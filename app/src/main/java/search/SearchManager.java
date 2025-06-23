@@ -34,27 +34,8 @@ public class SearchManager {
      * @param type O tipo da busca: {@code "album"}, {@code "artist"}, {@code "genre"}, {@code "playlist"} ou outro (padrão: faixa).
      * @return Uma lista de {@code SearchResult} com os resultados da busca.
      */
-    public static ArrayList<SearchResult> search(String query, String type) {
+    public static ArrayList<SearchResult> search(String query, Researcher researcher) {
         ArrayList<SearchResult> results = new ArrayList<>();
-        Researcher researcher;
-
-        switch (type) {
-            case "genre":
-                researcher = new GenreResearcher();
-                break;
-            case "album":
-                researcher = new AlbumResearcher();
-                break;
-            case "artist":
-                researcher = new ArtistResearcher();
-                break;
-            case "playlist":
-                researcher = new PlaylistResearcher();
-                break;
-            default:
-                researcher = new TrackResearcher(); // assume busca por faixa como padrão
-                break;
-        }
         query = HttpClientUtil.QueryURLEncode(query);
         results = researcher.search(query);
         return results;

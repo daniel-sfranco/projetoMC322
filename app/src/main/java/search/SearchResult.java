@@ -15,7 +15,7 @@ package search;
  * Essa classe é utilizada por diferentes {@code Researcher}s para encapsular
  * os dados retornados de pesquisas por álbuns, artistas, playlists, gêneros ou faixas.
  * 
- * @author -
+ * @author Daniel Soares Franco - 259083
  */
 public class SearchResult {
 

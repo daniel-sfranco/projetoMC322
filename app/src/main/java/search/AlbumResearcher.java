@@ -24,7 +24,7 @@ import exceptions.RequestException;
  * A busca retorna uma lista de {@code SearchResult} com nome e ID de cada
  * álbum.
  * 
- * @author -
+ * @author Daniel Soares Franco - 259083
  */
 public class AlbumResearcher implements Researcher {
 

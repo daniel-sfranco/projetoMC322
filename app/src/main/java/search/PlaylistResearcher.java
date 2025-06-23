@@ -22,7 +22,7 @@ import exceptions.RequestException;
  * 
  * A busca é feita com base no nome da playlist, de forma insensível a maiúsculas.
  * 
- * @author -
+ * @author Daniel Soares Franco - 259083
  */
 public class PlaylistResearcher implements Researcher {
 

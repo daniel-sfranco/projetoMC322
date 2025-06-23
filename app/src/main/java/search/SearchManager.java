@@ -19,7 +19,7 @@ import api.HttpClientUtil;
  * 
  * Essa classe serve como ponto de entrada centralizado para as funcionalidades de busca.
  * 
- * @author -
+ * @author Daniel Soares Franco - 259083
  */
 public class SearchManager {
 

@@ -23,7 +23,7 @@ import user.User;
  * 
  * Cada resultado contém o nome da faixa e seu identificador único.
  * 
- * @author -
+ * @author Daniel Soares Franco - 259083
  */
 public class TrackResearcher implements Researcher {
 

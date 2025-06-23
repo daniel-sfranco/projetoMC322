@@ -1,0 +1,246 @@
+@startuml uml
+class Album {
+  + Album(String): 
+  + Album(String, String, ArrayList<Track>): 
+  + Album(String, String): 
+  + getTracks(): ArrayList<Track>
+  + toString(): String
+}
+class AlbumResearcher {
+  + AlbumResearcher(): 
+  + search(String): ArrayList<SearchResult>
+}
+class Artist {
+  + Artist(String, String): 
+  + Artist(String): 
+  + getTracks(): ArrayList<Track>
+  + toString(): String
+}
+class ArtistResearcher {
+  + ArtistResearcher(): 
+  + search(String): ArrayList<SearchResult>
+}
+class AuthUtils {
+  + AuthUtils(): 
+  - expectedState: String
+  - authCodeFuture: CompletableFuture<String>
+  - clientId: String
+  - clientSecret: String
+  - port: int
+  + getExpectedState(): String
+  + firstLogin(SpotifyToken): void
+  - exchangeCodeForToken(SpotifyToken, String): void
+  - startServer(): CompletableFuture<String>
+  + getClientSecret(String): String
+  + getClientId(String): String
+  + printError(String, Response): String
+}
+class ClientDataFileManager {
+  + ClientDataFileManager(): 
+  + writeClientData(String, String): void
+  + writeClientId(String): void
+  + readClientData(): Map<String, String>
+  + writeClientSecret(String): void
+}
+class FileManager {
+  + FileManager(): 
+  # FILES_LOCATION: String
+  # SPECIFIC_LOCATION: String
+  + addData(ArrayList<String>): void
+  + deleteFile(): boolean
+  + readFile(): ArrayList<String>
+  + deleteLine(String): void
+  + writeFile(ArrayList<String>): void
+}
+class GenreResearcher {
+  + GenreResearcher(): 
+  + GENRE_FILE_LOCATION: String
+  + search(String): ArrayList<SearchResult>
+}
+class HttpClientUtil {
+  + HttpClientUtil(): 
+  - client: HttpClient
+  + sendPostFormRequest(String, Map<String, String>, Map<String, String>): String
+  + QueryURLEncode(String): String?
+  + getClient(): HttpClient
+  + sendGetRequest(String, Map<String, String>): String
+  + sendPostRequest(String, Map<String, String>, Json): String
+}
+class IncorrectClientFileDataException {
+  + IncorrectClientFileDataException(String): 
+}
+class InvalidNumTracksException {
+  + InvalidNumTracksException(int): 
+}
+class Json {
+  + Json(String): 
+  + Json(Object): 
+  - value: String
+  - mapper: ObjectMapper
+  + toString(): String
+  + parseJsonArray(): ArrayList<Json>
+  + get(String): Json
+  + parseJson(Class<T>): T
+  + print(): void
+  + parseJson(): Map<String, Json>
+}
+class MusicSource {
+  + MusicSource(String): 
+  + MusicSource(String, String): 
+  + MusicSource(): 
+  + MusicSource(String, String, ArrayList<Track>): 
+  # name: String
+  # tracksIds: ArrayList<String>
+  # tracks: ArrayList<Track>
+  # request: Request
+  # id: String
+  + getTracks(): ArrayList<Track>
+  + getId(): String
+  + getName(): String
+  + toString(): String
+}
+class Playlist {
+  + Playlist(String, String, String, ArrayList<Track>): 
+  + Playlist(String): 
+  - Playlist(PlaylistBuilder): 
+  - ownerId: String
+  + getOwnerId(): String
+  + getTracks(): ArrayList<Track>
+  + builder(int): PlaylistBuilder
+  + toString(): String
+  + editPlaylist(String): void
+}
+class PlaylistFileManager {
+  + PlaylistFileManager(): 
+  + getUserPlaylists(): ArrayList<String>
+  + deletePlaylistId(String): void
+  + addPlaylistId(String): void
+}
+class PlaylistResearcher {
+  + PlaylistResearcher(): 
+  + search(String): ArrayList<SearchResult>
+}
+class RefreshTokenFileManager {
+  + RefreshTokenFileManager(): 
+  + readRefreshToken(): String?
+  + writeRefreshToken(String): void
+}
+class Request {
+  + Request(): 
+  - baseUrl: String
+  - token: SpotifyToken
+  + setToken(SpotifyToken): void
+  + getBaseUrl(): String
+  + getToken(): SpotifyToken
+  + sendPostRequest(String, Json): Json
+  + sendGetRequest(String): Json
+}
+class RequestException {
+  + RequestException(int, String): 
+  + RequestException(String): 
+}
+interface Researcher << interface >> {
+  + search(String): ArrayList<SearchResult>
+}
+class SearchManager {
+  + SearchManager(): 
+  + search(String, String): ArrayList<SearchResult>
+}
+class SearchResult {
+  + SearchResult(String, String): 
+  - name: String
+  - id: String
+  + toString(): String
+  + getName(): String
+  + setName(String): void
+  + getId(): String
+  + setId(String): void
+}
+class SpotifyToken {
+  + SpotifyToken(Request): 
+  - updatedAt: LocalDateTime
+  - utils: AuthUtils
+  - accessToken: String
+  - refreshToken: String
+  - request: Request
+  - expiresIn: int
+  + getRequest(): Request
+  + setAccessToken(String): void
+  + setRefreshToken(String): void
+  + getRefreshToken(): String
+  + setExpiresIn(int): void
+  + refreshToken(): String
+  + getAccessToken(): String
+  + setUpdatedAt(LocalDateTime): void
+}
+class Track {
+  + Track(int, String, String, Boolean): 
+  + Track(String): 
+  - id: String
+  - request: Request
+  - duration: int
+  - explicit: Boolean
+  - name: String
+  + getDuration(): int
+  + getExplicit(): Boolean
+  + toString(): String
+  + getId(): String
+  + getName(): String
+}
+class TrackResearcher {
+  + TrackResearcher(): 
+  + search(String): ArrayList<SearchResult>
+}
+class User {
+  - User(): 
+  - followers: int
+  - id: String
+  - INSTANCE: User
+  - name: String
+  - request: Request
+  - email: String
+  - explicitContentFilter: Boolean
+  - country: String
+  + toString(): String
+  + getName(): String
+  + getRefreshToken(): String
+  + getEmail(): String
+  + getCountry(): String
+  + setRefreshToken(String): void
+  + deleteRefreshToken(): Boolean
+  + getId(): String
+  + getExplicitContentFilter(): Boolean
+  + getInstance(): User
+  + getFollowers(): int
+  + getRequest(): Request
+}
+class projetofinalTest {
+  + projetofinalTest(): 
+  + VerifyAlbumSearch(): void
+  + VerifyArtistSearch(): void
+  + VerifyGenreSearch(): void
+  + VerifyReadCredentials(): void
+  + VerifyReadRefreshToken(): void
+  + VerifyTrackSearch(): void
+}
+
+Album                             -[#000082,plain]-^  MusicSource                      
+AlbumResearcher                   -[#008200,dashed]-^  Researcher                       
+Artist                            -[#000082,plain]-^  MusicSource                      
+ArtistResearcher                  -[#008200,dashed]-^  Researcher                       
+ClientDataFileManager             -[#000082,plain]-^  FileManager                      
+GenreResearcher                   -[#008200,dashed]-^  Researcher                       
+MusicSource                      "1" *-[#595959,plain]-> "request\n1" Request                          
+MusicSource                      "1" *-[#595959,plain]-> "tracks\n*" Track                            
+Playlist                          -[#000082,plain]-^  MusicSource                      
+PlaylistController               "1" *-[#595959,plain]-> "artistasSelecionados\n*" SearchResult                     
+PlaylistFileManager               -[#000082,plain]-^  FileManager                      
+PlaylistResearcher                -[#008200,dashed]-^  Researcher                       
+RefreshTokenFileManager           -[#000082,plain]-^  FileManager                      
+Request                          "1" *-[#595959,plain]-> "token\n1" SpotifyToken                     
+SpotifyToken                     "1" *-[#595959,plain]-> "utils\n1" AuthUtils                        
+SpotifyToken                     "1" *-[#595959,plain]-> "request\n1" Request                          
+Track                            "1" *-[#595959,plain]-> "request\n1" Request                          
+TrackResearcher                   -[#008200,dashed]-^  Researcher                       
+User                             "1" *-[#595959,plain]-> "request\n1" Request                          
+@enduml

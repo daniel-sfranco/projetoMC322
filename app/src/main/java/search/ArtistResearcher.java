@@ -24,7 +24,7 @@ import user.User;
  * 
  * Cada resultado contém o nome e o ID do artista.
  * 
- * @author -
+ * @author Daniel Soares Franco - 259083
  */
 public class ArtistResearcher implements Researcher {
 

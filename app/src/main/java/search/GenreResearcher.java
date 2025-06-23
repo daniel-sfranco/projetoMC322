@@ -23,7 +23,7 @@ import java.util.Scanner;
  * Cada linha do arquivo deve conter o ID e o nome do gênero separados por ponto e vírgula.
  * Exemplo: {@code pop123;Pop}
  * 
- * @author 
+ * @author Daniel Soares Franco - 259083
  */
 public class GenreResearcher implements Researcher {
 

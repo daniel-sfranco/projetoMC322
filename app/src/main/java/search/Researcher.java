@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * 
  * O resultado da pesquisa é uma lista de objetos {@code SearchResult}.
  * 
- * @author -
+ * @author Daniel Soares Franco - 259083
  */
 public interface Researcher {
     /**

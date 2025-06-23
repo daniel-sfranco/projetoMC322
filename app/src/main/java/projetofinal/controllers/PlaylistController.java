@@ -45,11 +45,11 @@ public class PlaylistController {
     @FXML
     private FlowPane musicaAdicionadosFlow;
 
-    private final List<SearchResult> artistasSelecionados = new ArrayList<>();
-    private final List<SearchResult> albunsSelecionados = new ArrayList<>();
-    private final List<SearchResult> musicasSelecionadas = new ArrayList<>();
-    private final StringBuilder generosSelecionados = new StringBuilder();
-    private final StringBuilder playlistSelecionadas = new StringBuilder();
+    private List<SearchResult> artistasSelecionados = new ArrayList<>();
+    private List<SearchResult> albunsSelecionados = new ArrayList<>();
+    private List<SearchResult> musicasSelecionadas = new ArrayList<>();
+    private StringBuilder generosSelecionados = new StringBuilder();
+    private StringBuilder playlistSelecionadas = new StringBuilder();
     private String playlistSelecionadaId = null;
 
     // Ações de navegação
@@ -115,7 +115,7 @@ public class PlaylistController {
             // 4. Finaliza a construção
             Playlist novaPlaylist = builder.build();
             System.out.println("Playlist criada com sucesso: " + novaPlaylist);
-
+            App.setRoot("visualizarPlaylists");
         } catch (Exception e) {
             mensagemErroLabel.setText("Erro ao gerar playlist: " + e.getMessage());
             mensagemErroLabel.setVisible(true);
@@ -167,11 +167,6 @@ public class PlaylistController {
 
                 if (!lista.contains(item)) {
                     lista.add(item);
-
-                    Label itemLabel = new Label(item.getName());
-                    itemLabel.setStyle(
-                            "-fx-background-color: #FF1AA8; -fx-text-fill: white; -fx-padding: 4 8; -fx-background-radius: 12;");
-                    painelDestino.getChildren().add(itemLabel);
                 }
             } else if (destino instanceof StringBuilder) {
                 // Só aceita um único valor por vez
@@ -184,9 +179,8 @@ public class PlaylistController {
                     playlistSelecionadaId = item.getId(); // salva só o ID aqui
 
                 }
-
-                adicionarItemComRemocao(destino, painelDestino, item);
             }
+            adicionarItemComRemocao(destino, painelDestino, item);
 
             inputField.clear();
         } else {

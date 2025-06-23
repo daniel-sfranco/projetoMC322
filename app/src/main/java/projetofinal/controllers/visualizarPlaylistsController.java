@@ -82,8 +82,6 @@ public class visualizarPlaylistsController {
         return card;
     }
     
-
-    
     private String calcularDuracaoTotal(Playlist playlist) {
         int totalMs = playlist.getTracks().stream().mapToInt(Track::getDuration).sum();
         int totalMin = totalMs / 60000;

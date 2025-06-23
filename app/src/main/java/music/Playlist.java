@@ -190,7 +190,8 @@ public class Playlist extends MusicSource {
      * @param playlistId o id da playlist para a qual haverá o redirecionamento
      */
     public static void editPlaylist(String playlistId) {
-        String uri = "https://open.spotify.com/playlist/" + playlistId;
+        User user = User.getInstance();
+        String uri = "https://open.spotify.com/playlist/" + playlistId + "?market=" + user.getCountry();
         try {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(new URI(uri));

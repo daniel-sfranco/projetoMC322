@@ -90,6 +90,10 @@ public class PlaylistController {
 
             if (!texto.isEmpty()) {
                 numeroDeMusicas = Integer.parseInt(texto);
+            } else {
+                mensagemErroLabel.setText("Insira um número de músicas");
+                mensagemErroLabel.setVisible(true);
+                return;
             }
 
             // 2. Começa a construção
@@ -162,6 +166,7 @@ public class PlaylistController {
         if (query.isEmpty())
             return;
 
+        mensagemErroLabel.setVisible(false);
         List<SearchResult> resultados = SearchManager.search(query, tipoBusca);
 
         if (!resultados.isEmpty()) {
@@ -190,7 +195,8 @@ public class PlaylistController {
 
             inputField.clear();
         } else {
-            System.out.println("Nenhum resultado encontrado para: " + query);
+            mensagemErroLabel.setText("Nenhum resultado encontrado para: " + query);
+            mensagemErroLabel.setVisible(true);
         }
     }
 

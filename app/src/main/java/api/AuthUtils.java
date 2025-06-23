@@ -22,7 +22,6 @@ import fileManager.RefreshTokenFileManager;
 import spark.Spark;
 
 /**
- * AuthUtils
  * Classe utilitária para gerenciar a autenticação com o Spotify.
  * Inicia um servidor local para receber o código de autorização após a
  * autenticação do usuário.

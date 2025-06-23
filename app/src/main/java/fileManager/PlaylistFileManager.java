@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * PlaylistFileManager
  * Classe que gerencia o arquivo User/PlaylistsIds.che, que armazena
  * os ids das playlists geradas pelo aplicativo, para poder direcionar para
  * o spotify para edições na aba "acessar"

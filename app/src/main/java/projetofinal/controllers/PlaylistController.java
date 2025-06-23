@@ -22,6 +22,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller para a tela principal da aplicação, onde será possível escolher as
+ * opções para criação da playlist
+ */
 public class PlaylistController {
     @FXML
     private TextField numeroMusicasTextField;

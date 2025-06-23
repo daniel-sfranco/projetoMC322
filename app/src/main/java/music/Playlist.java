@@ -86,11 +86,10 @@ public class Playlist extends MusicSource {
     /**
      * Construtor para criar uma nova instância de Playlist.
      *
-     * @param numTracks O número total de faixas na playlist.
-     * @param id        O ID único da playlist no Spotify.
-     * @param name      O nome da playlist.
-     * @param ownerId   O id do usuário proprietário da playlist.
-     * @param tracksIds Uma lista de ids de faixas contidas na playlist.
+     * @param id      O ID único da playlist no Spotify.
+     * @param name    O nome da playlist.
+     * @param ownerId O id do usuário proprietário da playlist.
+     * @param tracks  Uma lista de faixas contidas na playlist.
      */
     public Playlist(String id, String name, String ownerId, ArrayList<Track> tracks) {
         super(id, name, tracks);
@@ -321,6 +320,8 @@ public class Playlist extends MusicSource {
          * aumenta conforme o especificado.
          * 
          * @param trackId os ids das músicas a serem adicionadas.
+         * @return o mesmo builder, para permitir a adição de outras características
+         * @throws RequestException caso haja algum erro de requisição
          */
         public PlaylistBuilder addTrack(ArrayList<String> trackId) throws RequestException {
             this.minTracks += trackId.size();

@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Json
  * Classe para objetos do tipo Json, para conversão entre tipos
  * Fornece métodos para serializar objetos em JSON e desserializar JSON em
  * objetos.
@@ -45,7 +44,7 @@ public class Json {
      * Converte o valor armazenado para um objeto do tipo especificado.
      * Obs: não funciona para tipos compostos, como Map ou ArrayList.
      * Para array use primeiro parseJsonArray e depois itere sobre os
-     * elementos do ArrayList<Json> recebido
+     * elementos do ArrayList de Json recebido
      * 
      * @param valueType a classe do objeto a ser lido
      * @param <T>       a classe do objeto a ser retornado

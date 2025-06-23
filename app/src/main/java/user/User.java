@@ -19,9 +19,6 @@ import fileManager.RefreshTokenFileManager;
  * Representa um usuário dentro do contexto da aplicação, contendo informações
  * como país, nome, email, ID, filtro de conteúdo explícito e número de
  * seguidores.
- * Esta classe implementa a interface {@link Storable}, permitindo que suas
- * instâncias
- * sejam salvas e lidas de um arquivo JSON.
  * 
  * @author Vinícius de Oliveira - 251527
  */

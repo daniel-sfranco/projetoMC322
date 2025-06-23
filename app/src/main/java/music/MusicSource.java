@@ -15,11 +15,12 @@ import api.Request;
 import user.User;
 
 /**
- * A classe {@code MusicSource} define um contrato para qualquer entidade que
- * possa ser considerada uma fonte de música no sistema.
+ * Representa classes que são consideradas fontes de música, isto é, contém
+ * músicas.
  * Isso inclui classes como {@code Artist}, {@code Album} e {@code Playlist},
- * garantindo que todas as fontes de música possuam um ID único e um nome para
- * identificação.
+ * garantindo que todas as fontes de música possuam um ID único, um nome para
+ * identificação. e uma lista de músicas e de IDs das músicas, além de um objeto request
+ * associado
  * 
  * @author Vinícius de Oliveira - 251527
  * @author Daniel Soares Franco - 259083

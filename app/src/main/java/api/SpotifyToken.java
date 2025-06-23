@@ -10,7 +10,6 @@ import exceptions.RequestException;
 import fileManager.RefreshTokenFileManager;
 
 /**
- * SpotifyToken
  * Classe que representa o token de autenticação retornado pela API do Spotify.
  * Contém os campos access_token, token_type e expiresIn.
  *
@@ -81,7 +80,7 @@ public class SpotifyToken {
     /**
      * Define o token de acesso.
      * 
-     * @param access_token O token de acesso a ser definido.
+     * @param accessToken O token de acesso a ser definido.
      */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
@@ -90,7 +89,7 @@ public class SpotifyToken {
     /**
      * Define o token para recuperação do token de acesso.
      * 
-     * @param refresh_token O token para recuperação do token de acesso
+     * @param refreshToken O token para recuperação do token de acesso
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;

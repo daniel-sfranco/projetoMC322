@@ -28,7 +28,7 @@ import exceptions.IncorrectClientFileDataException;
  */
 public class ClientDataFileManager extends FileManager {
     /**
-     * Função que será executada na primeira chamada a um método estático da classe
+     * Método que será executado na primeira chamada a um método estático da classe
      * Define qual é o local específico da classe onde está o arquivo
      */
     static {
@@ -37,6 +37,9 @@ public class ClientDataFileManager extends FileManager {
         writeClientData(clientId, clientSecret);
     }
     
+    /**
+     * Método que define o local do arquivo com os dados da aplicação do Spotify
+     */
     public static void setLocation(){
         FileManager.SPECIFIC_LOCATION = FileManager.FILES_LOCATION + "ClientData.che";
     }

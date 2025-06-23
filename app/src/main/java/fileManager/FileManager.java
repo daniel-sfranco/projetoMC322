@@ -10,6 +10,11 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe abstrata que lida com escrita e leitura de dados
+ * É implementada para armazenamento de dados como os dados da aplicação
+ * do Spotify, o refreshToken e as playlists geradas usando o aplicativo
+ */
 public abstract class FileManager {
     /**
      * Atributos estáticos para locais de arquivos

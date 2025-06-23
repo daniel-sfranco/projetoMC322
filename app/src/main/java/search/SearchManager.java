@@ -31,7 +31,10 @@ public class SearchManager {
      * Direciona a chamada para a implementação de {@code Researcher} apropriada.
      * 
      * @param query A string a ser buscada (ex: nome do artista, álbum, etc.).
-     * @param type O tipo da busca: {@code "album"}, {@code "artist"}, {@code "genre"}, {@code "playlist"} ou outro (padrão: faixa).
+     * @param researcher um objeto que implemetna a interface {@code Researcher}, que indica
+     * qual tipo de filtro deve ser implementado
+     * Opções: {@code GenreResearcher}, {@code AlbumResearcher}, {@code ArtistResearcher},
+     * {@code PlaylistResearcher} e {@code TrackResearcher}
      * @return Uma lista de {@code SearchResult} com os resultados da busca.
      */
     public static ArrayList<SearchResult> search(String query, Researcher researcher) {

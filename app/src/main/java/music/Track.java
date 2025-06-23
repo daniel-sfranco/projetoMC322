@@ -51,8 +51,6 @@ public class Track {
      * @param duration   A duração da faixa em milissegundos.
      * @param name       O nome da faixa.
      * @param id         O ID único da faixa no Spotify.
-     * @param artistsIds Uma lista de ids de artistas associados à faixa.
-     * @param albumId    O id do álbum ao qual a faixa pertence.
      * @param explicit   Um booleano indicando se a faixa é explícita.
      */
     public Track(int duration, String name, String id, Boolean explicit) {

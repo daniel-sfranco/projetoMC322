@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import exceptions.RequestException;
 
 /**
- * HttpClientUtil
  * Classe utilitária para enviar requisições HTTP GET e POST usando HttpClient
  * do Java.
  * Fornece métodos para enviar requisições com cabeçalhos personalizados e
@@ -105,7 +104,7 @@ public class HttpClientUtil {
      *
      * @param url      a URL para a qual a requisição será enviada
      * @param headers  um mapa de cabeçalhos a serem incluídos na requisição
-     * @param formBody o corpo do formulário a ser enviado como string
+     * @param body o corpo do formulário a ser enviado como string
      * @return o corpo da resposta como uma string
      * @throws RequestException se a resposta tiver um código de status >= 400
      */

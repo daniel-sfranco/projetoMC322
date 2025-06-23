@@ -5,7 +5,6 @@ import java.util.Map;
 import exceptions.RequestException;
 
 /**
- * Request
  * Classe que representa uma requisição para a API do Spotify.
  * Contém informações básicas como URL base, clientId e clientSecret, e gerencia
  * as conexões com a API.
